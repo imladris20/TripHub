@@ -1,4 +1,3 @@
-import "./App.css";
 // import { Route, Routes } from "react-router-dom";
 // import { useContext } from "react";
 // import Context from "./context/ContextTemplate";
