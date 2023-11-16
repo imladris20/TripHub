@@ -12,7 +12,7 @@ function App() {
     });
   };
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, status } = useQuery({
     queryKey: ["getPost"],
     queryFn: async () => {
       await wait(3000);
@@ -30,13 +30,19 @@ function App() {
         <Route path="/admin" element={<Admin />} />
       </Routes> */}
       <p className="cursor-pointer font-mono text-2xl text-gray-500">
-        Start Your Project
+        {"Why don't you start your project?"}
       </p>
       <div className="mt-5 border border-solid border-gray-300 p-2">
-        {isLoading ? "正在axios喔" : JSON.stringify(data)}
+        {`isLoading: ${isLoading}`}
       </div>
       <div className="mt-5 border border-solid border-gray-300 p-2">
-        <h2>Bears: {bears}</h2>
+        {`status: ${status}`}
+      </div>
+      <div className="mt-5 border border-solid border-gray-300 p-2">
+        {isLoading ? "還在載入喔" : JSON.stringify(data.body)}
+      </div>
+      <div className="mt-5 border border-solid border-gray-300 p-2">
+        <h2 className="my-3">Bears: {bears}</h2>
         <button
           className="mr-4 h-8 w-16 cursor-pointer bg-green-200 p-1"
           onClick={increasePopulation}
