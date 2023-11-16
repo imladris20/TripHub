@@ -5,19 +5,23 @@ const initialState = 0;
 
 const useStore = create((set, get) => ({
   bears: initialState,
-  increasePopulation: () =>
+  increasePopulation: () => {
     set(
       produce((state) => {
         state.bears = state.bears + 1;
       }),
-    ),
+    );
+    console.log("get", get());
+  },
   // increasePopulation: () => set((state) => ({ bears: state.bears + 1 })),
-  removeAllBears: () =>
+  removeAllBears: () => {
     set(
       produce((state) => {
         state.bears = 0;
       }),
-    ),
+    );
+    console.log("get", get());
+  },
 }));
 
 export default useStore;

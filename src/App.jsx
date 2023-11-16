@@ -4,7 +4,7 @@ import axios from "axios";
 import useStore from "./store/store";
 
 function App() {
-  const { bears, increasePopulation, removeAllBears } = useStore();
+  const { bears, increasePopulation, removeAllBears, get } = useStore();
 
   const wait = (ms) => {
     return new Promise((resolve) => {
@@ -37,6 +37,9 @@ function App() {
       </div>
       <div className="mt-5 border border-solid border-gray-300 p-2">
         {`status: ${status}`}
+      </div>
+      <div className="mt-5 border border-solid border-gray-300 p-2">
+        {`zustand get: ${get}`}
       </div>
       <div className="mt-5 border border-solid border-gray-300 p-2">
         {isLoading ? "還在載入喔" : JSON.stringify(data.body)}
