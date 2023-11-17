@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.8.4",
+    "@vis.gl/react-google-maps": "^0.3.3",
     "axios": "^1.6.1",
     "immer": "^10.0.3",
     "normalize.css": "^8.0.1",
@@ -22,7 +23,6 @@
   "devDependencies": {
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
-    "@ubilabs/google-maps-react-hooks": "^2.0.2",
     "@vitejs/plugin-react": "^4.0.3",
     "autoprefixer": "^10.4.16",
     "eslint": "^8.45.0",
