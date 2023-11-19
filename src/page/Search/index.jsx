@@ -1,45 +1,33 @@
-import {
-  APIProvider,
-  AdvancedMarker,
-  InfoWindow,
-  Map,
-  Pin,
-} from "@vis.gl/react-google-maps";
-
+import { APIProvider, AdvancedMarker, Map } from "@vis.gl/react-google-maps";
 import useStore from "../../store/store";
-
-console.log(APIProvider, Map, AdvancedMarker, Pin, InfoWindow);
-const feilisu = { lat: 25.037042786024042, lng: 121.53209613797584 };
+import CurrentPosition from "./CurrentPosition";
+import InputBlock from "./InputBlock";
 
 const Search = () => {
-  const { apiKey, mapId, initialPosition, open, setOpen } = useStore();
+  const { apiKey, mapId, defaultPosition, currentPosition } = useStore();
 
   return (
     <div className="flex h-[calc(100vh-64px)] flex-row items-center">
-      <div className="flex h-full w-2/5 flex-row items-center justify-center bg-yellow-100">
-        search list space
-      </div>
-      <APIProvider apiKey={apiKey}>
+      <APIProvider apiKey={apiKey} libraries={["places"]}>
+        <div className="flex h-full w-2/5 flex-col items-center justify-start bg-yellow-100">
+          <InputBlock />
+          <p>search list space</p>
+        </div>
         <div className="h-full w-full">
-          <Map zoom={18} center={initialPosition} mapId={mapId}>
-            <AdvancedMarker position={initialPosition}></AdvancedMarker>
-            <AdvancedMarker position={feilisu} onClick={() => setOpen(true)}>
-              <Pin
-                background={"green"}
-                borderColor={"grey"}
-                glyphColor={"purple"}
-              />
+          <Map
+            id={"searchMap"}
+            zoom={8}
+            center={defaultPosition}
+            mapId={mapId}
+            mapTypeControl={false}
+            streetViewControl={false}
+          >
+            <AdvancedMarker position={currentPosition}>
+              <div className="h-4 w-4 rounded-full border-4 border-solid border-white bg-sky-500 outline outline-sky-500"></div>
             </AdvancedMarker>
-            {open && (
-              <InfoWindow
-                position={feilisu}
-                onCloseClick={() => setOpen(false)}
-              >
-                菲立斯很好吃
-              </InfoWindow>
-            )}
           </Map>
         </div>
+        <CurrentPosition />
       </APIProvider>
     </div>
   );

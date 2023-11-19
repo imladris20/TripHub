@@ -3,15 +3,32 @@ import { create } from "zustand";
 
 const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const mapId = import.meta.env.VITE_GOOGLE_MAPS_ID;
-const initialPosition = { lat: 25.0384859846332, lng: 121.53237060857701 };
+const defaultPosition = { lat: 23.553118, lng: 121.0211024 };
+const awsPosition = { lat: 25.0384859846332, lng: 121.53237060857701 };
 const initialState = 0;
 
 const useStore = create((set, get) => ({
   open: false,
   bears: initialState,
-  initialPosition,
+  defaultPosition,
+  currentPosition: defaultPosition,
   apiKey,
   mapId,
+  isCurrentPositionSetted: false,
+  setIsCurrentPositionSetted: () => {
+    set(
+      produce((state) => {
+        state.isCurrentPositionSetted = !state.isCurrentPositionSetted;
+      }),
+    );
+  },
+  setCurrentPosition: (geolocation) => {
+    set(
+      produce((state) => {
+        state.currentPosition = geolocation;
+      }),
+    );
+  },
   increasePopulation: () => {
     set(
       produce((state) => {
