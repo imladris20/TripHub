@@ -6,19 +6,28 @@ const mapId = import.meta.env.VITE_GOOGLE_MAPS_ID;
 const defaultPosition = { lat: 23.553118, lng: 121.0211024 };
 const awsPosition = { lat: 25.0384859846332, lng: 121.53237060857701 };
 const initialState = 0;
+let map;
+const selected = null;
 
 const useStore = create((set, get) => ({
   open: false,
   bears: initialState,
-  defaultPosition,
   currentPosition: defaultPosition,
   apiKey,
   mapId,
-  isCurrentPositionSetted: false,
-  setIsCurrentPositionSetted: () => {
+  map,
+  selected,
+  setSelected: (geolocation) => {
     set(
       produce((state) => {
-        state.isCurrentPositionSetted = !state.isCurrentPositionSetted;
+        state.selected = geolocation;
+      }),
+    );
+  },
+  setMap: (newMap) => {
+    set(
+      produce((state) => {
+        state.map = newMap;
       }),
     );
   },
