@@ -1,51 +1,51 @@
-import { Loader } from "@googlemaps/js-api-loader";
-import { useAutocomplete } from "@vis.gl/react-google-maps";
-import { useEffect, useRef, useState } from "react";
+import {
+  useAutocomplete,
+  useMap,
+  useMapsLibrary,
+} from "@vis.gl/react-google-maps";
+import { useRef, useState } from "react";
 import useStore from "../../store/store";
-
-const options = {
-  bounds: {
-    east: 121.53237060857701 + 0.001,
-    west: 121.53237060857701 - 0.001,
-    south: 25.0384859846332 - 0.001,
-    north: 25.0384859846332 + 0.001,
-  },
-  strictBounds: false,
-};
+import { SearchIcon } from "../../utils/icons";
 
 const InputBlock = () => {
   const inputRef = useRef(null);
+  const map = useMap("searchMap");
+  const markerLib = useMapsLibrary("marker");
+  const { Marker } = markerLib;
+  const marker = new Marker({ map });
+
   const [searchValue, setSearchValue] = useState("");
-  const { currentPosition, apiKey } = useStore();
-  let { map } = useStore();
+  const { currentCenter, setCurrentZoom, setCurrentCenter } = useStore();
 
-  const loader = new Loader({
-    apiKey,
-    version: "weekly",
-  });
-
-  let markerLibraryRef = useRef();
-
-  useEffect(() => {
-    async function loadMarkerLibrary() {
-      markerLibraryRef = await loader.importLibrary("marker");
-    }
-    loadMarkerLibrary();
-  }, []);
+  const autoCompleteOptions = {
+    region: "tw",
+    componentRestrictions: { country: "tw" },
+    bounds: {
+      east: currentCenter.lng + 0.1,
+      west: currentCenter.lng - 0.1,
+      south: currentCenter.lat - 0.1,
+      north: currentCenter.lat + 0.1,
+    },
+    strictBounds: true,
+  };
 
   const onPlaceChanged = (place) => {
     if (place) {
       setSearchValue(place.formatted_address || place.name);
-      const pos = {
-        lat: place.geometry.location.lat(),
-        lng: place.geometry.location.lng(),
+
+      const info = {
+        location: place.geometry.location,
+        placeId: place.place_id,
+        name: place.name,
+        address: place.formatted_address,
+        rating: place.rating,
+        phoneNumber: place.formatted_phone_number || "not provided",
+        priceLevel: place.price_level || "not provided",
       };
 
-      const { Marker } = markerLibraryRef;
-      const marker = new Marker({
-        map,
-        position: pos,
-      });
+      marker.setPosition(info.location);
+
+      setCurrentZoom(14);
 
       // Keep focus on input element
       inputRef.current && inputRef.current.focus();
@@ -54,12 +54,12 @@ const InputBlock = () => {
 
   useAutocomplete({
     inputField: inputRef && inputRef.current,
-    options,
+    autoCompleteOptions,
     onPlaceChanged,
   });
 
   return (
-    <>
+    <div className="flex h-8 w-full flex-row p-0">
       <input
         value={searchValue}
         type="text"
@@ -68,7 +68,10 @@ const InputBlock = () => {
         placeholder="想找什麼景點呢？"
         ref={inputRef}
       />
-    </>
+      <button className="row-flex flex h-8 w-8 items-center justify-center bg-sky-300">
+        <SearchIcon />
+      </button>
+    </div>
   );
 };
 

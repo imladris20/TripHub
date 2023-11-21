@@ -3,24 +3,19 @@ import { create } from "zustand";
 
 const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const mapId = import.meta.env.VITE_GOOGLE_MAPS_ID;
-const defaultPosition = { lat: 23.553118, lng: 121.0211024 };
 const awsPosition = { lat: 25.0384859846332, lng: 121.53237060857701 };
-const initialState = 0;
-let map;
-const selected = null;
 
 const useStore = create((set, get) => ({
   open: false,
-  bears: initialState,
-  currentPosition: defaultPosition,
+  currentCenter: { lat: 23.553118, lng: 121.0211024 },
+  currentZoom: 8.5,
   apiKey,
   mapId,
-  map,
-  selected,
-  setSelected: (geolocation) => {
+  selected: null,
+  setSelected: (placeInfo) => {
     set(
       produce((state) => {
-        state.selected = geolocation;
+        state.selected = placeInfo;
       }),
     );
   },
@@ -31,34 +26,17 @@ const useStore = create((set, get) => ({
       }),
     );
   },
-  setCurrentPosition: (geolocation) => {
+  setCurrentCenter: (geolocation) => {
     set(
       produce((state) => {
-        state.currentPosition = geolocation;
+        state.currentCenter = geolocation;
       }),
     );
   },
-  increasePopulation: () => {
+  setCurrentZoom: (level) => {
     set(
       produce((state) => {
-        state.bears = state.bears + 1;
-      }),
-    );
-    console.log("get", get());
-  },
-  // increasePopulation: () => set((state) => ({ bears: state.bears + 1 })),
-  removeAllBears: () => {
-    set(
-      produce((state) => {
-        state.bears = 0;
-      }),
-    );
-    console.log("get", get());
-  },
-  setOpen: (boolean) => {
-    set(
-      produce((state) => {
-        state.open = boolean;
+        state.currentZoom = level;
       }),
     );
   },

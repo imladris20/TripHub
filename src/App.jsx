@@ -8,20 +8,21 @@ import useStore from "./store/store";
 
 function App() {
   const { apiKey } = useStore();
+
   return (
-    <>
-      <APIProvider
-        apiKey={apiKey}
-        libraries={["places", "geocoding", "marker"]}
-      >
-        <Header />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/search" element={<Search />} />
-          <Route path="/practicing" element={<Practicing />} />
-        </Routes>
-      </APIProvider>
-    </>
+    <APIProvider
+      apiKey={apiKey}
+      region="TW"
+      language="zh-TW"
+      libraries={["places", "maps", "routes", "marker"]}
+    >
+      <Header />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/search" element={<Search />} />
+        <Route path="/practicing" element={<Practicing />} />
+      </Routes>
+    </APIProvider>
   );
 }
 

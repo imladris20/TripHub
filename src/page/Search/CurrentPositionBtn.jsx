@@ -1,19 +1,15 @@
-import { Loader } from "@googlemaps/js-api-loader";
+import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import { useState } from "react";
 import useStore from "../../store/store";
 import { CurrentLocationBtnIcon } from "../../utils/icons";
-import homeicon from "./home-button.png";
+import homeIcon from "./home-button.png";
 
-const CurrentPosition = () => {
-  const { setCurrentPosition, apiKey } = useStore();
+const CurrentPositionBtn = () => {
+  const { setCurrentCenter, setCurrentZoom } = useStore();
   const [isCurrentPositionShow, setIsCurrentPositionShow] = useState(false);
-
-  let { map } = useStore();
-
-  const loader = new Loader({
-    apiKey,
-    version: "weekly",
-  });
+  const map = useMap("searchMap");
+  const markerLib = useMapsLibrary("marker");
+  const { AdvancedMarkerElement } = markerLib;
 
   const handleCurrentLocationBtnClicked = () => {
     if (!map) return;
@@ -23,15 +19,17 @@ const CurrentPosition = () => {
         lat: position.coords.latitude,
         lng: position.coords.longitude,
       };
-      await setCurrentPosition(newPos);
+
+      await setCurrentCenter(newPos);
+      await setCurrentZoom(17);
       await map.setCenter(newPos);
       await map.setZoom(17);
 
       if (!isCurrentPositionShow) {
         const homeImg = document.createElement("img");
-        homeImg.src = homeicon;
-        const { AdvancedMarkerElement } = await loader.importLibrary("marker");
-        const marker = new AdvancedMarkerElement({
+        homeImg.src = homeIcon;
+
+        new AdvancedMarkerElement({
           map,
           position: newPos,
           title: "currentPosition",
@@ -44,7 +42,7 @@ const CurrentPosition = () => {
 
   return (
     <button
-      className="fixed bottom-[115px] right-[10px] ml-auto h-8 w-8 cursor-pointer rounded-md bg-gray-200 p-1"
+      className="fixed bottom-[115px] right-[10px] ml-auto flex h-10 w-10 cursor-pointer flex-row items-center justify-center rounded-sm bg-white p-1"
       onClick={() => handleCurrentLocationBtnClicked()}
     >
       <CurrentLocationBtnIcon />
@@ -52,4 +50,4 @@ const CurrentPosition = () => {
   );
 };
 
-export default CurrentPosition;
+export default CurrentPositionBtn;
