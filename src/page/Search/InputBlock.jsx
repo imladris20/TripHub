@@ -8,11 +8,12 @@ import useStore from "../../store/store";
 import { SearchIcon } from "../../utils/icons";
 
 const InputBlock = () => {
-  const inputRef = useRef(null);
+  const inputRef = useRef();
   const map = useMap("searchMap");
-  const markerLib = useMapsLibrary("marker");
-  const { Marker } = markerLib;
+  const { Marker } = useMapsLibrary("marker");
+  const { PlacesService, RankBy } = useMapsLibrary("places");
   const marker = new Marker({ map });
+  const service = new PlacesService(map);
 
   const [searchValue, setSearchValue] = useState("");
   const { currentCenter, setCurrentZoom, setCurrentCenter } = useStore();
@@ -31,7 +32,7 @@ const InputBlock = () => {
 
   const onPlaceChanged = (place) => {
     if (place) {
-      setSearchValue(place.formatted_address || place.name);
+      setSearchValue(place.name);
 
       const info = {
         location: place.geometry.location,
@@ -53,6 +54,31 @@ const InputBlock = () => {
     }
   };
 
+  const handleSearchButtonClicked = () => {
+    console.log(currentCenter);
+    console.log(searchValue);
+
+    const request = {
+      location: currentCenter,
+      radius: "5000",
+      keyword: searchValue,
+    };
+
+    const callback = (results, status) => {
+      console.log("nearbySearch results: ", results);
+      console.log("nearbySearch status: ", status);
+      console.log("type of nearbySearch status: ", typeof status);
+      // if (status == PlacesServiceStatus.OK) {
+      //   for (var i = 0; i < results.length; i++) {
+      //     var place = results[i];
+      //     createMarker(results[i]);
+      //   }
+      // }
+    };
+
+    service.nearbySearch(request, callback);
+  };
+
   useAutocomplete({
     inputField: inputRef && inputRef.current,
     autoCompleteOptions,
@@ -69,7 +95,10 @@ const InputBlock = () => {
         placeholder="想找什麼景點呢？"
         ref={inputRef}
       />
-      <button className="row-flex flex h-8 w-8 items-center justify-center bg-sky-300">
+      <button
+        className="row-flex flex h-8 w-8 items-center justify-center bg-sky-300"
+        onClick={() => handleSearchButtonClicked()}
+      >
         <SearchIcon />
       </button>
     </div>

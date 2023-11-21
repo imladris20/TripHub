@@ -1,9 +1,28 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Logo from "../../assets/logo.png";
 
 const Header = () => {
-  const [activePageTag, setActivePageTag] = useState();
+  const currentPath = useLocation().pathname;
+  let initialActiveTag;
+  switch (currentPath) {
+    case "/search": {
+      initialActiveTag = 1;
+      break;
+    }
+    case "/pois": {
+      initialActiveTag = 2;
+      break;
+    }
+    case "/schedule": {
+      initialActiveTag = 3;
+      break;
+    }
+    default: {
+      initialActiveTag = null;
+    }
+  }
+  const [activePageTag, setActivePageTag] = useState(initialActiveTag);
 
   return (
     <header className="flex h-16 w-full flex-row items-center gap-4 bg-gray-200 px-4">
