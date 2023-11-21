@@ -46,6 +46,7 @@ const InputBlock = () => {
       marker.setPosition(info.location);
 
       setCurrentZoom(14);
+      setCurrentCenter(info.location);
 
       // Keep focus on input element
       inputRef.current && inputRef.current.focus();
