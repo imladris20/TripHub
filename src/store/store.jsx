@@ -13,6 +13,14 @@ const useStore = create((set, get) => ({
   apiKey,
   mapId,
   selected: null,
+  placeResult: null,
+  setPlaceResult: (placeResult) => {
+    set(
+      produce((state) => {
+        state.placeResult = placeResult;
+      }),
+    );
+  },
   setSelected: (placeInfo) => {
     set(
       produce((state) => {

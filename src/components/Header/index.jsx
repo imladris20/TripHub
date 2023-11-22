@@ -25,7 +25,7 @@ const Header = () => {
   const [activePageTag, setActivePageTag] = useState(initialActiveTag);
 
   return (
-    <header className="flex h-16 w-full flex-row items-center gap-4 bg-gray-200 px-4">
+    <header className="relative z-50 flex h-16 w-full flex-row items-center gap-4 border-b-2 border-solid border-gray-200 bg-white px-4">
       <Link to="/" className="cursor-pointer">
         <button onClick={() => setActivePageTag(null)}>
           <img src={Logo} alt="logo" className="h-11 w-11"></img>
@@ -62,7 +62,7 @@ const Header = () => {
         </button>
       </Link>
       <Link to="/practicing">
-        <button className="w-20 rounded bg-gray-200 px-2 py-1 text-xs text-gray-200">
+        <button className="w-20 rounded bg-white px-2 py-1 text-xs text-white">
           練習頁面
         </button>
       </Link>

@@ -2,9 +2,10 @@ import { Map, useApiIsLoaded, useMap } from "@vis.gl/react-google-maps";
 import useStore from "../../store/store";
 import CurrentPositionBtn from "./CurrentPositionBtn";
 import InputBlock from "./InputBlock";
+import ResultList from "./ResultList";
 
 const Search = () => {
-  const { mapId, currentCenter, currentZoom } = useStore();
+  const { mapId, currentCenter, currentZoom, placeResult } = useStore();
   const apiIsLoaded = useApiIsLoaded();
   const map = useMap("searchMap");
 
@@ -20,6 +21,11 @@ const Search = () => {
     <div className="flex h-[calc(100vh-64px)] flex-row items-center">
       <div className="flex h-full w-2/5 flex-col items-center justify-start bg-yellow-100">
         {map && <InputBlock />}
+        {placeResult ? (
+          <ResultList />
+        ) : (
+          <h1 className="m-auto">Currently ResultList is empty.</h1>
+        )}
       </div>
       <Map id={"searchMap"} options={initialMapOptions} />
       {apiIsLoaded && <CurrentPositionBtn />}

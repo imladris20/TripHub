@@ -11,12 +11,15 @@ const InputBlock = () => {
   const inputRef = useRef();
   const map = useMap("searchMap");
   const { Marker } = useMapsLibrary("marker");
-  const { PlacesService, RankBy } = useMapsLibrary("places");
+  const { PlacesService } = useMapsLibrary("places");
   const marker = new Marker({ map });
   const service = new PlacesService(map);
 
   const [searchValue, setSearchValue] = useState("");
-  const { currentCenter, setCurrentZoom, setCurrentCenter } = useStore();
+  const { currentCenter, setCurrentZoom, setCurrentCenter, setPlaceResult } =
+    useStore();
+
+  const markerRef = useRef([]);
 
   const autoCompleteOptions = {
     region: "tw",
@@ -49,34 +52,64 @@ const InputBlock = () => {
       setCurrentZoom(14);
       setCurrentCenter(info.location);
 
-      // Keep focus on input element
       inputRef.current && inputRef.current.focus();
     }
   };
 
   const handleSearchButtonClicked = () => {
-    console.log(currentCenter);
-    console.log(searchValue);
+    if (!searchValue) return;
 
-    const request = {
+    const textSearchRequest = {
       location: currentCenter,
       radius: "5000",
-      keyword: searchValue,
+      query: searchValue,
+      rankBy: "DISTANCE",
     };
 
-    const callback = (results, status) => {
-      console.log("nearbySearch results: ", results);
-      console.log("nearbySearch status: ", status);
-      console.log("type of nearbySearch status: ", typeof status);
-      // if (status == PlacesServiceStatus.OK) {
-      //   for (var i = 0; i < results.length; i++) {
-      //     var place = results[i];
-      //     createMarker(results[i]);
-      //   }
-      // }
+    const textSearchCallback = (results, status) => {
+      if (status === "OK") {
+        setPlaceResult(results);
+        setCurrentZoom(13.8);
+        setCurrentCenter(results[0].geometry.location);
+        if (markerRef.current.length) {
+          markerRef.current.forEach((marker) => {
+            marker.setVisible(false);
+          });
+          markerRef.current = [];
+        }
+
+        results.map((placeResult) => {
+          const placeId = placeResult.place_id;
+          const request = {
+            placeId,
+            fields: [
+              "name",
+              "geometry",
+              "formatted_address",
+              "photos",
+              "place_id",
+              "types",
+              "opening_hours",
+              "price_level",
+              "rating",
+              "user_ratings_total",
+            ],
+          };
+          service.getDetails(request, (place, status) => {
+            if (status === "OK") {
+              // getDetailsArr.push(place);
+              const marker = new Marker({
+                map,
+                position: place.geometry.location,
+              });
+              markerRef.current.push(marker);
+            }
+          });
+        });
+      }
     };
 
-    service.nearbySearch(request, callback);
+    service.textSearch(textSearchRequest, textSearchCallback);
   };
 
   useAutocomplete({
@@ -86,17 +119,17 @@ const InputBlock = () => {
   });
 
   return (
-    <div className="flex h-8 w-full flex-row p-0">
+    <div className="flex h-8 w-full flex-row items-center justify-start border-b-4 border-solid border-gray-200 p-0">
       <input
         value={searchValue}
         type="text"
-        className="h-8 w-full rounded border border-solid border-gray-300 px-2 focus:outline-none focus:ring-1 focus:ring-sky-500"
+        className="h-8 w-full px-2 focus:outline-sky-300"
         onChange={(e) => setSearchValue(e.target.value)}
         placeholder="想找什麼景點呢？"
         ref={inputRef}
       />
       <button
-        className="row-flex flex h-8 w-8 items-center justify-center bg-sky-300"
+        className="row-flex mt-[2px] flex h-[30px] w-[30px] items-center justify-center bg-gray-400"
         onClick={() => handleSearchButtonClicked()}
       >
         <SearchIcon />
