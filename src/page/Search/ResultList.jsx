@@ -6,8 +6,6 @@ const ResultList = () => {
   const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   let labelIndex = 0;
 
-  console.log("result list components rendered");
-
   return (
     <div className="justify-start-start flex h-full w-full flex-col overflow-auto">
       {placeResult.map((place) => {
@@ -23,14 +21,10 @@ const ResultList = () => {
               {place.rating} ⭐ ({place.user_ratings_total}則)
             </h2>
             <h2 className="text-xs">{place.formatted_address}</h2>
-            <div className="flex h-auto w-full flex-row items-center justify-start gap-3">
-              <h2 className="text-xs text-green-800">營業中</h2>
-              <h2 className="text-xs">|</h2>
-              <h2 className="text-xs">03 358 8900</h2>
-            </div>
             {place?.opening_hours?.weekday_text ? (
               <div className="flex flex-col gap-[1px]">
-                {place.opening_hours.weekday_text.map((day) => {
+                <h3 className="text-xs">營業時間</h3>
+                {place.opening_hours.weekday_text.map((day, index) => {
                   return (
                     <h3
                       className="text-[10px]"
@@ -43,9 +37,14 @@ const ResultList = () => {
               </div>
             ) : (
               <div className="flex flex-col gap-[1px]">
-                <h3 className="text-[10px]">🤔 店家未提供詳細營業時間</h3>
+                <h3 className="text-[10px]">🤔 店家未提供詳細營業資訊</h3>
               </div>
             )}
+            <h2 className="text-xs">
+              {place.formatted_phone_number
+                ? `電話：${place.formatted_phone_number}`
+                : "店家未提供連絡電話"}
+            </h2>
             <h2 className="text-xs">
               {(() => {
                 switch (place.price_level) {

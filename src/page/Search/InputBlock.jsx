@@ -70,10 +70,11 @@ const InputBlock = () => {
             "name",
             "geometry",
             "formatted_address",
+            "formatted_phone_number",
             "photos",
             "place_id",
             "types",
-            "opening_hours",
+            `opening_hours.weekday_text`,
             "price_level",
             "rating",
             "user_ratings_total",
@@ -152,37 +153,9 @@ const InputBlock = () => {
         setCurrentCenter(results[0].geometry.location);
 
         fetchPlaceDetails(markerRef.current, results).then((place) => {
-          console.log("after fetch", place);
+          console.log(place);
           setPlaceResult(place);
         });
-        // results.map((placeResult) => {
-        //   const placeId = placeResult.place_id;
-        //   const request = {
-        //     placeId,
-        //     fields: [
-        //       "name",
-        //       "geometry",
-        //       "formatted_address",
-        //       "photos",
-        //       "place_id",
-        //       "types",
-        //       "opening_hours",
-        //       "price_level",
-        //       "rating",
-        //       "user_ratings_total",
-        //     ],
-        //   };
-        //   service.getDetails(request, (place, status) => {
-        //     if (status === "OK") {
-        //       // getDetailsArr.push(place);
-        //       const marker = new Marker({
-        //         map,
-        //         position: place.geometry.location,
-        //       });
-        //       markerRef.current.push(marker);
-        //     }
-        //   });
-        // });
       }
     };
 
