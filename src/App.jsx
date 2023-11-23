@@ -1,22 +1,32 @@
-// import { Route, Routes } from "react-router-dom";
-// import { useContext } from "react";
-// import Context from "./context/ContextTemplate";
+import { APIProvider } from "@vis.gl/react-google-maps";
+import { Route, Routes } from "react-router-dom";
+import Header from "./components/Header";
+import Pois from "./page/Pois";
+import Schedule from "./page/Schedule";
+import Home from "./page/home";
+import Practicing from "./page/practicing";
+import Search from "./page/search";
+import useStore from "./store/store";
 
 function App() {
-  // const {
-  //   state, function1, function2
-  // } = useContext(Context);
+  const { apiKey } = useStore();
 
   return (
-    <>
-      {/* <Routes>
+    <APIProvider
+      apiKey={apiKey}
+      region="TW"
+      language="zh-TW"
+      libraries={["places", "maps", "routes", "marker"]}
+    >
+      <Header />
+      <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/admin" element={<Admin />} />
-      </Routes> */}
-      <p className="cursor-pointer font-mono text-2xl text-gray-500">
-        Start Your Project
-      </p>
-    </>
+        <Route path="/search" element={<Search />} />
+        <Route path="/pois" element={<Pois />} />
+        <Route path="/schedule" element={<Schedule />} />
+        <Route path="/practicing" element={<Practicing />} />
+      </Routes>
+    </APIProvider>
   );
 }
 
