@@ -5,7 +5,9 @@ import {
   createUserWithEmailAndPassword,
   getAuth,
   signInWithEmailAndPassword,
+  signOut,
 } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -26,7 +28,9 @@ const firebaseConfig = {
 export const initFirebase = () => {
   const app = initializeApp(firebaseConfig);
   const analytics = getAnalytics(app);
-  return { app, analytics };
+  const db = getFirestore(app);
+  const auth = getAuth();
+  return { db, auth };
 };
 
 export const nativeSignUp = async (email, password) => {
@@ -59,4 +63,10 @@ export const nativeSignIn = async (email, password) => {
   } catch (error) {
     throw error;
   }
+};
+
+export const nativeSignOut = async () => {
+  const auth = getAuth();
+  const result = await signOut(auth);
+  return result;
 };

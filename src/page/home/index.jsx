@@ -1,19 +1,15 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import useStore from "../../store/store";
-import { initFirebase } from "../../utils/firebaseSDK";
-import SingWindow from "./SignWindow";
+import SignWindow from "./SignWindow";
 
 const Home = () => {
-  const { isLogin, isSignWindowOpen, setIsSignWindowOpen } = useStore();
-  const [isFbInited, setIsFbInited] = useState(false);
-
-  useEffect(() => {
-    if (!isFbInited) {
-      const { app, analytics } = initFirebase();
-      setIsFbInited(true);
-    }
-  }, []);
+  const {
+    isLogin,
+    isSignWindowOpen,
+    setIsSignWindowOpen,
+    database,
+    setDatabase,
+  } = useStore();
 
   return (
     <div className="relative flex h-[calc(100vh-64px)] w-full flex-col items-center justify-center gap-8 bg-[url('./welcome.jpg')] bg-cover bg-no-repeat">
@@ -40,7 +36,7 @@ const Home = () => {
           )}
         </div>
       </div>
-      {isSignWindowOpen && <SingWindow />}
+      {isSignWindowOpen && <SignWindow />}
     </div>
   );
 };

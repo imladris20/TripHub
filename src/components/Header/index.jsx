@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Logo from "../../assets/logo.png";
+import useStore from "../../store/store";
+import Profile from "./Profile";
 
 const Header = () => {
+  const { isLogin } = useStore();
   const currentPath = useLocation().pathname;
   let initialActiveTag;
   switch (currentPath) {
@@ -66,6 +69,7 @@ const Header = () => {
           練習頁面
         </button>
       </Link>
+      {isLogin && <Profile />}
     </header>
   );
 };
