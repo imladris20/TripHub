@@ -74,3 +74,15 @@ export const AddToPoisIcon = () => {
     </svg>
   );
 };
+
+export const CloseIcon = () => {
+  return (
+    <path
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="32"
+      d="M368 368L144 144M368 144L144 368"
+    />
+  );
+};

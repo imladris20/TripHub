@@ -1,6 +1,11 @@
 // Import the functions you need from the SDKs you need
 import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -22,4 +27,36 @@ export const initFirebase = () => {
   const app = initializeApp(firebaseConfig);
   const analytics = getAnalytics(app);
   return { app, analytics };
+};
+
+export const nativeSignUp = async (email, password) => {
+  const auth = getAuth();
+
+  try {
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password,
+    );
+    const user = userCredential.user;
+    return user;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const nativeSignIn = async (email, password) => {
+  const auth = getAuth();
+
+  try {
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password,
+    );
+    const user = userCredential.user;
+    return user;
+  } catch (error) {
+    throw error;
+  }
 };
