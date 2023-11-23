@@ -34,36 +34,40 @@ const Header = () => {
           <img src={Logo} alt="logo" className="h-11 w-11"></img>
         </button>
       </Link>
-      <Link to="/search">
-        <button
-          className={`w-20 rounded px-2 py-1 text-xs text-[#001a23] ${
-            activePageTag === 1 ? "bg-emerald-400" : "bg-green-100"
-          }`}
-          onClick={() => setActivePageTag(1)}
-        >
-          搜尋景點
-        </button>
-      </Link>
-      <Link to="/pois">
-        <button
-          className={`w-20 rounded px-2 py-1 text-xs text-[#001a23] ${
-            activePageTag === 2 ? "bg-emerald-400" : "bg-green-100"
-          }`}
-          onClick={() => setActivePageTag(2)}
-        >
-          口袋名單
-        </button>
-      </Link>
-      <Link to="/schedule">
-        <button
-          className={`w-20 rounded px-2 py-1 text-xs text-[#001a23] ${
-            activePageTag === 3 ? "bg-emerald-400" : "bg-green-100"
-          }`}
-          onClick={() => setActivePageTag(3)}
-        >
-          行程規劃
-        </button>
-      </Link>
+      {isLogin && (
+        <>
+          <Link to="/search">
+            <button
+              className={`w-20 rounded px-2 py-1 text-xs text-[#001a23] ${
+                activePageTag === 1 ? "bg-emerald-400" : "bg-green-100"
+              }`}
+              onClick={() => setActivePageTag(1)}
+            >
+              搜尋景點
+            </button>
+          </Link>
+          <Link to="/pois">
+            <button
+              className={`w-20 rounded px-2 py-1 text-xs text-[#001a23] ${
+                activePageTag === 2 ? "bg-emerald-400" : "bg-green-100"
+              }`}
+              onClick={() => setActivePageTag(2)}
+            >
+              口袋名單
+            </button>
+          </Link>
+          <Link to="/schedule">
+            <button
+              className={`w-20 rounded px-2 py-1 text-xs text-[#001a23] ${
+                activePageTag === 3 ? "bg-emerald-400" : "bg-green-100"
+              }`}
+              onClick={() => setActivePageTag(3)}
+            >
+              行程規劃
+            </button>
+          </Link>
+        </>
+      )}
       <Link to="/practicing">
         <button className="w-20 rounded bg-white px-2 py-1 text-xs text-white">
           練習頁面

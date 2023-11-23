@@ -1,7 +1,7 @@
 import { APIProvider } from "@vis.gl/react-google-maps";
 import { onAuthStateChanged } from "firebase/auth";
-import { useEffect, useState } from "react";
-import { Route, Routes } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import Header from "./components/Header";
 import Pois from "./page/Pois";
 import Schedule from "./page/Schedule";
@@ -12,8 +12,10 @@ import useStore from "./store/store";
 import { initFirebase } from "./utils/firebaseSDK";
 
 function App() {
-  const { apiKey, setDatabase, setIsLogin, setIsSignWindowOpen } = useStore();
+  const { apiKey, setDatabase, setIsLogin, setIsSignWindowOpen, isLogin } =
+    useStore();
   const [isFbInited, setIsFbInited] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!isFbInited) {
@@ -28,10 +30,13 @@ function App() {
         } else {
           console.log("no current user");
           setIsLogin(false);
+          navigate("/");
         }
       });
     }
   }, []);
+
+  console.log(isLogin);
 
   return (
     <APIProvider
