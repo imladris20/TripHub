@@ -6,13 +6,15 @@ const ResultList = () => {
   const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   let labelIndex = 0;
 
+  console.log("result list components rendered");
+
   return (
     <div className="justify-start-start flex h-full w-full flex-col overflow-auto">
       {placeResult.map((place) => {
         return (
           <div
             key={place.place_id}
-            className="relative flex w-[330px] flex-col items-start gap-[6px] border-b-2 border-solid border-gray-200 bg-white p-2"
+            className="relative flex w-full flex-col items-start gap-[6px] border-b-2 border-solid border-gray-200 bg-white p-2"
           >
             <button>
               <h1 className="mb-0 text-left text-lg font-bold">{place.name}</h1>
@@ -26,11 +28,24 @@ const ResultList = () => {
               <h2 className="text-xs">|</h2>
               <h2 className="text-xs">03 358 8900</h2>
             </div>
-            <div className="flex flex-col gap-[1px]">
-              {place.opening_hours.weekday_text.map((day) => {
-                return <h3 className="text-[10px]">{day}</h3>;
-              })}
-            </div>
+            {place?.opening_hours?.weekday_text ? (
+              <div className="flex flex-col gap-[1px]">
+                {place.opening_hours.weekday_text.map((day) => {
+                  return (
+                    <h3
+                      className="text-[10px]"
+                      key={`weekday_${place.place_id}_${index}`}
+                    >
+                      {day}
+                    </h3>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="flex flex-col gap-[1px]">
+                <h3 className="text-[10px]">🤔 店家未提供詳細營業時間</h3>
+              </div>
+            )}
             <h2 className="text-xs">
               {(() => {
                 switch (place.price_level) {
@@ -43,7 +58,7 @@ const ResultList = () => {
                   case 4:
                     return "💰💰💰💰 800~1600元 / 人";
                   default:
-                    return "店家未提供價位參考";
+                    return "🤔 店家未提供價位參考";
                 }
               })()}
             </h2>
