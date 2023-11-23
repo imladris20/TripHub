@@ -14,6 +14,7 @@ const useStore = create((set, get) => ({
   mapId,
   selected: null,
   placeResult: null,
+  isLogin: false,
   setPlaceResult: (placeResult) => {
     set(
       produce((state) => {
