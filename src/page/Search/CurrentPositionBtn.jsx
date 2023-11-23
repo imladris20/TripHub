@@ -13,17 +13,13 @@ const CurrentPositionBtn = () => {
 
   const handleCurrentLocationBtnClicked = () => {
     if (!map) return;
-
-    navigator.geolocation.getCurrentPosition(async (position) => {
+    navigator.geolocation.getCurrentPosition((position) => {
       const newPos = {
         lat: position.coords.latitude,
         lng: position.coords.longitude,
       };
-
-      await setCurrentCenter(newPos);
-      await setCurrentZoom(17);
-      await map.setCenter(newPos);
-      await map.setZoom(17);
+      setCurrentCenter(newPos);
+      setCurrentZoom(17);
 
       if (!isCurrentPositionShow) {
         const homeImg = document.createElement("img");

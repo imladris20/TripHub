@@ -11,6 +11,7 @@ const InputBlock = () => {
   const inputRef = useRef();
   const map = useMap("searchMap");
   const { Marker } = useMapsLibrary("marker");
+  const { InfoWindow } = useMapsLibrary("maps");
   const { PlacesService } = useMapsLibrary("places");
   const marker = new Marker({ map });
   const service = new PlacesService(map);
@@ -56,6 +57,78 @@ const InputBlock = () => {
     }
   };
 
+  const fetchPlaceDetails = async (ref, textSearchResult) => {
+    const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let labelIndex = 0;
+
+    const details = await Promise.all(
+      textSearchResult.map((place) => {
+        const placeId = place.place_id;
+        const request = {
+          placeId,
+          fields: [
+            "name",
+            "geometry",
+            "formatted_address",
+            "photos",
+            "place_id",
+            "types",
+            "opening_hours",
+            "price_level",
+            "rating",
+            "user_ratings_total",
+          ],
+        };
+
+        let markerLabel = labels[labelIndex++ % labels.length];
+
+        return new Promise((resolve) => {
+          service.getDetails(request, (place, status) => {
+            if (status === "OK") {
+              const marker = new Marker({
+                map,
+                position: place.geometry.location,
+                label: markerLabel,
+              });
+
+              const tryContent = `
+                <div class='flex flex-col h-auto w-auto gap-1 justify-start items-start'>
+                  <h1 class='text-base font-bold'>${place.name}</h1>
+                  <h2 className="text-xs">
+                    ${place.rating} ⭐ (${place.user_ratings_total}則)
+                  </h2>
+                  <h2 className="text-xs">${place.formatted_address}</h2>
+                </div>
+              `;
+
+              const infowindow = new google.maps.InfoWindow({
+                ariaLabel: place.name,
+                content: tryContent,
+              });
+
+              marker.addListener("mouseover", () => {
+                infowindow.open({
+                  anchor: marker,
+                  map,
+                });
+              });
+
+              marker.addListener("mouseout", () => {
+                infowindow.close();
+              });
+
+              ref.push(marker);
+              resolve(place);
+            } else {
+              resolve(null);
+            }
+          });
+        });
+      }),
+    );
+    return details;
+  };
+
   const handleSearchButtonClicked = () => {
     if (!searchValue) return;
 
@@ -66,46 +139,50 @@ const InputBlock = () => {
       rankBy: "DISTANCE",
     };
 
+    if (markerRef.current.length) {
+      markerRef.current.forEach((marker) => {
+        marker.setVisible(false);
+      });
+      markerRef.current = [];
+    }
+
     const textSearchCallback = (results, status) => {
       if (status === "OK") {
-        setPlaceResult(results);
         setCurrentZoom(13.8);
         setCurrentCenter(results[0].geometry.location);
-        if (markerRef.current.length) {
-          markerRef.current.forEach((marker) => {
-            marker.setVisible(false);
-          });
-          markerRef.current = [];
-        }
 
-        results.map((placeResult) => {
-          const placeId = placeResult.place_id;
-          const request = {
-            placeId,
-            fields: [
-              "name",
-              "geometry",
-              "formatted_address",
-              "photos",
-              "place_id",
-              "types",
-              "opening_hours",
-              "price_level",
-              "rating",
-              "user_ratings_total",
-            ],
-          };
-          service.getDetails(request, (place, status) => {
-            if (status === "OK") {
-              // getDetailsArr.push(place);
-              const marker = new Marker({
-                map,
-                position: place.geometry.location,
-              });
-              markerRef.current.push(marker);
-            }
-          });
+        fetchPlaceDetails(markerRef.current, results).then((place) => {
+          console.log("after fetch", place);
+          setPlaceResult(place);
         });
+        // results.map((placeResult) => {
+        //   const placeId = placeResult.place_id;
+        //   const request = {
+        //     placeId,
+        //     fields: [
+        //       "name",
+        //       "geometry",
+        //       "formatted_address",
+        //       "photos",
+        //       "place_id",
+        //       "types",
+        //       "opening_hours",
+        //       "price_level",
+        //       "rating",
+        //       "user_ratings_total",
+        //     ],
+        //   };
+        //   service.getDetails(request, (place, status) => {
+        //     if (status === "OK") {
+        //       // getDetailsArr.push(place);
+        //       const marker = new Marker({
+        //         map,
+        //         position: place.geometry.location,
+        //       });
+        //       markerRef.current.push(marker);
+        //     }
+        //   });
+        // });
       }
     };
 
