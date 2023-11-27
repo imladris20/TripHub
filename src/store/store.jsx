@@ -14,6 +14,30 @@ const useStore = create((set, get) => ({
   mapId,
   selected: null,
   placeResult: null,
+  isLogin: false,
+  isSignWindowOpen: false,
+  database: null,
+  setIsLogin: (boolean) => {
+    set(
+      produce((state) => {
+        state.isLogin = boolean;
+      }),
+    );
+  },
+  setDatabase: (db) => {
+    set(
+      produce((state) => {
+        state.database = db;
+      }),
+    );
+  },
+  setIsSignWindowOpen: (boolean) => {
+    set(
+      produce((state) => {
+        state.isSignWindowOpen = boolean;
+      }),
+    );
+  },
   setPlaceResult: (placeResult) => {
     set(
       produce((state) => {

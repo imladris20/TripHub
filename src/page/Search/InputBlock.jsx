@@ -92,7 +92,7 @@ const InputBlock = () => {
                 label: markerLabel,
               });
 
-              const tryContent = `
+              const windowContent = `
                 <div class='flex flex-col h-auto w-auto gap-1 justify-start items-start'>
                   <h1 class='text-base font-bold'>${place.name}</h1>
                   <h2 className="text-xs">
@@ -104,7 +104,7 @@ const InputBlock = () => {
 
               const infowindow = new google.maps.InfoWindow({
                 ariaLabel: place.name,
-                content: tryContent,
+                content: windowContent,
               });
 
               marker.addListener("mouseover", () => {
@@ -153,7 +153,6 @@ const InputBlock = () => {
         setCurrentCenter(results[0].geometry.location);
 
         fetchPlaceDetails(markerRef.current, results).then((place) => {
-          console.log(place);
           setPlaceResult(place);
         });
       }
