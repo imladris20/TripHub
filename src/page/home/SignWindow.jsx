@@ -4,7 +4,7 @@ import SignUp from "./SignUp";
 import SignIn from "./SingIn";
 
 const SingWindow = () => {
-  const { isLogin, isSignWindowOpen, setIsSignWindowOpen } = useStore();
+  const { setIsSignWindowOpen } = useStore();
   return (
     <div className="flex-start absolute left-1/2 top-1/2 z-50 flex h-1/2 w-auto -translate-x-1/2 -translate-y-1/2 flex-row items-center gap-10 rounded-2xl border border-dotted border-red-300 bg-white p-10 opacity-95">
       <button

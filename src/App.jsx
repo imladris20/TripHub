@@ -12,8 +12,13 @@ import useStore from "./store/store";
 import { initFirebase } from "./utils/firebaseSDK";
 
 function App() {
-  const { apiKey, setDatabase, setIsLogin, setIsSignWindowOpen, isLogin } =
-    useStore();
+  const {
+    apiKey,
+    setDatabase,
+    setIsLogin,
+    setIsSignWindowOpen,
+    setPlaceResult,
+  } = useStore();
   const [isFbInited, setIsFbInited] = useState(false);
   const navigate = useNavigate();
 
@@ -29,14 +34,13 @@ function App() {
           setIsSignWindowOpen(false);
         } else {
           console.log("no current user");
+          setPlaceResult(null);
           setIsLogin(false);
           navigate("/");
         }
       });
     }
   }, []);
-
-  console.log(isLogin);
 
   return (
     <APIProvider

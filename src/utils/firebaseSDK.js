@@ -1,13 +1,13 @@
 // Import the functions you need from the SDKs you need
-import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
 import {
   createUserWithEmailAndPassword,
   getAuth,
   signInWithEmailAndPassword,
   signOut,
+  updateProfile,
 } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { doc, getFirestore, setDoc } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -27,13 +27,14 @@ const firebaseConfig = {
 
 export const initFirebase = () => {
   const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
   const db = getFirestore(app);
   const auth = getAuth();
   return { db, auth };
 };
 
-export const nativeSignUp = async (email, password) => {
+//  Authentication
+
+export const nativeSignUp = async (name, email, password) => {
   const auth = getAuth();
 
   try {
@@ -43,6 +44,11 @@ export const nativeSignUp = async (email, password) => {
       password,
     );
     const user = userCredential.user;
+
+    const updata = await updateProfile(user, {
+      displayName: name,
+    });
+
     return user;
   } catch (error) {
     throw error;
@@ -69,4 +75,15 @@ export const nativeSignOut = async () => {
   const auth = getAuth();
   const result = await signOut(auth);
   return result;
+};
+
+//  FireStore
+
+export const setDocNewUser = async (name, email, uid, db) => {
+  const docData = {
+    name,
+    email,
+  };
+
+  setDoc(doc(db, "users", uid), docData, { merge: true });
 };

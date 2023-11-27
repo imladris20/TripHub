@@ -3,13 +3,7 @@ import useStore from "../../store/store";
 import SignWindow from "./SignWindow";
 
 const Home = () => {
-  const {
-    isLogin,
-    isSignWindowOpen,
-    setIsSignWindowOpen,
-    database,
-    setDatabase,
-  } = useStore();
+  const { isLogin, isSignWindowOpen, setIsSignWindowOpen } = useStore();
 
   return (
     <div className="relative flex h-[calc(100vh-64px)] w-full flex-col items-center justify-center gap-8 bg-[url('/welcome.jpg')] bg-cover bg-no-repeat">
