@@ -1,14 +1,71 @@
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { useEffect, useState } from "react";
 import useStore from "../../store/store";
-import { AddToPoisIcon } from "../../utils/icons";
+import { AddToPoisIcon, AlreadyAddedPoisIcon } from "../../utils/icons";
 
 const ResultList = () => {
-  const { placeResult } = useStore();
-  const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  let labelIndex = 0;
+  const { placeResult, database } = useStore();
+  // const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  // let labelIndex = 0;
+  const uid = localStorage.getItem("uid");
+  const [isInPoisArr, setIsInPoisArr] = useState(new Array(20).fill(false));
+
+  const handleAddToPoisBtnClicked = (place) => {
+    const docData = {
+      name: place.name,
+      location: {
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng(),
+      },
+      address: place.formatted_address || "not provided",
+      phoneNumber: place.formatted_phone_number || "not provided",
+      rating: place.rating || "not provided",
+      ratingTotal: place.user_ratings_total || "not provided",
+      priceLevel: place.price_level || "not provided",
+    };
+
+    setDoc(
+      doc(database, `users/${uid}/pointOfInterests`, place.place_id),
+      docData,
+      {
+        merge: true,
+      },
+    );
+  };
+
+  useEffect(() => {
+    const updateIsInPoisArr = async () => {
+      const result = await Promise.all(
+        placeResult.map(async (place, index) => {
+          const docRef = doc(
+            database,
+            `users/${uid}/pointOfInterests`,
+            place.place_id,
+          );
+
+          const result = await getDoc(docRef);
+
+          if (result.exists()) {
+            console.log(`${result.data().name} is already in collection`);
+            return true;
+          } else {
+            console.log("It's not in Pois");
+            return false;
+          }
+        }),
+      );
+
+      console.log(result);
+
+      setIsInPoisArr(result);
+    };
+
+    updateIsInPoisArr();
+  }, [placeResult]);
 
   return (
     <div className="justify-start-start flex h-full w-full flex-col overflow-auto">
-      {placeResult.map((place) => {
+      {placeResult.map((place, index) => {
         return (
           <div
             key={place.place_id}
@@ -62,9 +119,28 @@ const ResultList = () => {
               })()}
             </h2>
             {/* <h3>{labels[labelIndex++ % labels.length]}</h3> */}
-            <button className="absolute bottom-2 right-2 h-8 w-8">
-              <AddToPoisIcon />
-            </button>
+            {!isInPoisArr[index] ? (
+              <button
+                className="absolute bottom-2 right-2 h-8 w-8"
+                onClick={() => handleAddToPoisBtnClicked(place)}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 512 512"
+                  className="h-8 w-8 fill-orange-200 stroke-slate-600 stroke-2"
+                >
+                  <AddToPoisIcon />
+                </svg>
+              </button>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 512 512"
+                className="absolute bottom-2 right-2 h-8 w-8 fill-green-200 stroke-slate-500 stroke-2"
+              >
+                <AlreadyAddedPoisIcon />
+              </svg>
+            )}
           </div>
         );
       })}

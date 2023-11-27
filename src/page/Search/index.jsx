@@ -11,6 +11,8 @@ const Search = () => {
   const apiIsLoaded = useApiIsLoaded();
   const map = useMap("searchMap");
 
+  const uid = localStorage.getItem("uid");
+
   const initialMapOptions = {
     mapId,
     center: currentCenter,
@@ -21,7 +23,7 @@ const Search = () => {
 
   return (
     <div className="flex h-[calc(100vh-64px)] flex-row items-center">
-      {!isLogin && <Navigate to="/" replace={true} />}
+      {!uid && <Navigate to="/" replace={true} />}
       <div className="flex h-full w-2/5 flex-col items-center justify-start bg-yellow-100">
         {map && <InputBlock />}
         {placeResult ? (
