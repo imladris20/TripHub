@@ -34,6 +34,9 @@ const SignUp = () => {
       uid: user.uid,
       db: database,
     });
+
+    localStorage.setItem("uid", user.uid);
+
     setInsertName("");
     setInsertEmail("");
     setInsertPassword("");

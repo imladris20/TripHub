@@ -22,7 +22,7 @@ const SignIn = () => {
       email: insertEmail,
       password: insertPassword,
     });
-    console.log(user);
+    localStorage.setItem("uid", user.uid);
     setInsertEmail("");
     setInsertPassword("");
   };

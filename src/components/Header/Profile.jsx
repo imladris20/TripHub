@@ -13,7 +13,12 @@ const Profile = () => {
           <ProfileIcon />
         </svg>
       </button>
-      <button onClick={() => nativeSignOut()}>
+      <button
+        onClick={() => {
+          nativeSignOut();
+          localStorage.removeItem("uid");
+        }}
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 512 512"
