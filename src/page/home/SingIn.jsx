@@ -1,20 +1,13 @@
 import { useState } from "react";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation } from "react-query";
 import { nativeSignIn } from "../../utils/firebaseSDK";
 
 const SignIn = () => {
   const [insertEmail, setInsertEmail] = useState("");
   const [insertPassword, setInsertPassword] = useState("");
 
-  const queryClient = useQueryClient();
-
-  const mutation = useMutation(
-    (data) => nativeSignIn(data.email, data.password),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries("user");
-      },
-    },
+  const mutation = useMutation((data) =>
+    nativeSignIn(data.email, data.password),
   );
 
   const handleSignInClicked = async () => {

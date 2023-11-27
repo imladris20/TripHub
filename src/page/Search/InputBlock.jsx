@@ -102,7 +102,7 @@ const InputBlock = () => {
                 </div>
               `;
 
-              const infowindow = new google.maps.InfoWindow({
+              const infowindow = new InfoWindow({
                 ariaLabel: place.name,
                 content: windowContent,
               });

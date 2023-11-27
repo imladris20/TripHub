@@ -46,16 +46,12 @@ const ResultList = () => {
           const result = await getDoc(docRef);
 
           if (result.exists()) {
-            console.log(`${result.data().name} is already in collection`);
             return true;
           } else {
-            console.log("It's not in Pois");
             return false;
           }
         }),
       );
-
-      console.log(result);
 
       setIsInPoisArr(result);
     };
