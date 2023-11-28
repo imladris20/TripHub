@@ -37,22 +37,9 @@ const InputBlock = () => {
   const onPlaceChanged = (place) => {
     if (place) {
       setSearchValue(place.name);
-
-      const info = {
-        location: place.geometry.location,
-        placeId: place.place_id,
-        name: place.name,
-        address: place.formatted_address,
-        rating: place.rating,
-        phoneNumber: place.formatted_phone_number || "not provided",
-        priceLevel: place.price_level || "not provided",
-      };
-
-      marker.setPosition(info.location);
-
+      marker.setPosition(place.geometry.location);
       setCurrentZoom(14);
-      setCurrentCenter(info.location);
-
+      setCurrentCenter(place.geometry.location);
       inputRef.current && inputRef.current.focus();
     }
   };
