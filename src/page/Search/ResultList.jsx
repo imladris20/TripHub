@@ -5,8 +5,8 @@ import { AddToPoisIcon, AlreadyAddedPoisIcon } from "../../utils/icons";
 
 const ResultList = () => {
   const { placeResult, database } = useStore();
-  // const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  // let labelIndex = 0;
+  const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let labelIndex = 0;
   const uid = localStorage.getItem("uid");
   const [isInPoisArr, setIsInPoisArr] = useState(new Array(20).fill(false));
 
@@ -67,7 +67,12 @@ const ResultList = () => {
             key={place.place_id}
             className="relative flex w-full flex-col items-start gap-[6px] border-b-2 border-solid border-gray-200 bg-white p-2"
           >
-            <button>
+            <button className="flex w-full flex-row items-center justify-start gap-2">
+              <div className="flex h-6 w-6 flex-shrink-0 flex-row items-center justify-center rounded-full border border-dotted border-red-500 p-0 ">
+                <h1 className="text-sm text-red-500">
+                  {labels[labelIndex++ % labels.length]}
+                </h1>
+              </div>
               <h1 className="mb-0 text-left text-lg font-bold">{place.name}</h1>
             </button>
             <h2 className="text-xs">
@@ -114,7 +119,6 @@ const ResultList = () => {
                 }
               })()}
             </h2>
-            {/* <h3>{labels[labelIndex++ % labels.length]}</h3> */}
             {!isInPoisArr[index] ? (
               <button
                 className="absolute bottom-2 right-2 h-8 w-8"
