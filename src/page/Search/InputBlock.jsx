@@ -17,8 +17,13 @@ const InputBlock = () => {
   const service = new PlacesService(map);
 
   const [searchValue, setSearchValue] = useState("");
-  const { currentCenter, setCurrentZoom, setCurrentCenter, setPlaceResult } =
-    useStore();
+  const {
+    currentCenter,
+    setCurrentZoom,
+    setCurrentCenter,
+    setPlaceResult,
+    setDetailInfo,
+  } = useStore();
 
   const markerRef = useRef([]);
 
@@ -118,6 +123,7 @@ const InputBlock = () => {
   };
 
   const handleSearchButtonClicked = () => {
+    setDetailInfo(null);
     if (!searchValue) return;
 
     const textSearchRequest = {

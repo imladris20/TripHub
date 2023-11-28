@@ -17,6 +17,14 @@ const useStore = create((set, get) => ({
   isLogin: false,
   isSignWindowOpen: false,
   database: null,
+  detailInfo: null,
+  setDetailInfo: (place) => {
+    set(
+      produce((state) => {
+        state.detailInfo = place;
+      }),
+    );
+  },
   setIsLogin: (boolean) => {
     set(
       produce((state) => {

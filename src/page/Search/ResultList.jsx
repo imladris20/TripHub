@@ -4,7 +4,7 @@ import useStore from "../../store/store";
 import { AddToPoisIcon, AlreadyAddedPoisIcon } from "../../utils/icons";
 
 const ResultList = () => {
-  const { placeResult, database } = useStore();
+  const { placeResult, database, setDetailInfo } = useStore();
   const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   let labelIndex = 0;
   const uid = localStorage.getItem("uid");
@@ -62,16 +62,23 @@ const ResultList = () => {
   return (
     <div className="justify-start-start flex h-full w-full flex-col overflow-auto">
       {placeResult.map((place, index) => {
+        const label = labels[labelIndex++ % labels.length];
         return (
           <div
             key={place.place_id}
             className="relative flex w-full flex-col items-start gap-[6px] border-b-2 border-solid border-gray-200 bg-white p-2"
           >
-            <button className="flex w-full flex-row items-center justify-start gap-2">
-              <div className="flex h-6 w-6 flex-shrink-0 flex-row items-center justify-center rounded-full border border-dotted border-red-500 p-0 ">
-                <h1 className="text-sm text-red-500">
-                  {labels[labelIndex++ % labels.length]}
-                </h1>
+            <button
+              className="flex w-full flex-row items-center justify-start gap-2"
+              onClick={() =>
+                setDetailInfo({
+                  data: place,
+                  label,
+                })
+              }
+            >
+              <div className="flex h-5 w-5 flex-shrink-0 flex-row items-center justify-center rounded-full border border-dotted border-red-500 p-0 ">
+                <h1 className="text-sm text-red-500">{label}</h1>
               </div>
               <h1 className="mb-0 text-left text-lg font-bold">{place.name}</h1>
             </button>
@@ -79,25 +86,6 @@ const ResultList = () => {
               {place.rating} ⭐ ({place.user_ratings_total}則)
             </h2>
             <h2 className="text-xs">{place.formatted_address}</h2>
-            {place?.opening_hours?.weekday_text ? (
-              <div className="flex flex-col gap-[1px]">
-                <h3 className="text-xs">營業時間</h3>
-                {place.opening_hours.weekday_text.map((day, index) => {
-                  return (
-                    <h3
-                      className="text-[10px]"
-                      key={`weekday_${place.place_id}_${index}`}
-                    >
-                      {day}
-                    </h3>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="flex flex-col gap-[1px]">
-                <h3 className="text-[10px]">🤔 店家未提供詳細營業資訊</h3>
-              </div>
-            )}
             <h2 className="text-xs">
               {place.formatted_phone_number
                 ? `電話：${place.formatted_phone_number}`
@@ -115,7 +103,7 @@ const ResultList = () => {
                   case 4:
                     return "💰💰💰💰 800~1600元 / 人";
                   default:
-                    return "🤔 店家未提供價位參考";
+                    return "";
                 }
               })()}
             </h2>
