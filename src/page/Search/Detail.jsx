@@ -18,9 +18,13 @@ const Detail = () => {
     types,
     user_ratings_total,
     geometry,
+    address_components,
   } = detailInfo.data;
 
   const photoUrl = photos[Math.floor(Math.random() * 10)].getUrl();
+
+  console.log(types);
+  console.log(address_components[4].long_name);
 
   return (
     <div className="absolute left-[21%] top-8 z-[999] flex h-[calc(100%-32px)] w-1/4 flex-col items-start gap-3 rounded-lg border-b-2 border-solid border-gray-200 bg-white p-3 shadow-2xl">
@@ -95,7 +99,9 @@ const Detail = () => {
           </div>
         )}
       </div>
-      <div></div>
+      <div className="flex flex-col gap-2">
+        <h1>為景點加上屬於自己的標籤吧！</h1>
+      </div>
     </div>
   );
 };

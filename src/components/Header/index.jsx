@@ -26,7 +26,7 @@ const Header = () => {
 
   return (
     <header className="relative z-50 flex h-16 w-full flex-row items-center gap-4 border-b-2 border-solid border-gray-200 bg-white px-4">
-      <Link to="/" className="cursor-pointer">
+      <Link to="/" className="m-0 h-11 w-11 cursor-pointer p-0">
         <button onClick={() => setActivePageTag(null)}>
           <img src={Logo} alt="logo" className="h-11 w-11"></img>
         </button>

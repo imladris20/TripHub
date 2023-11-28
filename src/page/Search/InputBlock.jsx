@@ -70,6 +70,7 @@ const InputBlock = () => {
             "price_level",
             "rating",
             "user_ratings_total",
+            "address_components",
           ],
         };
 
@@ -136,6 +137,7 @@ const InputBlock = () => {
     if (markerRef.current.length) {
       markerRef.current.forEach((marker) => {
         marker.setVisible(false);
+        marker.setMap(null);
       });
       markerRef.current = [];
     }
