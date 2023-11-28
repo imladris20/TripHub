@@ -1,36 +1,28 @@
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import useStore from "../../store/store";
 import { AddToPoisIcon, AlreadyAddedPoisIcon } from "../../utils/icons";
 
 const ResultList = () => {
-  const { placeResult, database, setDetailInfo } = useStore();
+  const {
+    placeResult,
+    database,
+    setDetailInfo,
+    setCurrentCenter,
+    setCurrentZoom,
+  } = useStore();
   const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   let labelIndex = 0;
   const uid = localStorage.getItem("uid");
   const [isInPoisArr, setIsInPoisArr] = useState(new Array(20).fill(false));
 
-  const handleAddToPoisBtnClicked = (place) => {
-    const docData = {
-      name: place.name,
-      location: {
-        lat: place.geometry.location.lat(),
-        lng: place.geometry.location.lng(),
-      },
-      address: place.formatted_address || "not provided",
-      phoneNumber: place.formatted_phone_number || "not provided",
-      rating: place.rating || "not provided",
-      ratingTotal: place.user_ratings_total || "not provided",
-      priceLevel: place.price_level || "not provided",
-    };
-
-    setDoc(
-      doc(database, `users/${uid}/pointOfInterests`, place.place_id),
-      docData,
-      {
-        merge: true,
-      },
-    );
+  const handleItemClicked = (place, label) => {
+    setDetailInfo({
+      data: place,
+      label,
+    });
+    setCurrentCenter(place.geometry.location);
+    setCurrentZoom(18);
   };
 
   useEffect(() => {
@@ -70,12 +62,7 @@ const ResultList = () => {
           >
             <button
               className="flex w-full flex-row items-center justify-start gap-2"
-              onClick={() =>
-                setDetailInfo({
-                  data: place,
-                  label,
-                })
-              }
+              onClick={() => handleItemClicked(place, label)}
             >
               <div className="flex h-5 w-5 flex-shrink-0 flex-row items-center justify-center rounded-full border border-dotted border-red-500 p-0 ">
                 <h1 className="text-sm text-red-500">{label}</h1>
@@ -86,11 +73,6 @@ const ResultList = () => {
               {place.rating} ⭐ ({place.user_ratings_total}則)
             </h2>
             <h2 className="text-xs">{place.formatted_address}</h2>
-            <h2 className="text-xs">
-              {place.formatted_phone_number
-                ? `電話：${place.formatted_phone_number}`
-                : "店家未提供連絡電話"}
-            </h2>
             <h2 className="text-xs">
               {(() => {
                 switch (place.price_level) {
@@ -109,13 +91,13 @@ const ResultList = () => {
             </h2>
             {!isInPoisArr[index] ? (
               <button
-                className="absolute bottom-2 right-2 h-8 w-8"
-                onClick={() => handleAddToPoisBtnClicked(place)}
+                className="absolute bottom-2 right-2 h-6 w-6"
+                onClick={() => handleItemClicked(place, label)}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 512 512"
-                  className="h-8 w-8 fill-orange-200 stroke-slate-600 stroke-2"
+                  className="h-6 w-6 fill-orange-200 stroke-slate-600 stroke-2"
                 >
                   <AddToPoisIcon />
                 </svg>
@@ -124,7 +106,7 @@ const ResultList = () => {
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 512 512"
-                className="absolute bottom-2 right-2 h-8 w-8 fill-green-200 stroke-slate-500 stroke-2"
+                className="absolute bottom-2 right-2 h-6 w-6 fill-green-200 stroke-slate-500 stroke-2"
               >
                 <AlreadyAddedPoisIcon />
               </svg>
