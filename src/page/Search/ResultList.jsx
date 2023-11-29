@@ -1,4 +1,4 @@
-import { doc, getDoc } from "firebase/firestore";
+import { collection, doc, getDoc, onSnapshot, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import useStore from "../../store/store";
 import { AddToPoisIcon, AlreadyAddedPoisIcon } from "../../utils/icons";
@@ -26,29 +26,34 @@ const ResultList = () => {
   };
 
   useEffect(() => {
-    const updateIsInPoisArr = async () => {
-      const result = await Promise.all(
-        placeResult.map(async (place, index) => {
-          const docRef = doc(
-            database,
-            `users/${uid}/pointOfInterests`,
-            place.place_id,
-          );
+    const q = query(collection(database, "users", uid, "pointOfInterests"));
+    const unsubscribe = onSnapshot(q, (querySnapShot) => {
+      const updateIsInPoisArr = async () => {
+        const result = await Promise.all(
+          placeResult.map(async (place, index) => {
+            const docRef = doc(
+              database,
+              `users/${uid}/pointOfInterests`,
+              place.place_id,
+            );
 
-          const result = await getDoc(docRef);
+            const result = await getDoc(docRef);
 
-          if (result.exists()) {
-            return true;
-          } else {
-            return false;
-          }
-        }),
-      );
+            if (result.exists()) {
+              return true;
+            } else {
+              return false;
+            }
+          }),
+        );
 
-      setIsInPoisArr(result);
+        setIsInPoisArr(result);
+      };
+      updateIsInPoisArr();
+    });
+    return () => {
+      unsubscribe();
     };
-
-    updateIsInPoisArr();
   }, [placeResult]);
 
   return (

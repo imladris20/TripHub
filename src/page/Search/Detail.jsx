@@ -172,7 +172,7 @@ const Detail = () => {
       <div className="mt-auto flex w-full flex-row items-center justify-center shadow-2xl">
         {setDocMutation.isSuccess ? (
           <button
-            className="h-10 w-full rounded-xl bg-sky-200 p-2 font-bold text-gray-800"
+            className="h-10 w-full cursor-default rounded-xl bg-sky-200 p-2 font-bold text-gray-800"
             onClick={() => handleAddToPoisBtnClicked()}
           >
             加入成功！
