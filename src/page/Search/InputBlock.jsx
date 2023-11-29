@@ -17,8 +17,13 @@ const InputBlock = () => {
   const service = new PlacesService(map);
 
   const [searchValue, setSearchValue] = useState("");
-  const { currentCenter, setCurrentZoom, setCurrentCenter, setPlaceResult } =
-    useStore();
+  const {
+    currentCenter,
+    setCurrentZoom,
+    setCurrentCenter,
+    setPlaceResult,
+    setSearchItemDetailInfo,
+  } = useStore();
 
   const markerRef = useRef([]);
 
@@ -65,6 +70,7 @@ const InputBlock = () => {
             "price_level",
             "rating",
             "user_ratings_total",
+            "address_components",
           ],
         };
 
@@ -118,6 +124,7 @@ const InputBlock = () => {
   };
 
   const handleSearchButtonClicked = () => {
+    setSearchItemDetailInfo(null);
     if (!searchValue) return;
 
     const textSearchRequest = {
@@ -130,6 +137,7 @@ const InputBlock = () => {
     if (markerRef.current.length) {
       markerRef.current.forEach((marker) => {
         marker.setVisible(false);
+        marker.setMap(null);
       });
       markerRef.current = [];
     }

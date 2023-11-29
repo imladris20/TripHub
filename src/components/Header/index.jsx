@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Logo from "../../assets/logo.png";
 import useStore from "../../store/store";
@@ -7,29 +7,26 @@ import Profile from "./Profile";
 const Header = () => {
   const { isLogin } = useStore();
   const currentPath = useLocation().pathname;
-  let initialActiveTag;
-  switch (currentPath) {
-    case "/search": {
-      initialActiveTag = 1;
-      break;
+  useEffect(() => {
+    switch (location.pathname) {
+      case "/search":
+        setActivePageTag(1);
+        break;
+      case "/pois":
+        setActivePageTag(2);
+        break;
+      case "/schedule":
+        setActivePageTag(3);
+        break;
+      default:
+        setActivePageTag(null);
     }
-    case "/pois": {
-      initialActiveTag = 2;
-      break;
-    }
-    case "/schedule": {
-      initialActiveTag = 3;
-      break;
-    }
-    default: {
-      initialActiveTag = null;
-    }
-  }
-  const [activePageTag, setActivePageTag] = useState(initialActiveTag);
+  }, [currentPath]);
+  const [activePageTag, setActivePageTag] = useState(null);
 
   return (
     <header className="relative z-50 flex h-16 w-full flex-row items-center gap-4 border-b-2 border-solid border-gray-200 bg-white px-4">
-      <Link to="/" className="cursor-pointer">
+      <Link to="/" className="m-0 h-11 w-11 cursor-pointer p-0">
         <button onClick={() => setActivePageTag(null)}>
           <img src={Logo} alt="logo" className="h-11 w-11"></img>
         </button>
