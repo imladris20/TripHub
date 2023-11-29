@@ -29,11 +29,9 @@ function App() {
       setIsFbInited(true);
       onAuthStateChanged(auth, (user) => {
         if (user !== null) {
-          console.log("logged in!");
           setIsLogin(true);
           setIsSignWindowOpen(false);
         } else {
-          console.log("no current user");
           setPlaceResult(null);
           setIsLogin(false);
           navigate("/");

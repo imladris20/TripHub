@@ -16,7 +16,7 @@ const useStore = create((set, get) => ({
   isLogin: false,
   isSignWindowOpen: false,
   database: null,
-  detailInfo: null,
+  searchItemDetailInfo: null,
   typeOptions: [
     "自然景點",
     "人文景點",
@@ -38,10 +38,10 @@ const useStore = create((set, get) => ({
     "拉麵",
     "慈善機構",
   ],
-  setDetailInfo: (place) => {
+  setSearchItemDetailInfo: (place) => {
     set(
       produce((state) => {
-        state.detailInfo = place;
+        state.searchItemDetailInfo = place;
       }),
     );
   },

@@ -7,8 +7,13 @@ import InputBlock from "./InputBlock";
 import ResultList from "./ResultList";
 
 const Search = () => {
-  const { mapId, currentCenter, currentZoom, placeResult, detailInfo } =
-    useStore();
+  const {
+    mapId,
+    currentCenter,
+    currentZoom,
+    placeResult,
+    searchItemDetailInfo,
+  } = useStore();
   const apiIsLoaded = useApiIsLoaded();
   const map = useMap("searchMap");
 
@@ -35,7 +40,7 @@ const Search = () => {
       </div>
       <Map id={"searchMap"} options={initialMapOptions} />
       {apiIsLoaded && <CurrentPositionBtn />}
-      {detailInfo && <Detail />}
+      {searchItemDetailInfo && <Detail />}
     </div>
   );
 };

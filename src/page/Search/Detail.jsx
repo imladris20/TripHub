@@ -7,7 +7,12 @@ import useStore from "../../store/store";
 import { CloseIcon } from "../../utils/icons";
 
 const Detail = () => {
-  const { detailInfo, setDetailInfo, typeOptions, database } = useStore();
+  const {
+    searchItemDetailInfo,
+    setSearchItemDetailInfo,
+    typeOptions,
+    database,
+  } = useStore();
   const uid = localStorage.getItem("uid");
   const [categoryTags, setCategoryTags] = useState(new Array(3).fill("請選擇"));
 
@@ -29,7 +34,7 @@ const Detail = () => {
     user_ratings_total,
     address_components,
     geometry,
-  } = detailInfo.data;
+  } = searchItemDetailInfo.data;
 
   const city = address_components.find((element) =>
     element.types.includes("administrative_area_level_1"),
@@ -68,10 +73,10 @@ const Detail = () => {
   };
 
   return (
-    <div className="absolute left-[21%] top-8 z-[999] flex h-[calc(100%-32px)] w-1/4 flex-col items-start gap-3 rounded-lg border-b-2 border-solid border-gray-200 bg-white p-3 shadow-2xl">
+    <div className="absolute left-[21%] top-8 z-[999] flex h-[calc(100%-32px)] w-1/4 flex-col items-start gap-3 rounded-lg border-b-2 border-solid border-gray-200 bg-white p-3 shadow-2xl 2xl:w-1/5">
       <div className="flex w-[88%] flex-row items-center justify-start gap-2">
         <div className="flex h-4 w-4 flex-shrink-0 flex-row items-center justify-center rounded-full border border-dotted border-red-500 p-0 ">
-          <h1 className="text-xs text-red-500">{detailInfo.label}</h1>
+          <h1 className="text-xs text-red-500">{searchItemDetailInfo.label}</h1>
         </div>
         <h1 className="text-left text-base font-bold">{name}</h1>
       </div>
@@ -188,7 +193,7 @@ const Detail = () => {
       </div>
       <button
         className="absolute right-3 top-3 h-7 w-7"
-        onClick={() => setDetailInfo(null)}
+        onClick={() => setSearchItemDetailInfo(null)}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

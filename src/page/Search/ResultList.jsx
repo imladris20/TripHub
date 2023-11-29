@@ -7,7 +7,7 @@ const ResultList = () => {
   const {
     placeResult,
     database,
-    setDetailInfo,
+    setSearchItemDetailInfo,
     setCurrentCenter,
     setCurrentZoom,
   } = useStore();
@@ -17,7 +17,7 @@ const ResultList = () => {
   const [isInPoisArr, setIsInPoisArr] = useState(new Array(20).fill(false));
 
   const handleItemClicked = (place, label) => {
-    setDetailInfo({
+    setSearchItemDetailInfo({
       data: place,
       label,
     });

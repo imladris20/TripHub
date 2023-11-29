@@ -22,7 +22,7 @@ const InputBlock = () => {
     setCurrentZoom,
     setCurrentCenter,
     setPlaceResult,
-    setDetailInfo,
+    setSearchItemDetailInfo,
   } = useStore();
 
   const markerRef = useRef([]);
@@ -124,7 +124,7 @@ const InputBlock = () => {
   };
 
   const handleSearchButtonClicked = () => {
-    setDetailInfo(null);
+    setSearchItemDetailInfo(null);
     if (!searchValue) return;
 
     const textSearchRequest = {
