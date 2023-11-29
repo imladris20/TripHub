@@ -1,10 +1,12 @@
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import { collection, onSnapshot, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import useStore from "../../store/store";
+import useStore, { poisStore } from "../../store/store";
 
 const List = () => {
   const { database } = useStore();
+  const { setCurrentZoom, setCurrentCenter, setPoisItemDetailInfo } =
+    poisStore();
   const map = useMap("poisMap");
   const { Marker } = useMapsLibrary("marker");
   const { InfoWindow } = useMapsLibrary("maps");
@@ -68,6 +70,12 @@ const List = () => {
     }
   }, [currentPois]);
 
+  const handleItemClicked = (place) => {
+    setPoisItemDetailInfo(place);
+    setCurrentCenter(place.data.location);
+    setCurrentZoom(18);
+  };
+
   return (
     <div className="justify-start-start flex h-full w-full flex-col overflow-auto">
       {currentPois ? (
@@ -88,7 +96,7 @@ const List = () => {
               key={id}
               className="relative flex w-full flex-col items-start gap-[6px] border-b-2 border-solid border-gray-200 bg-white p-2"
             >
-              <button>
+              <button onClick={() => handleItemClicked(item)}>
                 <h1 className="mb-0 text-left text-lg font-bold">{name}</h1>
               </button>
               <h2 className="text-xs">

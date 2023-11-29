@@ -54,6 +54,8 @@ const Detail = () => {
       priceLevel: price_level || "店家未提供",
       city,
       categories: categoryTags.filter((value) => value !== "請選擇"),
+      photoLink: photos[0].getUrl() || "",
+      openingHours: opening_hours.weekday_text || "",
     };
 
     await setDocMutation.mutateAsync({
@@ -128,7 +130,7 @@ const Detail = () => {
               {opening_hours.weekday_text.map((day, index) => {
                 return (
                   <h3
-                    className="text-[10px]"
+                    className="text-[11px]"
                     key={`weekday_${place_id}_${index}`}
                   >
                     {day}
