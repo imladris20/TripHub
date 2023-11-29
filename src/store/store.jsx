@@ -28,6 +28,7 @@ const useStore = create((set, get) => ({
     "咖哩",
     "拉麵",
     "慈善機構",
+    "麻糬",
   ],
   currentCenter: TAIWAN,
   currentZoom: 8.5,

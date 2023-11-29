@@ -89,6 +89,7 @@ const List = () => {
               priceLevel,
               rating,
               ratingTotal,
+              categories,
             },
           } = item;
           return (
@@ -96,6 +97,18 @@ const List = () => {
               key={id}
               className="relative flex w-full flex-col items-start gap-[6px] border-b-2 border-solid border-gray-200 bg-white p-2"
             >
+              <div className="flex w-full flex-row items-center justify-start gap-2">
+                {categories.map((category, index) => {
+                  return (
+                    <div className="flex h-4 w-1/4 flex-row items-center justify-center rounded-full bg-gray-200 text-justify text-[10px] text-slate-500">
+                      <h1 className="text-justify text-[10px] text-slate-500">
+                        {category}
+                      </h1>
+                    </div>
+                  );
+                })}
+              </div>
+
               <button onClick={() => handleItemClicked(item)}>
                 <h1 className="mb-0 text-left text-lg font-bold">{name}</h1>
               </button>

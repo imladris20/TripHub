@@ -54,8 +54,8 @@ const Detail = () => {
       priceLevel: price_level || "店家未提供",
       city,
       categories: categoryTags.filter((value) => value !== "請選擇"),
-      photoLink: photos[0].getUrl() || "",
-      openingHours: opening_hours.weekday_text || "",
+      photoLink: photos[0].getUrl() || "店家未提供",
+      openingHours: opening_hours?.weekday_text || "店家未提供",
     };
 
     await setDocMutation.mutateAsync({
