@@ -5,27 +5,29 @@ import useStore from "../../store/store";
 
 const List = () => {
   const { database } = useStore();
-  const uid = localStorage.getItem("uid");
-  const [currentPois, setCurrentPois] = useState();
   const map = useMap("poisMap");
   const { Marker } = useMapsLibrary("marker");
   const { InfoWindow } = useMapsLibrary("maps");
+  const uid = localStorage.getItem("uid");
+  const [currentPois, setCurrentPois] = useState();
 
   useEffect(() => {
-    const q = query(collection(database, "users", uid, "pointOfInterests"));
+    if (database) {
+      const q = query(collection(database, "users", uid, "pointOfInterests"));
 
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const newArr = [];
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const newArr = [];
 
-      querySnapshot.forEach((doc) => {
-        newArr.push({ id: doc.id, data: doc.data() });
+        querySnapshot.forEach((doc) => {
+          newArr.push({ id: doc.id, data: doc.data() });
+        });
+        setCurrentPois(newArr);
       });
-      setCurrentPois(newArr);
-    });
 
-    return () => {
-      unsubscribe();
-    };
+      return () => {
+        unsubscribe();
+      };
+    }
   }, [database]);
 
   useEffect(() => {

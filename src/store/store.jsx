@@ -96,3 +96,53 @@ const useStore = create((set, get) => ({
 }));
 
 export default useStore;
+
+export const poisStore = create((set, get) => ({
+  apiKey,
+  mapId,
+  typeOptions: [
+    "自然景點",
+    "人文景點",
+    "室內景點",
+    "山",
+    "海",
+    "博物館",
+    "古蹟",
+    "購物",
+    "生活用品",
+    "打卡拍照",
+    "餐廳",
+    "小吃",
+    "伴手禮",
+    "海灘",
+    "租車",
+    "車站",
+    "咖哩",
+    "拉麵",
+    "慈善機構",
+  ],
+  currentCenter: TAIWAN,
+  currentZoom: 7.5,
+  setCurrentCenter: (geolocation) => {
+    set(
+      produce((state) => {
+        state.currentCenter = geolocation;
+      }),
+    );
+  },
+  setCurrentZoom: (level) => {
+    set(
+      produce((state) => {
+        state.currentZoom = level;
+      }),
+    );
+  },
+  poisItemDetailInfo: null,
+  setPoisItemDetailInfo: (place) => {
+    set(
+      produce((state) => {
+        state.poisItemDetailInfo = place;
+      }),
+    );
+  },
+}));
