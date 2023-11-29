@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import useStore, { poisStore } from "../../store/store";
 
 const List = () => {
-  const { database } = useStore();
+  const { database, typeOptions } = useStore();
   const { setCurrentZoom, setCurrentCenter, setPoisItemDetailInfo } =
     poisStore();
   const map = useMap("poisMap");
@@ -99,16 +99,24 @@ const List = () => {
             >
               <div className="flex w-full flex-row items-center justify-start gap-2">
                 {categories.map((category, index) => {
+                  let color;
+                  for (var i = 0; i < typeOptions.length; i++) {
+                    if (typeOptions[i].name === category) {
+                      color = typeOptions[i].bg;
+                    }
+                  }
+                  color = color || "bg-gray-700";
                   return (
-                    <div className="flex h-4 w-1/4 flex-row items-center justify-center rounded-full bg-gray-200 text-justify text-[10px] text-slate-500">
-                      <h1 className="text-justify text-[10px] text-slate-500">
+                    <div
+                      className={`flex h-4 w-1/4 flex-row items-center justify-center rounded-full ${color}`}
+                    >
+                      <h1 className="text-justify text-[10px] text-white">
                         {category}
                       </h1>
                     </div>
                   );
                 })}
               </div>
-
               <button onClick={() => handleItemClicked(item)}>
                 <h1 className="mb-0 text-left text-lg font-bold">{name}</h1>
               </button>

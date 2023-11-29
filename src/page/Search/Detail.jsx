@@ -169,7 +169,7 @@ const Detail = () => {
                   value={option}
                   className="bg-white text-xs text-slate-800"
                 >
-                  {option}
+                  {option.name}
                 </option>
               ))}
             </select>
