@@ -1,11 +1,12 @@
 import { Map, useApiIsLoaded, useMap } from "@vis.gl/react-google-maps";
 import { Navigate } from "react-router-dom";
-import useStore from "../../store/store";
-// import InputBlock from "./InputBlock";
+import useStore, { poisStore } from "../../store/store";
+import Detail from "./Detail";
 import List from "./List";
 
 const Pois = () => {
-  const { mapId, currentCenter, currentZoom, placeResult } = useStore();
+  const { mapId } = useStore();
+  const { currentCenter, currentZoom, poisItemDetailInfo } = poisStore();
   const apiIsLoaded = useApiIsLoaded();
   const map = useMap("poisMap");
 
@@ -19,8 +20,12 @@ const Pois = () => {
     streetViewControl: false,
   };
 
+  if (!apiIsLoaded) {
+    return <h1>Api is Loading...</h1>;
+  }
+
   return (
-    <div className="flex h-[calc(100vh-64px)] flex-row items-center">
+    <div className="relative flex h-[calc(100vh-64px)] flex-row items-center">
       {!uid && <Navigate to="/" replace={true} />}
       {map && (
         <div className="flex h-full w-1/4 flex-col items-center justify-start bg-yellow-100">
@@ -28,6 +33,7 @@ const Pois = () => {
         </div>
       )}
       <Map id={"poisMap"} options={initialMapOptions} />
+      {poisItemDetailInfo && <Detail />}
     </div>
   );
 };
