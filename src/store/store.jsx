@@ -143,4 +143,12 @@ export const poisStore = create((set, get) => ({
       }),
     );
   },
+  currentPois: null,
+  setCurrentPois: (poisArr) => {
+    set(
+      produce((state) => {
+        state.currentPois = poisArr;
+      }),
+    );
+  },
 }));

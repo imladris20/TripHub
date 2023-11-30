@@ -1,24 +1,22 @@
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
-import {
-  collection,
-  getDocs,
-  onSnapshot,
-  query,
-  where,
-} from "firebase/firestore";
-import { useEffect, useRef, useState } from "react";
+import { collection, onSnapshot, query } from "firebase/firestore";
+import { useEffect, useRef } from "react";
 import useStore, { poisStore } from "../../store/store";
+import CityFilter from "./CityFilter";
 
 const List = () => {
-  const { database, typeOptions, taiwanCities } = useStore();
-  const { setCurrentZoom, setCurrentCenter, setPoisItemDetailInfo } =
-    poisStore();
+  const { database, typeOptions } = useStore();
+  const {
+    setCurrentZoom,
+    setCurrentCenter,
+    setPoisItemDetailInfo,
+    currentPois,
+    setCurrentPois,
+  } = poisStore();
   const map = useMap("poisMap");
   const { Marker } = useMapsLibrary("marker");
   const { InfoWindow } = useMapsLibrary("maps");
   const uid = localStorage.getItem("uid");
-  const [currentPois, setCurrentPois] = useState();
-  const [selectedCity, setSelectedCity] = useState("");
   const markerRef = useRef([]);
 
   const poisColRef = collection(database, "users", uid, "pointOfInterests");
@@ -94,51 +92,9 @@ const List = () => {
     setCurrentZoom(18);
   };
 
-  const handleSelectedCityChange = async (e) => {
-    setSelectedCity(e.target.value);
-    if (e.target.value === "全部顯示") {
-      console.log("all");
-      const q = query(poisColRef);
-      const newArr = [];
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        console.log(doc.id, " => ", doc.data());
-        newArr.push({ id: doc.id, data: doc.data() });
-      });
-      setCurrentPois(newArr);
-    } else {
-      const q = query(poisColRef, where("city", "==", e.target.value));
-      const newArr = [];
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        console.log(doc.id, " => ", doc.data());
-        newArr.push({ id: doc.id, data: doc.data() });
-      });
-      setCurrentPois(newArr);
-    }
-  };
-
-  console.log(markerRef.current);
-
   return (
     <>
-      <div className="flex h-10 w-full flex-row items-center justify-start border-2 border-dashed border-violet-200 bg-white outline-none">
-        <h1 className="ml-1 whitespace-nowrap">篩選：</h1>
-        <select
-          className="h-full w-full outline-none"
-          value={selectedCity}
-          onChange={(e) => handleSelectedCityChange(e)}
-        >
-          <option value="全部顯示">全部顯示</option>
-          {taiwanCities.map((city, index) => {
-            return (
-              <option key={index} value={city}>
-                {city}
-              </option>
-            );
-          })}
-        </select>
-      </div>
+      <CityFilter />
       <div className="justify-start-start flex h-full w-full flex-col overflow-auto">
         {currentPois ? (
           currentPois.map((item) => {
