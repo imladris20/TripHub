@@ -15,8 +15,6 @@ const Detail = () => {
     });
   });
 
-  console.log(poisItemDetailInfo.data);
-
   const {
     place_id: id,
     data: {
@@ -35,9 +33,6 @@ const Detail = () => {
   return (
     <div className="absolute left-[21%] z-[999] flex h-full w-1/4 flex-col items-start gap-3 rounded-lg border-b-2 border-solid border-gray-200 bg-white p-3 shadow-2xl 2xl:w-1/5">
       <div className="flex w-[88%] flex-row items-center justify-start gap-2">
-        {/* <div className="flex h-4 w-4 flex-shrink-0 flex-row items-center justify-center rounded-full border border-dotted border-red-500 p-0 ">
-          <h1 className="text-xs text-red-500">{poisItemDetailInfo.label}</h1>
-        </div> */}
         <h1 className="text-left text-base font-bold">{name}</h1>
       </div>
       {photoLink ? (

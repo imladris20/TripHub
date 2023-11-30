@@ -166,7 +166,7 @@ const Detail = () => {
               {typeOptions.map((option, index) => (
                 <option
                   key={index}
-                  value={option}
+                  value={option.name}
                   className="bg-white text-xs text-slate-800"
                 >
                   {option.name}

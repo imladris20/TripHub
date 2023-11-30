@@ -36,7 +36,7 @@ const CategoryFilter = () => {
 
     const pois = [];
     let q;
-    if (selectedCity === "顯示全部縣市") {
+    if (selectedCity === "顯示全部縣市" || selectedCity === "") {
       q = query(poisColRef);
     } else {
       q = query(poisColRef, where("city", "==", selectedCity));
