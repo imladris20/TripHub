@@ -120,3 +120,15 @@ export const AlreadyAddedPoisIcon = () => {
     </>
   );
 };
+
+export const FilterIcon = () => {
+  return (
+    <path
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="32"
+      d="M32 144h448M112 256h288M208 368h96"
+    />
+  );
+};

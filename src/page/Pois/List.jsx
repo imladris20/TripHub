@@ -2,6 +2,7 @@ import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import { collection, onSnapshot, query } from "firebase/firestore";
 import { useEffect, useRef } from "react";
 import useStore, { poisStore } from "../../store/store";
+import CategoryFilter from "./CategoryFilter";
 import CityFilter from "./CityFilter";
 
 const List = () => {
@@ -94,7 +95,10 @@ const List = () => {
 
   return (
     <>
-      <CityFilter />
+      <div className="flex w-full flex-row items-center justify-start gap-2 bg-white">
+        <CityFilter />
+        <CategoryFilter />
+      </div>
       <div className="justify-start-start flex h-full w-full flex-col overflow-auto">
         {currentPois ? (
           currentPois.map((item) => {

@@ -11,20 +11,20 @@ const useStore = create((set, get) => ({
   typeOptions: [
     { name: "自然景點", bg: "bg-[#7BC5AE]" },
     { name: "人文景點", bg: "bg-[#A67F78]" },
-    { name: "山", bg: "bg-[#028C6A]" },
-    { name: "海", bg: "bg-[#85B8CB]" },
+    { name: "打卡拍照", bg: "bg-[#FE7773]" },
     { name: "博物館", bg: "bg-[#BD8E62]" },
+    { name: "伴手禮", bg: "bg-[#BC5F6A]" },
     { name: "古蹟", bg: "bg-[#915C4C]" },
     { name: "購物", bg: "bg-[#689C97]" },
-    { name: "打卡拍照", bg: "bg-[#FE7773]" },
     { name: "餐廳", bg: "bg-[#B78338]" },
     { name: "小吃", bg: "bg-[#40686A]" },
-    { name: "伴手禮", bg: "bg-[#BC5F6A]" },
     { name: "租車", bg: "bg-[#003E19]" },
     { name: "車站", bg: "bg-[#69491A]" },
     { name: "咖哩", bg: "bg-[#F2AB39]" },
     { name: "拉麵", bg: "bg-[#8F8681]" },
     { name: "麻糬", bg: "bg-[#A46843]" },
+    { name: "山", bg: "bg-[#028C6A]" },
+    { name: "海", bg: "bg-[#85B8CB]" },
   ],
   taiwanCities: [
     "基隆市",
@@ -148,6 +148,22 @@ export const poisStore = create((set, get) => ({
     set(
       produce((state) => {
         state.currentPois = poisArr;
+      }),
+    );
+  },
+  isFilterWindowOpen: false,
+  setIsFilterWindowOpen: () => {
+    set(
+      produce((state) => {
+        state.isFilterWindowOpen = !state.isFilterWindowOpen;
+      }),
+    );
+  },
+  selectedCity: "",
+  setSelectedCity: (poisArr) => {
+    set(
+      produce((state) => {
+        state.selectedCity = poisArr;
       }),
     );
   },

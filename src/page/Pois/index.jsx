@@ -1,7 +1,6 @@
 import { Map, useApiIsLoaded, useMap } from "@vis.gl/react-google-maps";
 import { Navigate } from "react-router-dom";
 import useStore, { poisStore } from "../../store/store";
-// import InputBlock from "./InputBlock";
 import Detail from "./Detail";
 import List from "./List";
 
