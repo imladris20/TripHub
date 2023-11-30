@@ -1,5 +1,3 @@
-// import { Route, Routes } from "react-router-dom";
-import axios from "axios";
 import { useQuery } from "react-query";
 import useStore from "../../store/store";
 
@@ -16,7 +14,7 @@ function Practicing() {
     queryKey: ["getPost"],
     queryFn: async () => {
       await wait(3000);
-      const { data } = await axios.get(
+      const { data } = await fetch(
         "https://jsonplaceholder.typicode.com/posts/1",
       );
       return data;
