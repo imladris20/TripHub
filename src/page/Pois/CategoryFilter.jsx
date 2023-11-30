@@ -75,7 +75,7 @@ const CategoryFilter = () => {
       </svg>
 
       <div
-        className={`absolute right-0 top-10 z-[99] h-[450px] w-[256px] bg-white px-5 pt-4 opacity-90 ${
+        className={`absolute right-0 top-10 z-[99] h-[450px] w-[256px] rounded-bl-lg border-b border-l border-solid border-slate-300 bg-white px-5 pt-4 opacity-90 shadow-xl ${
           isFilterWindowOpen ? "block" : "hidden"
         }`}
       >
