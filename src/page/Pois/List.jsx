@@ -1,6 +1,12 @@
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
-import { collection, onSnapshot, query } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import {
+  collection,
+  getDocs,
+  onSnapshot,
+  query,
+  where,
+} from "firebase/firestore";
+import { useEffect, useRef, useState } from "react";
 import useStore, { poisStore } from "../../store/store";
 
 const List = () => {
@@ -13,14 +19,16 @@ const List = () => {
   const uid = localStorage.getItem("uid");
   const [currentPois, setCurrentPois] = useState();
   const [selectedCity, setSelectedCity] = useState("");
+  const markerRef = useRef([]);
+
+  const poisColRef = collection(database, "users", uid, "pointOfInterests");
 
   useEffect(() => {
     if (database) {
-      const q = query(collection(database, "users", uid, "pointOfInterests"));
+      const q = query(poisColRef);
 
       const unsubscribe = onSnapshot(q, (querySnapshot) => {
         const newArr = [];
-
         querySnapshot.forEach((doc) => {
           newArr.push({ id: doc.id, data: doc.data() });
         });
@@ -35,6 +43,13 @@ const List = () => {
 
   useEffect(() => {
     if (currentPois) {
+      if (markerRef.current.length) {
+        markerRef.current.forEach((marker) => {
+          marker.setVisible(false);
+          marker.setMap(null);
+        });
+        markerRef.current = [];
+      }
       currentPois.map((item) => {
         const {
           data: { location, name, rating, ratingTotal, address },
@@ -67,6 +82,8 @@ const List = () => {
         marker.addListener("mouseout", () => {
           infowindow.close();
         });
+
+        markerRef.current.push(marker);
       });
     }
   }, [currentPois]);
@@ -77,10 +94,31 @@ const List = () => {
     setCurrentZoom(18);
   };
 
-  const handleSelectedCityChange = (e) => {
-    console.log(e.target.value);
+  const handleSelectedCityChange = async (e) => {
     setSelectedCity(e.target.value);
+    if (e.target.value === "全部顯示") {
+      console.log("all");
+      const q = query(poisColRef);
+      const newArr = [];
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        console.log(doc.id, " => ", doc.data());
+        newArr.push({ id: doc.id, data: doc.data() });
+      });
+      setCurrentPois(newArr);
+    } else {
+      const q = query(poisColRef, where("city", "==", e.target.value));
+      const newArr = [];
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        console.log(doc.id, " => ", doc.data());
+        newArr.push({ id: doc.id, data: doc.data() });
+      });
+      setCurrentPois(newArr);
+    }
   };
+
+  console.log(markerRef.current);
 
   return (
     <>
@@ -91,7 +129,7 @@ const List = () => {
           value={selectedCity}
           onChange={(e) => handleSelectedCityChange(e)}
         >
-          <option value="">全部顯示</option>
+          <option value="全部顯示">全部顯示</option>
           {taiwanCities.map((city, index) => {
             return (
               <option key={index} value={city}>
