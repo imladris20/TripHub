@@ -107,7 +107,6 @@ const AddToSchedule = () => {
       tripsOption.length !== 0 &&
       selectedTrip !== "disabled"
     ) {
-      console.log("pass");
       compare();
     }
   }, [selectedTrip]);
