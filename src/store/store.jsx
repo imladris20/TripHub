@@ -168,3 +168,30 @@ export const poisStore = create((set, get) => ({
     );
   },
 }));
+
+export const scheduleStore = create((set, get) => ({
+  currentCenter: TAIWAN,
+  currentZoom: 7.5,
+  setCurrentCenter: (geolocation) => {
+    set(
+      produce((state) => {
+        state.currentCenter = geolocation;
+      }),
+    );
+  },
+  setCurrentZoom: (level) => {
+    set(
+      produce((state) => {
+        state.currentZoom = level;
+      }),
+    );
+  },
+  isTripSelected: false,
+  setIsTripSelected: (bool) => {
+    set(
+      produce((state) => {
+        state.isTripSelected = bool;
+      }),
+    );
+  },
+}));
