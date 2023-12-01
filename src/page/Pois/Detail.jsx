@@ -6,12 +6,6 @@ import AddToSchedule from "./AddToSchedule";
 const Detail = () => {
   const { poisItemDetailInfo, setPoisItemDetailInfo } = poisStore();
 
-  // const setDocMutation = useMutation(({ database, uid, place_id, docData }) => {
-  //   setDoc(doc(database, `users/${uid}/pointOfInterests`, place_id), docData, {
-  //     merge: true,
-  //   });
-  // });
-
   const {
     place_id: id,
     data: {
