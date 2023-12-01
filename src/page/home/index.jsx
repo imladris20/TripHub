@@ -20,7 +20,7 @@ const Home = () => {
             </Link>
           ) : (
             <button
-              className="h-16 w-auto rounded-lg bg-green-200 p-4 text-xl text-slate-800"
+              className="btn btn-primary h-16 w-auto rounded-lg border-none bg-green-200 p-4 text-xl text-slate-800"
               onClick={() => {
                 setIsSignWindowOpen(true);
               }}
