@@ -14,13 +14,13 @@ const Home = () => {
           </h1>
           {isLogin ? (
             <Link to="/search">
-              <button className="h-16 w-auto rounded-lg bg-green-200 p-4 text-xl text-slate-800">
+              <button className="btn btn-primary h-16 w-auto rounded-lg border-none bg-green-200 p-4 text-xl text-slate-800">
                 點我開始規劃
               </button>
             </Link>
           ) : (
             <button
-              className="h-16 w-auto rounded-lg bg-green-200 p-4 text-xl text-slate-800"
+              className="btn btn-primary h-16 w-auto rounded-lg border-none bg-green-200 p-4 text-xl text-slate-800"
               onClick={() => {
                 setIsSignWindowOpen(true);
               }}
