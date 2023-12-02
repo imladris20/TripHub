@@ -8,8 +8,10 @@ const Profile = () => {
   return (
     <div className="ml-auto flex h-6 w-auto flex-row items-center gap-4">
       {username && (
-        <h1 className="text-sm text-slate-500 ">
-          哈囉！{username}，想去哪裡玩呢？
+        <h1 className="-mr-4 w-28 p-1 text-[13px] leading-4 text-slate-500">
+          哈囉！{username}，
+          <br />
+          想去哪裡玩呢？
         </h1>
       )}
       <button>
