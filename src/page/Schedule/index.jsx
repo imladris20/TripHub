@@ -3,6 +3,7 @@ import { addDoc, collection, onSnapshot } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
 import { Navigate } from "react-router-dom";
 import useStore, { scheduleStore } from "../../store/store";
+import Detail from "./Detail";
 import List from "./List";
 
 const Schedule = () => {
@@ -15,6 +16,8 @@ const Schedule = () => {
     currentLoadingTrip,
     setCurrentLoadingTrip,
     setTripSelectModal,
+    attractionItemDetail,
+    setAttractionItemDetail,
   } = scheduleStore();
   const map = useMap("tripMap");
   const [tripsOption, setTripsOption] = useState([]);
@@ -164,7 +167,7 @@ const Schedule = () => {
           </div>
         )}
         <Map id={"tripMap"} options={initialMapOptions} />
-        {/* {poisItemDetailInfo && <Detail />} */}
+        {attractionItemDetail && <Detail />}
       </div>
     </>
   );

@@ -218,4 +218,12 @@ export const scheduleStore = create((set, get) => ({
       }),
     );
   },
+  attractionItemDetail: null,
+  setAttractionItemDetail: (place) => {
+    set(
+      produce((state) => {
+        state.attractionItemDetail = place;
+      }),
+    );
+  },
 }));

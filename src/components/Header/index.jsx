@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Logo from "../../assets/logo.png";
-import ScheduleHeader from "../../page/Schedule/header";
+import ScheduleHeader from "../../page/Schedule/Header";
 import useStore, { scheduleStore } from "../../store/store";
 import Profile from "./Profile";
 

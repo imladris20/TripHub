@@ -4,7 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import useStore, { scheduleStore } from "../../store/store";
 
 const List = () => {
-  const { currentLoadingTrip } = scheduleStore();
+  const {
+    currentLoadingTrip,
+    setAttractionItemDetail,
+    setCurrentCenter,
+    setCurrentZoom,
+  } = scheduleStore();
   const { database } = useStore();
   const uid = localStorage.getItem("uid");
   const [trip, setTrip] = useState();
@@ -14,6 +19,17 @@ const List = () => {
   const [attractionsData, setAttractionsData] = useState([]);
 
   const markerRef = useRef([]);
+
+  const handleAttractionNameClicked = (attractionName, note, expense) => {
+    const targetData = attractionsData.find(
+      (data) => data.name === attractionName,
+    );
+    if (targetData) {
+      setAttractionItemDetail({ ...targetData, note, expense });
+      setCurrentCenter(targetData.location);
+      setCurrentZoom(18);
+    }
+  };
 
   //  listener of loading newest data of selected trip
   useEffect(() => {
@@ -56,7 +72,7 @@ const List = () => {
           }
         }),
       );
-      console.log(result);
+
       setAttractionsData(result);
 
       result.map((item) => {
@@ -100,6 +116,7 @@ const List = () => {
     const attractions = trip?.attractions;
 
     const arr = attractions.map((attraction, index) => {
+      const { name, note, expense } = attraction;
       return (
         <div
           key={index}
@@ -112,9 +129,12 @@ const List = () => {
             <span className="h-full w-[40px] border-r border-solid border-gray-500 p-2 text-xs">
               -
             </span>
-            <span className="h-full w-[176px] grow border-r border-solid border-gray-500 p-2 text-center text-xs">
+            <button
+              className="h-full w-[176px] grow cursor-pointer border-r border-solid border-gray-500 p-2 text-center text-xs"
+              onClick={() => handleAttractionNameClicked(name, note, expense)}
+            >
               {attraction.name}
-            </span>
+            </button>
           </div>
         </div>
       );
