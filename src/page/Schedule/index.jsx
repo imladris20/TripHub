@@ -3,6 +3,7 @@ import { addDoc, collection, onSnapshot } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
 import { Navigate } from "react-router-dom";
 import useStore, { scheduleStore } from "../../store/store";
+import List from "./List";
 
 const Schedule = () => {
   const modalRef = useRef();
@@ -11,8 +12,7 @@ const Schedule = () => {
   const {
     currentCenter,
     currentZoom,
-    isTripSelected,
-    setIsTripSelected,
+    currentLoadingTrip,
     setCurrentLoadingTrip,
     setTripSelectModal,
   } = scheduleStore();
@@ -122,7 +122,6 @@ const Schedule = () => {
               <button
                 className="btn btn-primary w-36 whitespace-nowrap"
                 onClick={() => {
-                  setIsTripSelected(true);
                   setCurrentLoadingTrip(tripIdToLoad);
                 }}
               >
@@ -159,9 +158,9 @@ const Schedule = () => {
         </div>
       </dialog>
       <div className="relative flex h-[calc(100vh-64px)] flex-row items-center">
-        {map && (
-          <div className="flex h-full w-1/4 flex-col items-center justify-start bg-yellow-100">
-            {/* <List /> */}
+        {map && currentLoadingTrip && (
+          <div className="flex h-full w-1/4 flex-col items-center justify-start overflow-y-auto bg-yellow-100">
+            <List />
           </div>
         )}
         <Map id={"tripMap"} options={initialMapOptions} />

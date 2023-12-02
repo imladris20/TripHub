@@ -58,6 +58,7 @@ const Header = () => {
             起始日期：
           </h1>
           <input
+            className="outline-none"
             type="date"
             value={startDate}
             onChange={(e) => handleStartDateInput(e)}
@@ -78,6 +79,7 @@ const Header = () => {
             結束日期：
           </h1>
           <input
+            className="outline-none"
             type="date"
             value={endDate}
             onChange={(e) => handleEndDateInput(e)}

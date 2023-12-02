@@ -114,7 +114,7 @@ const useStore = create((set, get) => ({
       }),
     );
   },
-  username: null,
+  username: localStorage.getItem("username"),
   setUsername: (name) => {
     set(
       produce((state) => {
