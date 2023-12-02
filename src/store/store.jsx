@@ -114,6 +114,14 @@ const useStore = create((set, get) => ({
       }),
     );
   },
+  username: null,
+  setUsername: (name) => {
+    set(
+      produce((state) => {
+        state.username = name;
+      }),
+    );
+  },
 }));
 
 export default useStore;
