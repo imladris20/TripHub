@@ -210,4 +210,12 @@ export const scheduleStore = create((set, get) => ({
       }),
     );
   },
+  tripSelectModal: null,
+  setTripSelectModal: (ref) => {
+    set(
+      produce((state) => {
+        state.tripSelectModal = ref;
+      }),
+    );
+  },
 }));
