@@ -8,15 +8,27 @@ const Schedule = () => {
   const modalRef = useRef();
   const apiIsLoaded = useApiIsLoaded();
   const { mapId, database } = useStore();
-  const { currentCenter, currentZoom, isTripSelected, setIsTripSelected } =
-    scheduleStore();
+  const {
+    currentCenter,
+    currentZoom,
+    isTripSelected,
+    setIsTripSelected,
+    setCurrentLoadingTrip,
+  } = scheduleStore();
   const map = useMap("tripMap");
   const [tripsOption, setTripsOption] = useState([]);
   const [selectedTrip, setSelectedTrip] = useState("disabled");
+  const [tripIdToLoad, setTripIdToLoad] = useState("");
   const uid = localStorage.getItem("uid");
 
   const handleTripSelected = (e) => {
     setSelectedTrip(e.target.value);
+    const correctOption = tripsOption.find(
+      (option) => option.data.name === e.target.value,
+    );
+    if (correctOption) {
+      setTripIdToLoad(correctOption.id);
+    }
   };
 
   const initialMapOptions = {
@@ -27,12 +39,14 @@ const Schedule = () => {
     streetViewControl: false,
   };
 
+  //  open modal first while page loaded
   useEffect(() => {
     if (modalRef.current) {
       modalRef.current.showModal();
     }
   }, [apiIsLoaded]);
 
+  //  prevent default of pressing "esc" key
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.keyCode === 27) {
@@ -45,6 +59,7 @@ const Schedule = () => {
     };
   }, []);
 
+  //  Load trip options on firestore into selections
   useEffect(() => {
     if (database) {
       const colRef = collection(database, "users", uid, "trips");
@@ -65,6 +80,9 @@ const Schedule = () => {
   if (!apiIsLoaded) {
     return <h1>Api is Loading...</h1>;
   }
+
+  // console.log("All trip options: ", tripsOption);
+  console.log("trip about to load: ", tripIdToLoad);
 
   return (
     <>
@@ -92,7 +110,10 @@ const Schedule = () => {
               <form method="dialog">
                 <button
                   className="btn btn-primary"
-                  onClick={() => setIsTripSelected(true)}
+                  onClick={() => {
+                    setIsTripSelected(true);
+                    setCurrentLoadingTrip(tripIdToLoad);
+                  }}
                 >
                   確認選擇
                 </button>

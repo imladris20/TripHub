@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Logo from "../../assets/logo.png";
-import useStore from "../../store/store";
+import ScheduleHeader from "../../page/Schedule/header";
+import useStore, { scheduleStore } from "../../store/store";
 import Profile from "./Profile";
 
 const Header = () => {
   const { isLogin } = useStore();
+  const { currentLoadingTrip } = scheduleStore();
   const currentPath = useLocation().pathname;
   useEffect(() => {
     switch (location.pathname) {
@@ -63,13 +65,17 @@ const Header = () => {
               行程規劃
             </button>
           </Link>
+          {location.pathname === "/schedule" && currentLoadingTrip && (
+            <ScheduleHeader />
+          )}
         </>
       )}
-      <Link to="/practicing">
+
+      {/* <Link to="/practicing">
         <button className="w-20 rounded bg-white px-2 py-1 text-xs text-white">
           練習頁面
         </button>
-      </Link>
+      </Link> */}
       {isLogin && <Profile />}
     </header>
   );

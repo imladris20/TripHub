@@ -27,6 +27,7 @@ export default {
         myyellow: "#ECEE81",
         mypurple: "#EDB7ED",
         mygray: "#E8F1F2",
+        sand: "#ead6db",
       },
     },
   },

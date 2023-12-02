@@ -194,4 +194,12 @@ export const scheduleStore = create((set, get) => ({
       }),
     );
   },
+  currentLoadingTrip: null,
+  setCurrentLoadingTrip: (tripId) => {
+    set(
+      produce((state) => {
+        state.currentLoadingTrip = tripId;
+      }),
+    );
+  },
 }));
