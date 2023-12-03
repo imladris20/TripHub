@@ -1,5 +1,5 @@
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
-import { doc, getDoc, onSnapshot } from "firebase/firestore";
+import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
 import React, { useEffect, useRef, useState } from "react";
 import useStore, { scheduleStore } from "../../store/store";
 
@@ -28,10 +28,144 @@ const List = () => {
       (data) => data.name === attractionName,
     );
     if (targetData) {
-      setAttractionItemDetail({ ...targetData, note, expense });
+      setAttractionItemDetail({ ...targetData, note, expense, daySequence });
       setCurrentCenter(targetData.location);
       setCurrentZoom(18);
     }
+  };
+
+  const handleDropdownOptionClicked = async (
+    newDaySequence,
+    attractionIndex,
+  ) => {
+    const tripRef = doc(database, "users", uid, "trips", currentLoadingTrip);
+    const docSnap = await getDoc(tripRef);
+    const newAttractions = { ...docSnap.data() }.attractions;
+
+    newAttractions[attractionIndex].daySequence = newDaySequence;
+
+    await updateDoc(tripRef, { attractions: newAttractions });
+  };
+
+  const generateDropdownButton = (duration, attractionIndex) => {
+    const arr = new Array(duration + 1).fill("blank");
+    return arr.map((_, index) => {
+      return (
+        <li key={index}>
+          <button
+            onClick={() => handleDropdownOptionClicked(index, attractionIndex)}
+          >
+            {index !== 0 ? `移至第${index}天` : "移至未分配"}
+          </button>
+        </li>
+      );
+    });
+  };
+
+  const generateAttractions = (daySequenceIndex, duration) => {
+    const attractions = trip?.attractions;
+
+    const arr = attractions.map((attraction, attractionIndex) => {
+      const { name, note, expense, daySequence } = attraction;
+
+      if (
+        (daySequence > duration && daySequenceIndex === 0) ||
+        daySequence === daySequenceIndex
+      ) {
+        return (
+          <div
+            key={attractionIndex}
+            className="flex w-[350px] flex-col border-b border-solid border-gray-500 bg-white"
+          >
+            <div className="flex w-[350px] flex-row items-center justify-start">
+              <div className="w-[40px dropdown dropdown-hover h-8">
+                <div
+                  tabIndex={0}
+                  role="button"
+                  className="btn m-0 h-8 min-h-0 w-[40px] rounded-none border-b-0 border-l-0 border-r border-t-0 border-solid border-gray-400 bg-white p-0 text-xs"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 512 512"
+                    className="h-4 w-4 stroke-gray-700 stroke-2"
+                  >
+                    <path
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeMiterlimit="10"
+                      strokeWidth="32"
+                      d="M80 160h352M80 256h352M80 352h352"
+                    />
+                  </svg>
+                </div>
+                <ul
+                  tabIndex={0}
+                  className="menu dropdown-content z-[1] w-52 rounded-box bg-base-100 p-2 shadow"
+                >
+                  {generateDropdownButton(duration, attractionIndex)}
+                </ul>
+              </div>
+              <span className="h-full w-[40px] shrink-0 whitespace-pre-wrap border-r border-solid border-gray-500 p-2 text-center text-xs">
+                -
+              </span>
+              <span className="h-full w-[83px] shrink-0 whitespace-nowrap border-r border-solid border-gray-500 p-2 text-center text-xs">
+                08:00-09:00
+              </span>
+              <button
+                className="h-full w-[187px] shrink-0 grow cursor-pointer border-r border-solid border-gray-500 p-2 text-center text-xs"
+                onClick={() => handleAttractionNameClicked(name, note, expense)}
+              >
+                {attraction.name}
+              </button>
+            </div>
+          </div>
+        );
+      }
+
+      if (daySequence !== daySequenceIndex) {
+        return;
+      }
+    });
+
+    return arr;
+  };
+
+  const generateDayBlocks = () => {
+    const arr = new Array(currentTripDuration + 1).fill("blank");
+    return arr.map((_, daySequenceIndex) => {
+      return (
+        <React.Fragment key={daySequenceIndex}>
+          <div
+            key={daySequenceIndex}
+            className="flex w-[350px] flex-row items-center justify-center border-b border-dotted border-gray-200 bg-gray-500 py-3"
+          >
+            <h1 className="text-base text-gray-200">
+              {daySequenceIndex === 0
+                ? "未分配的景點"
+                : `第${daySequenceIndex}天`}
+            </h1>
+            {}
+          </div>
+          <div className="flex w-[350px] flex-col border-b border-solid border-gray-500 bg-white">
+            <div className="flex w-[350px] flex-row items-center justify-start">
+              <span className="h-full w-[40px] whitespace-nowrap border-r border-solid border-gray-500 p-2 text-center text-xs">
+                選項
+              </span>
+              <span className="h-full w-[40px] whitespace-nowrap border-r border-solid border-gray-500 p-2 text-center text-xs">
+                順序
+              </span>
+              <span className="h-full w-[83px] whitespace-nowrap border-r border-solid border-gray-500 p-2 text-center text-xs">
+                時間
+              </span>
+              <span className="h-full w-[187px] border-r border-solid border-gray-500 p-2 text-center text-xs">
+                景點名稱
+              </span>
+            </div>
+          </div>
+          {generateAttractions(daySequenceIndex, currentTripDuration)}
+        </React.Fragment>
+      );
+    });
   };
 
   //  listener of loading newest data of selected trip
@@ -123,123 +257,6 @@ const List = () => {
       generateMarker();
     }
   }, [trip]);
-
-  const generateDropdownButton = (duration) => {
-    const arr = new Array(duration + 1).fill("blank");
-    return arr.map((_, index) => {
-      return (
-        <li key={index}>
-          <button>{index !== 0 ? `移至第${index}天` : "移至未分配"}</button>
-        </li>
-      );
-    });
-  };
-
-  const generateAttractions = (daySequenceIndex, duration) => {
-    const attractions = trip?.attractions;
-
-    const arr = attractions.map((attraction, index) => {
-      const { name, note, expense, daySequence } = attraction;
-
-      if (
-        (daySequence > duration && daySequenceIndex === 0) ||
-        daySequence === daySequenceIndex
-      ) {
-        return (
-          <div
-            key={index}
-            className="flex w-[350px] flex-col border-b border-solid border-gray-500 bg-white"
-          >
-            <div className="flex w-[350px] flex-row items-center justify-start">
-              <div className="w-[40px dropdown dropdown-hover h-8">
-                <div
-                  tabIndex={0}
-                  role="button"
-                  className="btn m-0 h-8 min-h-0 w-[40px] rounded-none border-b-0 border-l-0 border-r border-t-0 border-solid border-gray-400 bg-white p-0 text-xs"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 512 512"
-                    className="h-4 w-4 stroke-gray-700 stroke-2"
-                  >
-                    <path
-                      fill="none"
-                      strokeLinecap="round"
-                      strokeMiterlimit="10"
-                      strokeWidth="32"
-                      d="M80 160h352M80 256h352M80 352h352"
-                    />
-                  </svg>
-                </div>
-                <ul
-                  tabIndex={0}
-                  className="menu dropdown-content z-[1] w-52 rounded-box bg-base-100 p-2 shadow"
-                >
-                  {generateDropdownButton(duration)}
-                </ul>
-              </div>
-              <span className="h-full w-[40px] shrink-0 whitespace-pre-wrap border-r border-solid border-gray-500 p-2 text-center text-xs">
-                -
-              </span>
-              <span className="h-full w-[83px] shrink-0 whitespace-nowrap border-r border-solid border-gray-500 p-2 text-center text-xs">
-                08:00-09:00
-              </span>
-              <button
-                className="h-full w-[187px] shrink-0 grow cursor-pointer border-r border-solid border-gray-500 p-2 text-center text-xs"
-                onClick={() => handleAttractionNameClicked(name, note, expense)}
-              >
-                {attraction.name}
-              </button>
-            </div>
-          </div>
-        );
-      }
-
-      if (daySequence !== daySequenceIndex) {
-        return;
-      }
-    });
-
-    return arr;
-  };
-
-  const generateDayBlocks = () => {
-    const arr = new Array(currentTripDuration + 1).fill("blank");
-    return arr.map((_, daySequenceIndex) => {
-      return (
-        <React.Fragment key={daySequenceIndex}>
-          <div
-            key={daySequenceIndex}
-            className="flex w-[350px] flex-row items-center justify-center border-b border-dotted border-gray-200 bg-gray-500 py-3"
-          >
-            <h1 className="text-base text-gray-200">
-              {daySequenceIndex === 0
-                ? "未分配的景點"
-                : `第${daySequenceIndex}天`}
-            </h1>
-            {}
-          </div>
-          <div className="flex w-[350px] flex-col border-b border-solid border-gray-500 bg-white">
-            <div className="flex w-[350px] flex-row items-center justify-start">
-              <span className="h-full w-[40px] whitespace-nowrap border-r border-solid border-gray-500 p-2 text-center text-xs">
-                選項
-              </span>
-              <span className="h-full w-[40px] whitespace-nowrap border-r border-solid border-gray-500 p-2 text-center text-xs">
-                順序
-              </span>
-              <span className="h-full w-[83px] whitespace-nowrap border-r border-solid border-gray-500 p-2 text-center text-xs">
-                時間
-              </span>
-              <span className="h-full w-[187px] border-r border-solid border-gray-500 p-2 text-center text-xs">
-                景點名稱
-              </span>
-            </div>
-          </div>
-          {generateAttractions(daySequenceIndex, currentTripDuration)}
-        </React.Fragment>
-      );
-    });
-  };
 
   return trip?.attractions ? (
     <>{generateDayBlocks()}</>
