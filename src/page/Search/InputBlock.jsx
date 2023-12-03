@@ -83,6 +83,7 @@ const InputBlock = () => {
                 map,
                 position: place.geometry.location,
                 label: markerLabel,
+                animation: 2,
               });
 
               const windowContent = `

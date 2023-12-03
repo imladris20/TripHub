@@ -16,7 +16,8 @@ const List = () => {
   const uid = localStorage.getItem("uid");
   const [trip, setTrip] = useState();
   const map = useMap("tripMap");
-  const { Marker } = useMapsLibrary("marker");
+  const { AdvancedMarkerElement, PinElement, Marker } =
+    useMapsLibrary("marker");
   const { InfoWindow } = useMapsLibrary("maps");
   const [attractionsData, setAttractionsData] = useState([]);
 
@@ -62,6 +63,7 @@ const List = () => {
 
       const result = await Promise.all(
         trip.attractions.map(async (attraction) => {
+          const { daySequence, note, expense } = attraction;
           const ref = doc(
             database,
             "users",
@@ -71,16 +73,25 @@ const List = () => {
           );
           const docSnap = await getDoc(ref);
           if (docSnap.exists()) {
-            return docSnap.data();
+            return { ...docSnap.data(), daySequence, note, expense };
           }
         }),
       );
 
       setAttractionsData(result);
 
+      console.log(result);
+
       result.map((item) => {
-        const { location, name, rating, ratingTotal, address } = item;
-        const marker = new Marker({ map, position: location });
+        const { location, name, rating, ratingTotal, address, daySequence } =
+          item;
+
+        const marker = new Marker({
+          map,
+          position: location,
+          animation: 2,
+          label: `${daySequence !== 0 ? `D${daySequence}` : "-"}`,
+        });
         const windowContent = `
           <div class='flex flex-col h-auto w-auto gap-1 justify-start items-start'>
             <h1 class='text-base font-bold'>${name}</h1>
@@ -156,7 +167,7 @@ const List = () => {
     return arr;
   };
 
-  const generateDays = () => {
+  const generateDayBlocks = () => {
     const arr = new Array(currentTripDuration + 1).fill("blank");
     return arr.map((_, daySequenceIndex) => {
       return (
@@ -194,7 +205,7 @@ const List = () => {
   return trip?.attractions ? (
     <>
       {generateAttractions()}
-      {generateDays()}
+      {generateDayBlocks()}
     </>
   ) : (
     <div className="flex h-full w-full flex-row items-center justify-center">
