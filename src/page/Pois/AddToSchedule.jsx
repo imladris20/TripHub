@@ -66,6 +66,7 @@ const AddToSchedule = () => {
       attractions: arrayUnion({
         note,
         expense,
+        daySequence: 0,
         name: poisItemDetailInfo.data.name,
         poisId: poisItemDetailInfo.id,
       }),
