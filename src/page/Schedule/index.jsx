@@ -41,6 +41,7 @@ const Schedule = () => {
   };
 
   const handleAddNewBlankTrip = async () => {
+    const colRef = collection(database, "users", uid, "trips");
     await addDoc(colRef, {
       name: newTripToAdd,
     });
