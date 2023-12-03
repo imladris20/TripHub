@@ -1,43 +1,40 @@
 import PlaceHolderPhoto from "../../assets/pois_photo_placeholder.png";
-import { poisStore } from "../../store/store";
+import { scheduleStore } from "../../store/store";
 import { CloseIcon } from "../../utils/icons";
-import AddToSchedule from "./AddToSchedule";
 
 const Detail = () => {
-  const { poisItemDetailInfo, setPoisItemDetailInfo } = poisStore();
+  const { attractionItemDetail, setAttractionItemDetail } = scheduleStore();
 
   const {
-    place_id: id,
-    data: {
-      name,
-      phoneNumber,
-      address,
-      openingHours,
-      photoLink,
-      priceLevel,
-      rating,
-      ratingTotal,
-      location,
-    },
-  } = poisItemDetailInfo;
+    address,
+    categories,
+    city,
+    location,
+    name,
+    openingHours,
+    phoneNumber,
+    photoLink,
+    priceLevel,
+    rating,
+    ratingTotal,
+    note,
+    expense,
+  } = attractionItemDetail;
 
   return (
-    <div className="absolute left-[21%] z-[997] flex h-full w-1/4 flex-col items-start gap-3 rounded-lg border-b-2 border-solid border-gray-200 bg-white p-3 shadow-2xl 2xl:w-1/5">
+    <div className="absolute left-[30%] z-[997] flex h-full w-1/4 flex-col items-start gap-3 rounded-lg border-b-2 border-solid border-gray-200 bg-gray-100 p-3 shadow-2xl 2xl:w-1/5">
       <div className="flex w-[88%] flex-row items-center justify-start gap-2">
         <h1 className="text-left text-base font-bold">{name}</h1>
       </div>
       {photoLink ? (
         <a href={photoLink} target="_blank">
-          <img
-            src={photoLink}
-            className="aspect-video w-full object-cover"
-          ></img>
+          <img src={photoLink} className="aspect-video w-full object-cover" />
         </a>
       ) : (
         <img
           src={PlaceHolderPhoto}
           className="aspect-video w-full object-cover"
-        ></img>
+        />
       )}
       <div className="flex w-full flex-col items-start justify-start gap-3 overflow-y-auto">
         <div className="flex flex-row items-center justify-start">
@@ -71,7 +68,7 @@ const Detail = () => {
             <div className="ml-5 flex flex-col gap-[2px]">
               {openingHours.map((day, index) => {
                 return (
-                  <h3 className="text-[11px]" key={`weekday_${id}_${index}`}>
+                  <h3 className="text-[11px]" key={`weekday_${index}`}>
                     {day}
                   </h3>
                 );
@@ -84,10 +81,16 @@ const Detail = () => {
           </div>
         )}
       </div>
-      <AddToSchedule />
+      <div className="mt-4">
+        <h1 className="text-sm font-bold">預計消費：{expense}元 💸</h1>
+      </div>
+      <div>
+        <h1 className="text-sm font-bold">備註：</h1>
+        <h2 className="text-xs">{note}</h2>
+      </div>
       <button
         className="absolute right-3 top-3 h-7 w-7"
-        onClick={() => setPoisItemDetailInfo(null)}
+        onClick={() => setAttractionItemDetail(null)}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

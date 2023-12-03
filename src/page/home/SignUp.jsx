@@ -7,7 +7,7 @@ const SignUp = () => {
   const [insertName, setInsertName] = useState("");
   const [insertEmail, setInsertEmail] = useState("");
   const [insertPassword, setInsertPassword] = useState("");
-  const { database } = useStore();
+  const { database, setUsername } = useStore();
 
   const signUpMutation = useMutation(({ name, email, password }) =>
     nativeSignUp(name, email, password),
@@ -36,6 +36,9 @@ const SignUp = () => {
     });
 
     localStorage.setItem("uid", user.uid);
+    localStorage.setItem("username", user.displayName);
+
+    setUsername(user.displayName);
 
     setInsertName("");
     setInsertEmail("");

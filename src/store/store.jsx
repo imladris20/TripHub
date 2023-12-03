@@ -114,6 +114,14 @@ const useStore = create((set, get) => ({
       }),
     );
   },
+  username: localStorage.getItem("username"),
+  setUsername: (name) => {
+    set(
+      produce((state) => {
+        state.username = name;
+      }),
+    );
+  },
 }));
 
 export default useStore;
@@ -164,6 +172,65 @@ export const poisStore = create((set, get) => ({
     set(
       produce((state) => {
         state.selectedCity = poisArr;
+      }),
+    );
+  },
+}));
+
+export const scheduleStore = create((set, get) => ({
+  currentCenter: TAIWAN,
+  currentZoom: 7.5,
+  setCurrentCenter: (geolocation) => {
+    set(
+      produce((state) => {
+        state.currentCenter = geolocation;
+      }),
+    );
+  },
+  setCurrentZoom: (level) => {
+    set(
+      produce((state) => {
+        state.currentZoom = level;
+      }),
+    );
+  },
+  isTripSelected: false,
+  setIsTripSelected: (bool) => {
+    set(
+      produce((state) => {
+        state.isTripSelected = bool;
+      }),
+    );
+  },
+  currentLoadingTrip: null,
+  setCurrentLoadingTrip: (tripId) => {
+    set(
+      produce((state) => {
+        state.currentLoadingTrip = tripId;
+      }),
+    );
+  },
+  tripSelectModal: null,
+  setTripSelectModal: (ref) => {
+    set(
+      produce((state) => {
+        state.tripSelectModal = ref;
+      }),
+    );
+  },
+  attractionItemDetail: null,
+  setAttractionItemDetail: (place) => {
+    set(
+      produce((state) => {
+        state.attractionItemDetail = place;
+      }),
+    );
+  },
+  currentTripDuration: 0,
+  setCurrentTripDuration: (num) => {
+    set(
+      produce((state) => {
+        state.currentTripDuration = num;
       }),
     );
   },

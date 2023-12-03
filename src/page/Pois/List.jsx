@@ -54,7 +54,7 @@ const List = () => {
           data: { location, name, rating, ratingTotal, address },
         } = item;
 
-        const marker = new Marker({ map, position: location });
+        const marker = new Marker({ map, position: location, animation: 2 });
 
         const windowContent = `
           <div class='flex flex-col h-auto w-auto gap-1 justify-start items-start'>

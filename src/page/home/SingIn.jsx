@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useMutation } from "react-query";
+import useStore from "../../store/store";
 import { nativeSignIn } from "../../utils/firebaseSDK";
 
 const SignIn = () => {
   const [insertEmail, setInsertEmail] = useState("");
   const [insertPassword, setInsertPassword] = useState("");
+  const { setUsername } = useStore();
 
   const mutation = useMutation((data) =>
     nativeSignIn(data.email, data.password),
@@ -16,6 +18,8 @@ const SignIn = () => {
       password: insertPassword,
     });
     localStorage.setItem("uid", user.uid);
+    localStorage.setItem("username", user.displayName);
+    setUsername(user.displayName);
     setInsertEmail("");
     setInsertPassword("");
   };
