@@ -80,8 +80,6 @@ const List = () => {
 
       setAttractionsData(result);
 
-      console.log(result);
-
       result.map((item) => {
         const { location, name, rating, ratingTotal, address, daySequence } =
           item;
@@ -126,6 +124,17 @@ const List = () => {
     }
   }, [trip]);
 
+  const generateDropdownButton = (duration) => {
+    const arr = new Array(duration + 1).fill("blank");
+    return arr.map((_, index) => {
+      return (
+        <li>
+          <button>{index !== 0 ? `移至第${index}天` : "移至未分配"}</button>
+        </li>
+      );
+    });
+  };
+
   const generateAttractions = (daySequenceIndex, duration) => {
     const attractions = trip?.attractions;
 
@@ -139,17 +148,44 @@ const List = () => {
         return (
           <div
             key={index}
-            className="flex w-full flex-col border-b border-solid border-gray-500 bg-white"
+            className="flex w-[350px] flex-col border-b border-solid border-gray-500 bg-white"
           >
-            <div className="flex w-full flex-row items-center justify-start">
-              <span className="h-full w-[40px] whitespace-pre-wrap border-r border-solid border-gray-500 p-2 text-center text-xs">
+            <div className="flex w-[350px] flex-row items-center justify-start">
+              <div className="w-[40px dropdown dropdown-hover h-8">
+                <div
+                  tabIndex={0}
+                  role="button"
+                  className="btn m-0 h-8 min-h-0 w-[40px] rounded-none border-b-0 border-l-0 border-r border-t-0 border-solid border-gray-400 bg-white p-0 text-xs"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 512 512"
+                    className="h-4 w-4 stroke-gray-700 stroke-2"
+                  >
+                    <path
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeMiterlimit="10"
+                      strokeWidth="32"
+                      d="M80 160h352M80 256h352M80 352h352"
+                    />
+                  </svg>
+                </div>
+                <ul
+                  tabIndex={0}
+                  className="menu dropdown-content z-[1] w-52 rounded-box bg-base-100 p-2 shadow"
+                >
+                  {generateDropdownButton(duration)}
+                </ul>
+              </div>
+              <span className="h-full w-[40px] shrink-0 whitespace-pre-wrap border-r border-solid border-gray-500 p-2 text-center text-xs">
                 -
               </span>
-              <span className="h-full w-[40px] border-r border-solid border-gray-500 p-2 text-center text-xs">
-                -
+              <span className="h-full w-[83px] shrink-0 whitespace-nowrap border-r border-solid border-gray-500 p-2 text-center text-xs">
+                08:00-09:00
               </span>
               <button
-                className="h-full w-[176px] grow cursor-pointer border-r border-solid border-gray-500 p-2 text-center text-xs"
+                className="h-full w-[187px] shrink-0 grow cursor-pointer border-r border-solid border-gray-500 p-2 text-center text-xs"
                 onClick={() => handleAttractionNameClicked(name, note, expense)}
               >
                 {attraction.name}
@@ -174,7 +210,7 @@ const List = () => {
         <React.Fragment key={daySequenceIndex}>
           <div
             key={daySequenceIndex}
-            className="flex w-full flex-row items-center justify-center border-b border-dotted border-gray-200 bg-gray-500 py-3"
+            className="flex w-[350px] flex-row items-center justify-center border-b border-dotted border-gray-200 bg-gray-500 py-3"
           >
             <h1 className="text-base text-gray-200">
               {daySequenceIndex === 0
@@ -183,15 +219,18 @@ const List = () => {
             </h1>
             {}
           </div>
-          <div className="flex w-full flex-col border-b border-solid border-gray-500 bg-white">
-            <div className="flex w-full flex-row items-center justify-start">
-              <span className="h-full w-[40px] whitespace-nowrap border-r border-solid border-gray-500 p-2 text-xs">
+          <div className="flex w-[350px] flex-col border-b border-solid border-gray-500 bg-white">
+            <div className="flex w-[350px] flex-row items-center justify-start">
+              <span className="h-full w-[40px] whitespace-nowrap border-r border-solid border-gray-500 p-2 text-center text-xs">
+                選項
+              </span>
+              <span className="h-full w-[40px] whitespace-nowrap border-r border-solid border-gray-500 p-2 text-center text-xs">
                 順序
               </span>
-              <span className="h-full w-[40px] whitespace-nowrap border-r border-solid border-gray-500 p-2 text-xs">
+              <span className="h-full w-[83px] whitespace-nowrap border-r border-solid border-gray-500 p-2 text-center text-xs">
                 時間
               </span>
-              <span className="h-full w-[176px] border-r border-solid border-gray-500 p-2 text-center text-xs">
+              <span className="h-full w-[187px] border-r border-solid border-gray-500 p-2 text-center text-xs">
                 景點名稱
               </span>
             </div>
@@ -203,10 +242,7 @@ const List = () => {
   };
 
   return trip?.attractions ? (
-    <>
-      {generateAttractions()}
-      {generateDayBlocks()}
-    </>
+    <>{generateDayBlocks()}</>
   ) : (
     <div className="flex h-full w-full flex-row items-center justify-center">
       <span className="loading loading-bars loading-lg"></span>
