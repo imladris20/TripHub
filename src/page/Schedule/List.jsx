@@ -112,7 +112,7 @@ const List = () => {
                 08:00-09:00
               </span>
               <button
-                className="h-full w-[187px] shrink-0 grow cursor-pointer border-r border-solid border-gray-500 p-2 text-center text-xs"
+                className="h-full w-[187px] shrink-0 grow cursor-pointer p-2 text-center text-xs"
                 onClick={() => handleAttractionNameClicked(name, note, expense)}
               >
                 {attraction.name}
@@ -149,7 +149,7 @@ const List = () => {
           <div className="flex w-[350px] flex-col border-b border-solid border-gray-500 bg-white">
             <div className="flex w-[350px] flex-row items-center justify-start">
               <span className="h-full w-[40px] whitespace-nowrap border-r border-solid border-gray-500 p-2 text-center text-xs">
-                選項
+                分配
               </span>
               <span className="h-full w-[40px] whitespace-nowrap border-r border-solid border-gray-500 p-2 text-center text-xs">
                 順序
@@ -157,7 +157,7 @@ const List = () => {
               <span className="h-full w-[83px] whitespace-nowrap border-r border-solid border-gray-500 p-2 text-center text-xs">
                 時間
               </span>
-              <span className="h-full w-[187px] border-r border-solid border-gray-500 p-2 text-center text-xs">
+              <span className="h-full w-[187px] p-2 text-center text-xs">
                 景點名稱
               </span>
             </div>
