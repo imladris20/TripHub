@@ -132,3 +132,35 @@ export const FilterIcon = () => {
     />
   );
 };
+
+export const VerticalSwapIcon = () => {
+  return (
+    <path
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="32"
+      d="M464 208L352 96 240 208M352 113.13V416M48 304l112 112 112-112M160 398V96"
+    />
+  );
+};
+
+export const TimeIcon = () => {
+  return (
+    <>
+      <path
+        d="M256 64C150 64 64 150 64 256s86 192 192 192 192-86 192-192S362 64 256 64z"
+        fill="none"
+        strokeMiterlimit="10"
+        strokeWidth="32"
+      />
+      <path
+        fill="none"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="32"
+        d="M256 128v144h96"
+      />
+    </>
+  );
+};

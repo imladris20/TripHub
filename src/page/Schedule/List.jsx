@@ -3,6 +3,8 @@ import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
 import React, { useEffect, useRef, useState } from "react";
 import useStore, { scheduleStore } from "../../store/store";
 
+import { TimeIcon, VerticalSwapIcon } from "../../utils/icons";
+
 const List = () => {
   const {
     currentLoadingTrip,
@@ -16,8 +18,7 @@ const List = () => {
   const uid = localStorage.getItem("uid");
   const [trip, setTrip] = useState();
   const map = useMap("tripMap");
-  const { AdvancedMarkerElement, PinElement, Marker } =
-    useMapsLibrary("marker");
+  const { Marker } = useMapsLibrary("marker");
   const { InfoWindow } = useMapsLibrary("maps");
   const [attractionsData, setAttractionsData] = useState([]);
 
@@ -62,6 +63,8 @@ const List = () => {
     });
   };
 
+  const timeEditModalRef = useRef();
+
   const generateAttractions = (daySequenceIndex, duration) => {
     const attractions = trip?.attractions;
 
@@ -89,13 +92,7 @@ const List = () => {
                     viewBox="0 0 512 512"
                     className="h-4 w-4 stroke-gray-700 stroke-2"
                   >
-                    <path
-                      fill="none"
-                      strokeLinecap="round"
-                      strokeMiterlimit="10"
-                      strokeWidth="32"
-                      d="M80 160h352M80 256h352M80 352h352"
-                    />
+                    <VerticalSwapIcon />
                   </svg>
                 </div>
                 <ul
@@ -108,8 +105,35 @@ const List = () => {
               <span className="h-full w-[40px] shrink-0 whitespace-pre-wrap border-r border-solid border-gray-500 p-2 text-center text-xs">
                 -
               </span>
-              <span className="h-full w-[83px] shrink-0 whitespace-nowrap border-r border-solid border-gray-500 p-2 text-center text-xs">
-                08:00-09:00
+              <span className="h-full w-[83px] shrink-0 whitespace-nowrap border-r border-solid border-gray-500 text-center text-xs">
+                <button
+                  className="btn btn-ghost h-full min-h-0 w-full rounded-none font-normal"
+                  onClick={() => timeEditModalRef.current.showModal()}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 512 512"
+                    className="h-4 w-4 stroke-gray-700 stroke-2"
+                  >
+                    <TimeIcon />
+                  </svg>
+                </button>
+                <dialog ref={timeEditModalRef} className="modal">
+                  <div className="modal-box">
+                    <form method="dialog">
+                      {/* if there is a button in form, it will close the modal */}
+                      <button className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">
+                        ✕
+                      </button>
+                    </form>
+                    <h3 className="text-lg font-bold">
+                      想要在{attraction.name}停留多久呢？
+                    </h3>
+                    <p className="py-4">
+                      Press ESC key or click on ✕ button to close
+                    </p>
+                  </div>
+                </dialog>
               </span>
               <button
                 className="h-full w-[187px] shrink-0 grow cursor-pointer p-2 text-center text-xs"
