@@ -9,6 +9,8 @@ const List = () => {
     setAttractionItemDetail,
     setCurrentCenter,
     setCurrentZoom,
+    currentTripDuration,
+    setCurrentTripDuration,
   } = scheduleStore();
   const { database } = useStore();
   const uid = localStorage.getItem("uid");
@@ -38,6 +40,7 @@ const List = () => {
         doc(database, "users", uid, "trips", currentLoadingTrip),
         (doc) => {
           setTrip(doc.data());
+          setCurrentTripDuration(doc.data()?.dayCount || 0);
         },
       );
       return () => {
@@ -123,10 +126,10 @@ const List = () => {
           className="flex w-full flex-col border-b border-solid border-gray-500 bg-white"
         >
           <div className="flex w-full flex-row items-center justify-start">
-            <span className="h-full w-[40px] whitespace-pre-wrap border-r border-solid border-gray-500 p-2 text-xs">
+            <span className="h-full w-[40px] whitespace-pre-wrap border-r border-solid border-gray-500 p-2 text-center text-xs">
               -
             </span>
-            <span className="h-full w-[40px] border-r border-solid border-gray-500 p-2 text-xs">
+            <span className="h-full w-[40px] border-r border-solid border-gray-500 p-2 text-center text-xs">
               -
             </span>
             <button
@@ -142,6 +145,22 @@ const List = () => {
 
     return arr;
   };
+
+  const generateBlankDays = () => {
+    const arr = new Array(currentTripDuration).fill("haha");
+    return arr.map((_, index) => {
+      return (
+        <div
+          key={index}
+          className="flex w-full flex-row items-center justify-center border-b border-dotted border-gray-200 bg-gray-500 py-3"
+        >
+          <h1 className="text-base text-gray-200">第{index + 1}天</h1>
+        </div>
+      );
+    });
+  };
+
+  console.log(currentTripDuration);
 
   return trip?.attractions ? (
     <>
@@ -162,6 +181,7 @@ const List = () => {
         </div>
       </div>
       {generateAttractions()}
+      {generateBlankDays()}
     </>
   ) : (
     <div className="flex h-full w-full flex-row items-center justify-center">

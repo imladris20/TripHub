@@ -226,4 +226,12 @@ export const scheduleStore = create((set, get) => ({
       }),
     );
   },
+  currentTripDuration: 0,
+  setCurrentTripDuration: (num) => {
+    set(
+      produce((state) => {
+        state.currentTripDuration = num;
+      }),
+    );
+  },
 }));

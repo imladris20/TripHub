@@ -1,4 +1,4 @@
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import useStore, { scheduleStore } from "../../store/store";
 
@@ -7,9 +7,22 @@ const Header = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const { database } = useStore();
-  const { currentLoadingTrip, tripSelectModal, setTripSelectModal } =
-    scheduleStore();
+  const {
+    currentLoadingTrip,
+    tripSelectModal,
+    setTripSelectModal,
+    currentTripDuration,
+    setCurrentTripDuration,
+  } = scheduleStore();
   const uid = localStorage.getItem("uid");
+
+  const calculateDayCount = (startDateStr, endDateStr) => {
+    const start = new Date(startDateStr);
+    const end = new Date(endDateStr);
+    const secondGap = end - start;
+    const count = Math.ceil(secondGap / (1000 * 60 * 60 * 24)) + 1;
+    return count;
+  };
 
   const handleStartDateInput = (e) => {
     const newStartDate = e.target.value;
@@ -20,7 +33,7 @@ const Header = () => {
     }
   };
 
-  const handleEndDateInput = (e) => {
+  const handleEndDateInput = async (e) => {
     if (!startDate) {
       window.alert("請先設定起始日期");
       return;
@@ -31,13 +44,25 @@ const Header = () => {
       return;
     }
     setEndDate(newEndDate);
+
+    const newDayCount = calculateDayCount(startDate, newEndDate);
+    setCurrentTripDuration(newDayCount);
+    const docRef = doc(database, "users", uid, "trips", currentLoadingTrip);
+    await setDoc(
+      docRef,
+      { dayCount: newDayCount, startDate, endDate: newEndDate },
+      { merge: true },
+    );
   };
 
   useEffect(() => {
     const getTrip = async () => {
       const docRef = doc(database, "users", uid, "trips", currentLoadingTrip);
       const docSnap = await getDoc(docRef);
+
       setCurrentTrip(docSnap.data());
+      setStartDate(docSnap.data()?.startDate || "");
+      setEndDate(docSnap.data()?.endDate || "");
     };
 
     if (currentLoadingTrip && database) {
@@ -63,16 +88,6 @@ const Header = () => {
             value={startDate}
             onChange={(e) => handleStartDateInput(e)}
           />
-          {/* <input
-            type="number"
-            className="mr-1 w-12 rounded border border-solid border-slate-300 pl-2 outline-none"
-          />
-          <h1 className="whitespace-nowrap text-sm text-slate-800">月</h1>
-          <input
-            type="number"
-            className="mr-1 w-12 rounded border border-solid border-slate-300 pl-2 outline-none"
-          />
-          <h1 className="whitespace-nowrap text-sm text-slate-800">日</h1> */}
         </div>
         <div className="flex h-full flex-row items-center border-b-2 border-r-2 border-t-2 border-solid border-sand px-3">
           <h1 className="whitespace-nowrap text-base font-bold text-slate-800">
@@ -84,16 +99,6 @@ const Header = () => {
             value={endDate}
             onChange={(e) => handleEndDateInput(e)}
           />
-          {/* <input
-            type="number"
-            className="mr-1 w-12 rounded border border-solid border-slate-300 pl-2 outline-none"
-          />
-          <h1 className="whitespace-nowrap text-sm text-slate-800">月</h1>
-          <input
-            type="number"
-            className="mr-1 w-12 rounded border border-solid border-slate-300 pl-2 outline-none"
-          />
-          <h1 className="whitespace-nowrap text-sm text-slate-800">日</h1> */}
         </div>
         <div className="flex h-full flex-row items-center rounded-r-lg border-y-2 border-r-2 border-solid border-sand">
           <button className="h-full w-full whitespace-nowrap bg-sand px-4 font-bold">
