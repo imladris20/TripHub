@@ -1,6 +1,6 @@
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import { doc, getDoc, onSnapshot } from "firebase/firestore";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import useStore, { scheduleStore } from "../../store/store";
 
 const List = () => {
@@ -115,73 +115,86 @@ const List = () => {
     }
   }, [trip]);
 
-  const generateAttractions = () => {
+  const generateAttractions = (daySequenceIndex, duration) => {
     const attractions = trip?.attractions;
 
     const arr = attractions.map((attraction, index) => {
-      const { name, note, expense } = attraction;
-      return (
-        <div
-          key={index}
-          className="flex w-full flex-col border-b border-solid border-gray-500 bg-white"
-        >
-          <div className="flex w-full flex-row items-center justify-start">
-            <span className="h-full w-[40px] whitespace-pre-wrap border-r border-solid border-gray-500 p-2 text-center text-xs">
-              -
-            </span>
-            <span className="h-full w-[40px] border-r border-solid border-gray-500 p-2 text-center text-xs">
-              -
-            </span>
-            <button
-              className="h-full w-[176px] grow cursor-pointer border-r border-solid border-gray-500 p-2 text-center text-xs"
-              onClick={() => handleAttractionNameClicked(name, note, expense)}
-            >
-              {attraction.name}
-            </button>
+      const { name, note, expense, daySequence } = attraction;
+
+      if (
+        (daySequence > duration && daySequenceIndex === 0) ||
+        daySequence === daySequenceIndex
+      ) {
+        return (
+          <div
+            key={index}
+            className="flex w-full flex-col border-b border-solid border-gray-500 bg-white"
+          >
+            <div className="flex w-full flex-row items-center justify-start">
+              <span className="h-full w-[40px] whitespace-pre-wrap border-r border-solid border-gray-500 p-2 text-center text-xs">
+                -
+              </span>
+              <span className="h-full w-[40px] border-r border-solid border-gray-500 p-2 text-center text-xs">
+                -
+              </span>
+              <button
+                className="h-full w-[176px] grow cursor-pointer border-r border-solid border-gray-500 p-2 text-center text-xs"
+                onClick={() => handleAttractionNameClicked(name, note, expense)}
+              >
+                {attraction.name}
+              </button>
+            </div>
           </div>
-        </div>
-      );
+        );
+      }
+
+      if (daySequence !== daySequenceIndex) {
+        return;
+      }
     });
 
     return arr;
   };
 
-  const generateBlankDays = () => {
-    const arr = new Array(currentTripDuration).fill("haha");
-    return arr.map((_, index) => {
+  const generateDays = () => {
+    const arr = new Array(currentTripDuration + 1).fill("blank");
+    return arr.map((_, daySequenceIndex) => {
       return (
-        <div
-          key={index}
-          className="flex w-full flex-row items-center justify-center border-b border-dotted border-gray-200 bg-gray-500 py-3"
-        >
-          <h1 className="text-base text-gray-200">第{index + 1}天</h1>
-        </div>
+        <React.Fragment key={daySequenceIndex}>
+          <div
+            key={daySequenceIndex}
+            className="flex w-full flex-row items-center justify-center border-b border-dotted border-gray-200 bg-gray-500 py-3"
+          >
+            <h1 className="text-base text-gray-200">
+              {daySequenceIndex === 0
+                ? "未分配的景點"
+                : `第${daySequenceIndex}天`}
+            </h1>
+            {}
+          </div>
+          <div className="flex w-full flex-col border-b border-solid border-gray-500 bg-white">
+            <div className="flex w-full flex-row items-center justify-start">
+              <span className="h-full w-[40px] whitespace-nowrap border-r border-solid border-gray-500 p-2 text-xs">
+                順序
+              </span>
+              <span className="h-full w-[40px] whitespace-nowrap border-r border-solid border-gray-500 p-2 text-xs">
+                時間
+              </span>
+              <span className="h-full w-[176px] border-r border-solid border-gray-500 p-2 text-center text-xs">
+                景點名稱
+              </span>
+            </div>
+          </div>
+          {generateAttractions(daySequenceIndex, currentTripDuration)}
+        </React.Fragment>
       );
     });
   };
 
-  console.log(currentTripDuration);
-
   return trip?.attractions ? (
     <>
-      <div className="flex w-full flex-row items-center justify-center bg-gray-500 py-3">
-        <h1 className="text-base text-gray-200">未分配的景點</h1>
-      </div>
-      <div className="flex w-full flex-col border-b border-solid border-gray-500 bg-white">
-        <div className="flex w-full flex-row items-center justify-start">
-          <span className="h-full w-[40px] whitespace-nowrap border-r border-solid border-gray-500 p-2 text-xs">
-            順序
-          </span>
-          <span className="h-full w-[40px] whitespace-nowrap border-r border-solid border-gray-500 p-2 text-xs">
-            時間
-          </span>
-          <span className="h-full w-[176px] border-r border-solid border-gray-500 p-2 text-center text-xs">
-            景點名稱
-          </span>
-        </div>
-      </div>
       {generateAttractions()}
-      {generateBlankDays()}
+      {generateDays()}
     </>
   ) : (
     <div className="flex h-full w-full flex-row items-center justify-center">

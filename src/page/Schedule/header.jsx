@@ -7,13 +7,8 @@ const Header = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const { database } = useStore();
-  const {
-    currentLoadingTrip,
-    tripSelectModal,
-    setTripSelectModal,
-    currentTripDuration,
-    setCurrentTripDuration,
-  } = scheduleStore();
+  const { currentLoadingTrip, tripSelectModal, setCurrentTripDuration } =
+    scheduleStore();
   const uid = localStorage.getItem("uid");
 
   const calculateDayCount = (startDateStr, endDateStr) => {

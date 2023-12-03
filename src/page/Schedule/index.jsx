@@ -17,7 +17,6 @@ const Schedule = () => {
     setCurrentLoadingTrip,
     setTripSelectModal,
     attractionItemDetail,
-    setAttractionItemDetail,
   } = scheduleStore();
   const map = useMap("tripMap");
   const [tripsOption, setTripsOption] = useState([]);
