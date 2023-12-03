@@ -7,7 +7,8 @@ import Detail from "./Detail";
 import List from "./List";
 
 const Schedule = () => {
-  const modalRef = useRef();
+  const tripModalRef = useRef();
+
   const apiIsLoaded = useApiIsLoaded();
   const { mapId, database } = useStore();
   const {
@@ -57,9 +58,9 @@ const Schedule = () => {
 
   //  open modal first while page loaded
   useEffect(() => {
-    if (modalRef.current) {
-      modalRef.current.showModal();
-      setTripSelectModal(modalRef);
+    if (tripModalRef?.current) {
+      tripModalRef?.current?.showModal();
+      setTripSelectModal(tripModalRef);
     }
   }, [apiIsLoaded]);
 
@@ -101,7 +102,7 @@ const Schedule = () => {
   return (
     <>
       {!uid && <Navigate to="/" replace={true} />}
-      <dialog ref={modalRef} className="modal">
+      <dialog ref={tripModalRef} className="modal">
         <div className="modal-box flex flex-col items-center justify-start gap-4">
           <h3 className="text-xl font-bold">請選擇行程</h3>
           <select
@@ -162,7 +163,7 @@ const Schedule = () => {
       </dialog>
       <div className="relative flex h-[calc(100vh-64px)] flex-row items-center">
         {map && currentLoadingTrip && (
-          <div className="flex h-full w-auto shrink-0 flex-col items-center justify-start overflow-y-scroll bg-yellow-100">
+          <div className="flex h-full w-auto min-w-[350px] shrink-0 flex-col items-center justify-start overflow-y-scroll bg-yellow-100">
             <List />
           </div>
         )}

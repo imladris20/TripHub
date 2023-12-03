@@ -128,7 +128,7 @@ const List = () => {
     const arr = new Array(duration + 1).fill("blank");
     return arr.map((_, index) => {
       return (
-        <li>
+        <li key={index}>
           <button>{index !== 0 ? `移至第${index}天` : "移至未分配"}</button>
         </li>
       );
