@@ -3,7 +3,7 @@ import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
 import React, { useEffect, useRef, useState } from "react";
 import useStore, { scheduleStore } from "../../store/store";
 
-import { TimeIcon, VerticalSwapIcon } from "../../utils/icons";
+import { MenuIcon, TimeIcon, VerticalSwapIcon } from "../../utils/icons";
 
 const List = () => {
   const {
@@ -24,6 +24,8 @@ const List = () => {
 
   const [trip, setTrip] = useState();
   const [attractionsData, setAttractionsData] = useState([]);
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
 
   const markerRef = useRef([]);
   const timeEditModalRefArr = Array.from({ length: 20 }, () => useRef(null));
@@ -39,7 +41,7 @@ const List = () => {
     }
   };
 
-  const handleDropdownOptionClicked = async (
+  const handleDaySequenceDropdownOptionClicked = async (
     newDaySequence,
     attractionIndex,
   ) => {
@@ -47,24 +49,57 @@ const List = () => {
     const docSnap = await getDoc(tripRef);
     const newAttractions = { ...docSnap.data() }.attractions;
 
+    console.log(newAttractions);
+
     newAttractions[attractionIndex].daySequence = newDaySequence;
 
     await updateDoc(tripRef, { attractions: newAttractions });
   };
 
-  const generateDropdownButton = (duration, attractionIndex) => {
+  const generateDaySequenceDropdown = (duration, attractionIndex) => {
     const arr = new Array(duration + 1).fill("blank");
     return arr.map((_, index) => {
       return (
         <li key={index}>
           <button
-            onClick={() => handleDropdownOptionClicked(index, attractionIndex)}
+            onClick={() =>
+              handleDaySequenceDropdownOptionClicked(index, attractionIndex)
+            }
           >
-            {index !== 0 ? `移至第${index}天` : "移至未分配"}
+            {index !== 0 ? `移至第${index}天` : "移回未分配"}
           </button>
         </li>
       );
     });
+  };
+
+  const generateInDayOrderDropdown = (daySequenceIndex) => {
+    // const tripRef = doc(database, "users", uid, "trips", currentLoadingTrip);
+    // const result = getDoc(tripRef);
+    // const attractions = result.data().attractions;
+    // const filterAttractions = attractions.filter(
+    //   (item) => item.daySequence === daySequenceIndex,
+    // );
+    // console.log(
+    //   `how many item in day ${daySequenceIndex}: `,
+    //   filterAttractions.length,
+    // );
+
+    const arr = new Array(2).fill("blank");
+    const newArr = arr.map((_, index) => {
+      return (
+        <li key={index}>
+          <button
+            onClick={() =>
+              handleDaySequenceDropdownOptionClicked(index, attractionIndex)
+            }
+          >
+            {index !== 0 ? `移至第${index}天` : "testing"}
+          </button>
+        </li>
+      );
+    });
+    return newArr;
   };
 
   const generateAttractions = (daySequenceIndex, duration) => {
@@ -94,6 +129,27 @@ const List = () => {
                     viewBox="0 0 512 512"
                     className="h-4 w-4 stroke-gray-700 stroke-2"
                   >
+                    <MenuIcon />
+                  </svg>
+                </div>
+                <ul
+                  tabIndex={0}
+                  className="menu dropdown-content z-[1] w-52 rounded-box bg-base-100 p-2 shadow"
+                >
+                  {generateDaySequenceDropdown(duration, attractionIndex)}
+                </ul>
+              </div>
+              <div className="w-[40px dropdown dropdown-hover h-8">
+                <div
+                  tabIndex={0}
+                  role="button"
+                  className="btn m-0 h-8 min-h-0 w-[40px] rounded-none border-b-0 border-l-0 border-r border-t-0 border-solid border-gray-400 bg-white p-0 text-xs"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 512 512"
+                    className="h-4 w-4 stroke-gray-700 stroke-2"
+                  >
                     <VerticalSwapIcon />
                   </svg>
                 </div>
@@ -101,12 +157,9 @@ const List = () => {
                   tabIndex={0}
                   className="menu dropdown-content z-[1] w-52 rounded-box bg-base-100 p-2 shadow"
                 >
-                  {generateDropdownButton(duration, attractionIndex)}
+                  {generateInDayOrderDropdown(daySequenceIndex)}
                 </ul>
               </div>
-              <span className="h-full w-[40px] shrink-0 whitespace-pre-wrap border-r border-solid border-gray-500 p-2 text-center text-xs">
-                -
-              </span>
               <span className="h-full w-[83px] shrink-0 whitespace-nowrap border-r border-solid border-gray-500 text-center text-xs">
                 <button
                   className="btn btn-ghost h-full min-h-0 w-full rounded-none font-normal"
@@ -126,19 +179,48 @@ const List = () => {
                   ref={timeEditModalRefArr[attractionIndex]}
                   className="modal"
                 >
-                  <div className="modal-box">
-                    <form method="dialog">
-                      {/* if there is a button in form, it will close the modal */}
-                      <button className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">
-                        ✕
-                      </button>
-                    </form>
-                    <h3 className="text-lg font-bold">
-                      想要在{attraction.name}停留多久呢？
-                    </h3>
-                    <p className="py-4">
-                      Press ESC key or click on ✕ button to close
-                    </p>
+                  <div className="modal-box relative">
+                    <div className="flex flex-col items-start justify-start gap-2">
+                      <h3 className="mb-4 text-lg font-bold">
+                        想要在{attraction.name}停留多久呢？
+                      </h3>
+                      <h1 className="text-base">起始時間：</h1>
+                      <input
+                        type="time"
+                        step="60"
+                        className="input input-bordered w-full max-w-xs"
+                        value={startTime}
+                        onChange={(e) => {
+                          console.log(
+                            "start time",
+                            typeof e.target.value,
+                            e.target.value,
+                          );
+                          setStartTime(e.target.value);
+                        }}
+                      />
+                      <h1 className="text-base">結束時間：</h1>
+                      <input
+                        type="time"
+                        step="60"
+                        className="input input-bordered w-full max-w-xs"
+                        value={endTime}
+                        onChange={(e) => {
+                          console.log(
+                            "end time",
+                            typeof e.target.value,
+                            e.target.value,
+                          );
+                          setEndTime(e.target.value);
+                        }}
+                      />
+                    </div>
+                    <div className="absolute bottom-6 right-6">
+                      <form method="dialog">
+                        {/* if there is a button in form, it will close the modal */}
+                        <button className="btn btn-secondary">確認</button>
+                      </form>
+                    </div>
                   </div>
                 </dialog>
               </span>

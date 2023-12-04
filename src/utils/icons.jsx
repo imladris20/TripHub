@@ -164,3 +164,15 @@ export const TimeIcon = () => {
     </>
   );
 };
+
+export const MenuIcon = () => {
+  return (
+    <path
+      fill="none"
+      strokeLinecap="round"
+      strokeMiterlimit="10"
+      strokeWidth="32"
+      d="M80 160h352M80 256h352M80 352h352"
+    />
+  );
+};
