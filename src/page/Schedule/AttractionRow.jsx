@@ -10,8 +10,10 @@ const AttractionRow = ({
   attractionIndex,
   daySequenceIndex,
 }) => {
-  const [startTime, setStartTime] = useState("");
+  const [startTime, setStartTime] = useState("08:00");
   const [endTime, setEndTime] = useState("");
+  const [stayHours, setStayHours] = useState("");
+  const [stayMinutes, setStayMinutes] = useState("");
 
   const {
     attractionsData,
@@ -22,16 +24,37 @@ const AttractionRow = ({
 
   const timeEditModalRef = useRef();
 
-  const { name, note, expense } = attraction;
+  const { name, note, expense, inDayOrder, daySequence, poisId } = attraction;
 
   const handleStartTimeInput = (e) => {
     console.log("Start time", typeof e.target.value, e.target.value);
     setStartTime(e.target.value);
   };
 
-  const handleEndTimeInput = (e) => {
-    console.log("End time", typeof e.target.value, e.target.value);
-    setEndTime(e.target.value);
+  const handleStayHoursInput = (e) => {
+    console.log(
+      `我打算待${e.target.value}小時${
+        stayMinutes || 0
+      }分鐘, e.target.value 類型是${typeof e.target.value}`,
+    );
+    setStayHours(e.target.value);
+    const newEndTime = calculateEndTime(
+      startTime,
+      e.target.value,
+      stayMinutes || 0,
+    );
+    setEndTime(newEndTime);
+  };
+
+  const handleStayMinutesInput = (e) => {
+    console.log(
+      `我打算待${stayHours || 0}小時${
+        e.target.value
+      }分鐘, e.target.value 類型是${typeof e.target.value}`,
+    );
+    setStayMinutes(e.target.value);
+    const newEndTime = calculateEndTime(startTime, stayHours, e.target.value);
+    setEndTime(newEndTime);
   };
 
   const handleAttractionNameClicked = (attractionName, note, expense) => {
@@ -43,6 +66,30 @@ const AttractionRow = ({
       setCurrentCenter(targetData.location);
       setCurrentZoom(18);
     }
+  };
+
+  const calculateEndTime = (start, hours, minutes) => {
+    const startHours = parseInt(start.split(":")[0], 10);
+    const startMinutes = parseInt(start.split(":")[1], 10);
+    const stayHoursNum = parseInt(hours, 10);
+    const stayMinutesNum = parseInt(minutes, 10);
+
+    const endHours = startHours + stayHoursNum;
+    const endMinutes = startMinutes + stayMinutesNum;
+
+    const endTime = new Date(0, 0, 0, endHours, endMinutes);
+
+    const stringifyEndTime =
+      endTime.getHours().toString().padStart(2, "0") +
+      ":" +
+      endTime.getMinutes().toString().padStart(2, "0");
+    return stringifyEndTime;
+  };
+
+  const handleConfirmSettingTime = () => {
+    console.log(`起始時間為${startTime}`);
+    console.log(`停留長度為${stayHours}時${stayMinutes}分`);
+    console.log(`結束時間為${endTime}`);
   };
 
   return (
@@ -82,23 +129,44 @@ const AttractionRow = ({
               <input
                 type="time"
                 step="60"
-                className="input input-bordered w-full max-w-xs"
+                className="input input-bordered h-6 w-44 max-w-xs p-0 pl-1"
                 value={startTime}
                 onChange={(e) => handleStartTimeInput(e)}
               />
-              <h1 className="text-base">結束時間：</h1>
-              <input
-                type="time"
-                step="60"
-                className="input input-bordered w-full max-w-xs"
-                value={endTime}
-                onChange={(e) => handleEndTimeInput(e)}
-              />
+              <h1 className="mt-4 text-base">停留長度：</h1>
+              <div className="flex flex-row items-center justify-start gap-2">
+                <input
+                  type="number"
+                  className="input input-bordered h-6 w-11 max-w-xs p-0 pl-2"
+                  placeholder="-"
+                  min={0}
+                  max={23}
+                  value={stayHours}
+                  onChange={(e) => handleStayHoursInput(e)}
+                />
+                <h1 className="text-base">小時</h1>
+                <input
+                  type="number"
+                  className="input input-bordered h-6 w-11 max-w-xs p-0 pl-2"
+                  placeholder="-"
+                  min={0}
+                  max={59}
+                  value={stayMinutes}
+                  onChange={(e) => handleStayMinutesInput(e)}
+                />
+                <h1 className="text-base">分鐘</h1>
+              </div>
+              <h1 className="mt-4 text-base">結束時間：{endTime}</h1>
             </div>
             <div className="absolute bottom-6 right-6">
               <form method="dialog">
                 {/* if there is a button in form, it will close the modal */}
-                <button className="btn btn-secondary">確認</button>
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => handleConfirmSettingTime()}
+                >
+                  確認
+                </button>
               </form>
             </div>
           </div>
