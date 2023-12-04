@@ -234,4 +234,12 @@ export const scheduleStore = create((set, get) => ({
       }),
     );
   },
+  attractionsData: [],
+  setAttractionsData: (result) => {
+    set(
+      produce((state) => {
+        state.attractionsData = result;
+      }),
+    );
+  },
 }));

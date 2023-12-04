@@ -1,18 +1,15 @@
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
-import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
+import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import React, { useEffect, useRef, useState } from "react";
 import useStore, { scheduleStore } from "../../store/store";
-
-import { MenuIcon, TimeIcon, VerticalSwapIcon } from "../../utils/icons";
+import DayBlock from "./DayBlock";
 
 const List = () => {
   const {
     currentLoadingTrip,
-    setAttractionItemDetail,
-    setCurrentCenter,
-    setCurrentZoom,
     currentTripDuration,
     setCurrentTripDuration,
+    setAttractionsData,
   } = scheduleStore();
   const { database } = useStore();
 
@@ -23,55 +20,8 @@ const List = () => {
   const { InfoWindow } = useMapsLibrary("maps");
 
   const [trip, setTrip] = useState();
-  const [attractionsData, setAttractionsData] = useState([]);
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
 
   const markerRef = useRef([]);
-  const timeEditModalRefArr = Array.from({ length: 20 }, () => useRef(null));
-
-  const handleAttractionNameClicked = (attractionName, note, expense) => {
-    const targetData = attractionsData.find(
-      (data) => data.name === attractionName,
-    );
-    if (targetData) {
-      setAttractionItemDetail({ ...targetData, note, expense });
-      setCurrentCenter(targetData.location);
-      setCurrentZoom(18);
-    }
-  };
-
-  const handleDaySequenceDropdownOptionClicked = async (
-    newDaySequence,
-    attractionIndex,
-  ) => {
-    const tripRef = doc(database, "users", uid, "trips", currentLoadingTrip);
-    const docSnap = await getDoc(tripRef);
-    const newAttractions = { ...docSnap.data() }.attractions;
-
-    console.log(newAttractions);
-
-    newAttractions[attractionIndex].daySequence = newDaySequence;
-
-    await updateDoc(tripRef, { attractions: newAttractions });
-  };
-
-  const generateDaySequenceDropdown = (duration, attractionIndex) => {
-    const arr = new Array(duration + 1).fill("blank");
-    return arr.map((_, index) => {
-      return (
-        <li key={index}>
-          <button
-            onClick={() =>
-              handleDaySequenceDropdownOptionClicked(index, attractionIndex)
-            }
-          >
-            {index !== 0 ? `移至第${index}天` : "移回未分配"}
-          </button>
-        </li>
-      );
-    });
-  };
 
   const generateInDayOrderDropdown = (daySequenceIndex) => {
     // const tripRef = doc(database, "users", uid, "trips", currentLoadingTrip);
@@ -100,185 +50,6 @@ const List = () => {
       );
     });
     return newArr;
-  };
-
-  const generateAttractions = (daySequenceIndex, duration) => {
-    const attractions = trip?.attractions;
-
-    const arr = attractions.map((attraction, attractionIndex) => {
-      const { name, note, expense, daySequence } = attraction;
-
-      if (
-        (daySequence > duration && daySequenceIndex === 0) ||
-        daySequence === daySequenceIndex
-      ) {
-        return (
-          <div
-            key={attractionIndex}
-            className="flex w-[350px] flex-col border-b border-solid border-gray-500 bg-white"
-          >
-            <div className="flex w-[350px] flex-row items-center justify-start">
-              <div className="w-[40px dropdown dropdown-hover h-8">
-                <div
-                  tabIndex={0}
-                  role="button"
-                  className="btn m-0 h-8 min-h-0 w-[40px] rounded-none border-b-0 border-l-0 border-r border-t-0 border-solid border-gray-400 bg-white p-0 text-xs"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 512 512"
-                    className="h-4 w-4 stroke-gray-700 stroke-2"
-                  >
-                    <MenuIcon />
-                  </svg>
-                </div>
-                <ul
-                  tabIndex={0}
-                  className="menu dropdown-content z-[1] w-52 rounded-box bg-base-100 p-2 shadow"
-                >
-                  {generateDaySequenceDropdown(duration, attractionIndex)}
-                </ul>
-              </div>
-              <div className="w-[40px dropdown dropdown-hover h-8">
-                <div
-                  tabIndex={0}
-                  role="button"
-                  className="btn m-0 h-8 min-h-0 w-[40px] rounded-none border-b-0 border-l-0 border-r border-t-0 border-solid border-gray-400 bg-white p-0 text-xs"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 512 512"
-                    className="h-4 w-4 stroke-gray-700 stroke-2"
-                  >
-                    <VerticalSwapIcon />
-                  </svg>
-                </div>
-                <ul
-                  tabIndex={0}
-                  className="menu dropdown-content z-[1] w-52 rounded-box bg-base-100 p-2 shadow"
-                >
-                  {generateInDayOrderDropdown(daySequenceIndex)}
-                </ul>
-              </div>
-              <span className="h-full w-[83px] shrink-0 whitespace-nowrap border-r border-solid border-gray-500 text-center text-xs">
-                <button
-                  className="btn btn-ghost h-full min-h-0 w-full rounded-none font-normal"
-                  onClick={() =>
-                    timeEditModalRefArr[attractionIndex].current.showModal()
-                  }
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 512 512"
-                    className="h-4 w-4 stroke-gray-700 stroke-2"
-                  >
-                    <TimeIcon />
-                  </svg>
-                </button>
-                <dialog
-                  ref={timeEditModalRefArr[attractionIndex]}
-                  className="modal"
-                >
-                  <div className="modal-box relative">
-                    <div className="flex flex-col items-start justify-start gap-2">
-                      <h3 className="mb-4 text-lg font-bold">
-                        想要在{attraction.name}停留多久呢？
-                      </h3>
-                      <h1 className="text-base">起始時間：</h1>
-                      <input
-                        type="time"
-                        step="60"
-                        className="input input-bordered w-full max-w-xs"
-                        value={startTime}
-                        onChange={(e) => {
-                          console.log(
-                            "start time",
-                            typeof e.target.value,
-                            e.target.value,
-                          );
-                          setStartTime(e.target.value);
-                        }}
-                      />
-                      <h1 className="text-base">結束時間：</h1>
-                      <input
-                        type="time"
-                        step="60"
-                        className="input input-bordered w-full max-w-xs"
-                        value={endTime}
-                        onChange={(e) => {
-                          console.log(
-                            "end time",
-                            typeof e.target.value,
-                            e.target.value,
-                          );
-                          setEndTime(e.target.value);
-                        }}
-                      />
-                    </div>
-                    <div className="absolute bottom-6 right-6">
-                      <form method="dialog">
-                        {/* if there is a button in form, it will close the modal */}
-                        <button className="btn btn-secondary">確認</button>
-                      </form>
-                    </div>
-                  </div>
-                </dialog>
-              </span>
-              <button
-                className="h-full w-[187px] shrink-0 grow cursor-pointer p-2 text-center text-xs"
-                onClick={() => handleAttractionNameClicked(name, note, expense)}
-              >
-                {attraction.name}
-              </button>
-            </div>
-          </div>
-        );
-      }
-
-      if (daySequence !== daySequenceIndex) {
-        return;
-      }
-    });
-
-    return arr;
-  };
-
-  const generateDayBlocks = () => {
-    const arr = new Array(currentTripDuration + 1).fill("blank");
-    return arr.map((_, daySequenceIndex) => {
-      return (
-        <React.Fragment key={daySequenceIndex}>
-          <div
-            key={daySequenceIndex}
-            className="flex w-[350px] flex-row items-center justify-center border-b border-dotted border-gray-200 bg-gray-500 py-3"
-          >
-            <h1 className="text-base text-gray-200">
-              {daySequenceIndex === 0
-                ? "未分配的景點"
-                : `第${daySequenceIndex}天`}
-            </h1>
-            {}
-          </div>
-          <div className="flex w-[350px] flex-col border-b border-solid border-gray-500 bg-white">
-            <div className="flex w-[350px] flex-row items-center justify-start">
-              <span className="h-full w-[40px] whitespace-nowrap border-r border-solid border-gray-500 p-2 text-center text-xs">
-                分配
-              </span>
-              <span className="h-full w-[40px] whitespace-nowrap border-r border-solid border-gray-500 p-2 text-center text-xs">
-                順序
-              </span>
-              <span className="h-full w-[83px] whitespace-nowrap border-r border-solid border-gray-500 p-2 text-center text-xs">
-                時間
-              </span>
-              <span className="h-full w-[187px] p-2 text-center text-xs">
-                景點名稱
-              </span>
-            </div>
-          </div>
-          {generateAttractions(daySequenceIndex, currentTripDuration)}
-        </React.Fragment>
-      );
-    });
   };
 
   //  listener of loading newest data of selected trip
@@ -372,7 +143,16 @@ const List = () => {
   }, [trip]);
 
   return trip?.attractions ? (
-    <>{generateDayBlocks()}</>
+    [...Array(currentTripDuration + 1)].map((_, daySequenceIndex) => {
+      return (
+        <DayBlock
+          key={daySequenceIndex}
+          daySequenceIndex={daySequenceIndex}
+          currentTripDuration={currentTripDuration}
+          trip={trip}
+        />
+      );
+    })
   ) : (
     <div className="flex h-full w-full flex-row items-center justify-center">
       <span className="loading loading-bars loading-lg"></span>
