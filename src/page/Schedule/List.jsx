@@ -15,21 +15,25 @@ const List = () => {
     setCurrentTripDuration,
   } = scheduleStore();
   const { database } = useStore();
+
   const uid = localStorage.getItem("uid");
-  const [trip, setTrip] = useState();
+
   const map = useMap("tripMap");
   const { Marker } = useMapsLibrary("marker");
   const { InfoWindow } = useMapsLibrary("maps");
+
+  const [trip, setTrip] = useState();
   const [attractionsData, setAttractionsData] = useState([]);
 
   const markerRef = useRef([]);
+  const timeEditModalRefArr = Array.from({ length: 20 }, () => useRef(null));
 
   const handleAttractionNameClicked = (attractionName, note, expense) => {
     const targetData = attractionsData.find(
       (data) => data.name === attractionName,
     );
     if (targetData) {
-      setAttractionItemDetail({ ...targetData, note, expense, daySequence });
+      setAttractionItemDetail({ ...targetData, note, expense });
       setCurrentCenter(targetData.location);
       setCurrentZoom(18);
     }
@@ -62,8 +66,6 @@ const List = () => {
       );
     });
   };
-
-  const timeEditModalRef = useRef();
 
   const generateAttractions = (daySequenceIndex, duration) => {
     const attractions = trip?.attractions;
@@ -108,7 +110,9 @@ const List = () => {
               <span className="h-full w-[83px] shrink-0 whitespace-nowrap border-r border-solid border-gray-500 text-center text-xs">
                 <button
                   className="btn btn-ghost h-full min-h-0 w-full rounded-none font-normal"
-                  onClick={() => timeEditModalRef.current.showModal()}
+                  onClick={() =>
+                    timeEditModalRefArr[attractionIndex].current.showModal()
+                  }
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -118,7 +122,10 @@ const List = () => {
                     <TimeIcon />
                   </svg>
                 </button>
-                <dialog ref={timeEditModalRef} className="modal">
+                <dialog
+                  ref={timeEditModalRefArr[attractionIndex]}
+                  className="modal"
+                >
                   <div className="modal-box">
                     <form method="dialog">
                       {/* if there is a button in form, it will close the modal */}
