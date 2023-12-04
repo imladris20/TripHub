@@ -22,6 +22,16 @@ const InDayOrderDropdown = ({ daySequenceIndex, name, attractionIndex }) => {
       )?.inDayOrder;
 
       return [...Array(filterAttractions.length + 1)].map((_, optionIndex) => {
+        if (optionIndex !== 0) {
+          const isOccupied = trip.attractions.some(
+            (item) => item.inDayOrder === optionIndex,
+          );
+
+          if (isOccupied) {
+            return;
+          }
+        }
+
         return (
           <li key={optionIndex}>
             <button
