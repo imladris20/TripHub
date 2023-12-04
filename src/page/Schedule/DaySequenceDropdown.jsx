@@ -16,6 +16,7 @@ const DaySequenceDropdown = ({ duration, attractionIndex }) => {
     const newAttractions = { ...docSnap.data() }.attractions;
 
     newAttractions[attractionIndex].daySequence = newDaySequence;
+    newAttractions[attractionIndex].inDayOrder = 0;
 
     await updateDoc(tripRef, { attractions: newAttractions });
   };
