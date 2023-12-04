@@ -7,7 +7,7 @@ const DaySequenceDropdown = ({ duration, attractionIndex }) => {
   const uid = localStorage.getItem("uid");
   const { currentLoadingTrip } = scheduleStore();
 
-  const handleDaySequenceDropdownOptionClicked = async (
+  const handleDropdownOptionClicked = async (
     newDaySequence,
     attractionIndex,
   ) => {
@@ -25,9 +25,7 @@ const DaySequenceDropdown = ({ duration, attractionIndex }) => {
       return (
         <li key={index}>
           <button
-            onClick={() =>
-              handleDaySequenceDropdownOptionClicked(index, attractionIndex)
-            }
+            onClick={() => handleDropdownOptionClicked(index, attractionIndex)}
           >
             {index !== 0 ? `移至第${index}天` : "移回未分配"}
           </button>

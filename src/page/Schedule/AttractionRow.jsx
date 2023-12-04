@@ -50,8 +50,13 @@ const AttractionRow = ({
       <DaySequenceDropDown
         duration={duration}
         attractionIndex={attractionIndex}
+        name={name}
       />
-      <InDayOrderDropdown daySequenceIndex={daySequenceIndex} />
+      <InDayOrderDropdown
+        daySequenceIndex={daySequenceIndex}
+        name={name}
+        attractionIndex={attractionIndex}
+      />
 
       {/* time(modal) */}
       <span className="h-full w-[83px] shrink-0 whitespace-nowrap border-r border-solid border-gray-500 text-center text-xs">

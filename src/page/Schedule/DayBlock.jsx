@@ -36,7 +36,7 @@ const DayBlock = ({ daySequenceIndex, currentTripDuration, trip }) => {
         key={daySequenceIndex}
         className="flex w-[350px] flex-row items-center justify-center border-b border-dotted border-gray-200 bg-gray-500 py-3"
       >
-        <h1 className="text-base text-gray-200">
+        <h1 className="text-base font-bold tracking-widest text-gray-100">
           {daySequenceIndex === 0 ? "未分配的景點" : `第${daySequenceIndex}天`}
         </h1>
         {}

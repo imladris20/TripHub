@@ -67,6 +67,7 @@ const AddToSchedule = () => {
         note,
         expense,
         daySequence: 0,
+        inDayOrder: 0,
         name: poisItemDetailInfo.data.name,
         poisId: poisItemDetailInfo.id,
       }),
