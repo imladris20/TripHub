@@ -58,8 +58,8 @@ const InDayOrderDropdown = ({ daySequenceIndex, name, attractionIndex }) => {
     currentOrder,
     newOrder,
   ) => {
-    console.log(`${name}在第${daySequenceIndex}天的第${currentOrder}項`);
-    console.log(`想變更到第${newOrder}項`);
+    // console.log(`${name}在第${daySequenceIndex}天的第${currentOrder}項`);
+    // console.log(`想變更到第${newOrder}項`);
 
     if (currentOrder !== newOrder) {
       const tripRef = doc(database, "users", uid, "trips", currentLoadingTrip);
@@ -67,6 +67,8 @@ const InDayOrderDropdown = ({ daySequenceIndex, name, attractionIndex }) => {
       const target = newAttractions.findIndex((item) => item.name === name);
 
       newAttractions[target].inDayOrder = newOrder;
+
+      newAttractions.sort((a, b) => a.inDayOrder - b.inDayOrder);
 
       await updateDoc(tripRef, { attractions: newAttractions });
     }

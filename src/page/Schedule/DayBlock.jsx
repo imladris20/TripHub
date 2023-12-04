@@ -2,7 +2,7 @@ import AttractionRow from "./AttractionRow";
 
 const DayBlock = ({ daySequenceIndex, currentTripDuration, trip }) => {
   const generateAttractions = (daySequenceIndex, duration) => {
-    const attractions = trip?.attractions;
+    let attractions = trip?.attractions;
 
     const arr = attractions.map((attraction, attractionIndex) => {
       const { daySequence } = attraction;
