@@ -1,39 +1,65 @@
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, onSnapshot, updateDoc } from "firebase/firestore";
+import { useEffect, useState } from "react";
 import useStore, { scheduleStore } from "../../store/store";
 import { MenuIcon } from "../../utils/icons";
 
-const DaySequenceDropdown = ({ duration, attractionIndex }) => {
+const DaySequenceDropdown = ({ duration, attractionIndex, name }) => {
   const { database } = useStore();
   const uid = localStorage.getItem("uid");
   const { currentLoadingTrip } = scheduleStore();
+  const [trip, setTrip] = useState();
 
   const handleDropdownOptionClicked = async (
     newDaySequence,
     attractionIndex,
   ) => {
-    const tripRef = doc(database, "users", uid, "trips", currentLoadingTrip);
-    const docSnap = await getDoc(tripRef);
-    const newAttractions = { ...docSnap.data() }.attractions;
+    const newAttractions = trip?.attractions;
 
-    newAttractions[attractionIndex].daySequence = newDaySequence;
-    newAttractions[attractionIndex].inDayOrder = 0;
-
-    await updateDoc(tripRef, { attractions: newAttractions });
+    if (newAttractions) {
+      const tripRef = doc(database, "users", uid, "trips", currentLoadingTrip);
+      newAttractions[attractionIndex].daySequence = newDaySequence;
+      newAttractions[attractionIndex].inDayOrder = 0;
+      await updateDoc(tripRef, { attractions: newAttractions });
+    }
   };
 
   const generateDaySequenceDropdownList = (duration, attractionIndex) => {
-    return [...Array(duration + 1)].map((_, index) => {
-      return (
-        <li key={index}>
-          <button
-            onClick={() => handleDropdownOptionClicked(index, attractionIndex)}
-          >
-            {index !== 0 ? `移至第${index}天` : "移回未分配"}
-          </button>
-        </li>
-      );
-    });
+    if (trip?.attractions) {
+      const currentDaySequence = trip.attractions.find(
+        (item) => item.name === name,
+      )?.daySequence;
+
+      return [...Array(duration + 1)].map((_, optionIndex) => {
+        return (
+          optionIndex !== currentDaySequence && (
+            <li key={optionIndex}>
+              <button
+                onClick={() =>
+                  handleDropdownOptionClicked(optionIndex, attractionIndex)
+                }
+              >
+                {optionIndex !== 0 ? `移至第${optionIndex}天` : "移回未分配"}
+              </button>
+            </li>
+          )
+        );
+      });
+    }
   };
+
+  useEffect(() => {
+    if (database && currentLoadingTrip) {
+      const unsubscribe = onSnapshot(
+        doc(database, "users", uid, "trips", currentLoadingTrip),
+        (doc) => {
+          setTrip(doc.data());
+        },
+      );
+      return () => {
+        unsubscribe();
+      };
+    }
+  }, [database, currentLoadingTrip]);
 
   return (
     <div className="w-[40px dropdown dropdown-hover h-8">

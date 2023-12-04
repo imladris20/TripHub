@@ -7,7 +7,7 @@ const InDayOrderDropdown = ({ daySequenceIndex, name, attractionIndex }) => {
   const { database } = useStore();
   const uid = localStorage.getItem("uid");
   const { currentLoadingTrip } = scheduleStore();
-  const [trip, setTrip] = useState([]);
+  const [trip, setTrip] = useState();
   const [currentOrder, setCurrentOrder] = useState();
   const [allAttractions, setAllAttractions] = useState([]);
 
@@ -24,7 +24,9 @@ const InDayOrderDropdown = ({ daySequenceIndex, name, attractionIndex }) => {
       return [...Array(filterAttractions.length + 1)].map((_, optionIndex) => {
         if (optionIndex !== 0) {
           const isOccupied = trip.attractions.some(
-            (item) => item.inDayOrder === optionIndex,
+            (item) =>
+              item.inDayOrder === optionIndex &&
+              item.daySequence === daySequenceIndex,
           );
 
           if (isOccupied) {
@@ -33,20 +35,22 @@ const InDayOrderDropdown = ({ daySequenceIndex, name, attractionIndex }) => {
         }
 
         return (
-          <li key={optionIndex}>
-            <button
-              onClick={() =>
-                handleDropdownOptionClicked(
-                  name,
-                  daySequenceIndex,
-                  currentOrder,
-                  optionIndex,
-                )
-              }
-            >
-              {optionIndex !== 0 ? `設為第${optionIndex}項` : "重設順序"}
-            </button>
-          </li>
+          optionIndex !== currentOrder && (
+            <li key={optionIndex}>
+              <button
+                onClick={() =>
+                  handleDropdownOptionClicked(
+                    name,
+                    daySequenceIndex,
+                    currentOrder,
+                    optionIndex,
+                  )
+                }
+              >
+                {optionIndex !== 0 ? `設為第${optionIndex}項` : "重設順序"}
+              </button>
+            </li>
+          )
         );
       });
     }
