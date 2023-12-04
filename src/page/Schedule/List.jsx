@@ -23,35 +23,6 @@ const List = () => {
 
   const markerRef = useRef([]);
 
-  const generateInDayOrderDropdown = (daySequenceIndex) => {
-    // const tripRef = doc(database, "users", uid, "trips", currentLoadingTrip);
-    // const result = getDoc(tripRef);
-    // const attractions = result.data().attractions;
-    // const filterAttractions = attractions.filter(
-    //   (item) => item.daySequence === daySequenceIndex,
-    // );
-    // console.log(
-    //   `how many item in day ${daySequenceIndex}: `,
-    //   filterAttractions.length,
-    // );
-
-    const arr = new Array(2).fill("blank");
-    const newArr = arr.map((_, index) => {
-      return (
-        <li key={index}>
-          <button
-            onClick={() =>
-              handleDaySequenceDropdownOptionClicked(index, attractionIndex)
-            }
-          >
-            {index !== 0 ? `移至第${index}天` : "testing"}
-          </button>
-        </li>
-      );
-    });
-    return newArr;
-  };
-
   //  listener of loading newest data of selected trip
   useEffect(() => {
     if (database && currentLoadingTrip) {

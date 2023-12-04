@@ -4,7 +4,12 @@ import { TimeIcon } from "../../utils/icons";
 import DaySequenceDropDown from "./DaySequenceDropdown";
 import InDayOrderDropdown from "./InDayOrderDropdown";
 
-const AttractionRow = ({ attraction, duration, attractionIndex }) => {
+const AttractionRow = ({
+  attraction,
+  duration,
+  attractionIndex,
+  daySequenceIndex,
+}) => {
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
 
@@ -46,7 +51,7 @@ const AttractionRow = ({ attraction, duration, attractionIndex }) => {
         duration={duration}
         attractionIndex={attractionIndex}
       />
-      <InDayOrderDropdown />
+      <InDayOrderDropdown daySequenceIndex={daySequenceIndex} />
 
       {/* time(modal) */}
       <span className="h-full w-[83px] shrink-0 whitespace-nowrap border-r border-solid border-gray-500 text-center text-xs">

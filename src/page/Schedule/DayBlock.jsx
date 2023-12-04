@@ -17,6 +17,7 @@ const DayBlock = ({ daySequenceIndex, currentTripDuration, trip }) => {
             attraction={attraction}
             duration={duration}
             attractionIndex={attractionIndex}
+            daySequenceIndex={daySequenceIndex}
           />
         );
       }
