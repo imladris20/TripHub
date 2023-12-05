@@ -1,8 +1,11 @@
+import { scheduleStore } from "../../store/store";
 import AttractionRow from "./AttractionRow";
 
-const DayBlock = ({ daySequenceIndex, currentTripDuration, trip }) => {
+const DayBlock = ({ daySequenceIndex }) => {
+  const { currentTripDuration, currentLoadingTripData } = scheduleStore;
+
   const generateAttractions = (daySequenceIndex, duration) => {
-    let attractions = trip?.attractions;
+    let attractions = currentLoadingTripData?.attractions;
 
     const arr = attractions.map((attraction, attractionIndex) => {
       const { daySequence } = attraction;
@@ -14,10 +17,9 @@ const DayBlock = ({ daySequenceIndex, currentTripDuration, trip }) => {
         return (
           <AttractionRow
             key={attractionIndex}
-            attraction={attraction}
-            duration={duration}
-            attractionIndex={attractionIndex}
             daySequenceIndex={daySequenceIndex}
+            currentAttraction={attraction}
+            currentAttractionIndex={attractionIndex}
           />
         );
       }

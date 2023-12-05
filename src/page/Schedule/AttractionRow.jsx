@@ -4,23 +4,28 @@ import InDayOrderDropdown from "./InDayOrderDropdown";
 import TimeSettingModal from "./TimeSettingModal";
 
 const AttractionRow = ({
-  attraction,
-  duration,
-  attractionIndex,
+  currentAttraction,
+  currentAttractionIndex,
   daySequenceIndex,
 }) => {
   const {
-    attractionsData,
+    attractionsData: allAttractions,
     setAttractionItemDetail,
     setCurrentCenter,
     setCurrentZoom,
+    currentTripDuration,
   } = scheduleStore();
 
-  const { name, note, expense, inDayOrder, daySequence, poisId } = attraction;
+  const { name, note, expense, inDayOrder, daySequence, poisId } =
+    currentAttraction;
 
-  const handleAttractionNameClicked = (attractionName, note, expense) => {
-    const targetData = attractionsData.find(
-      (data) => data.name === attractionName,
+  const handleAttractionNameClicked = (
+    currentAttractionName,
+    note,
+    expense,
+  ) => {
+    const targetData = allAttractions.find(
+      (data) => data.name === currentAttractionName,
     );
     if (targetData) {
       setAttractionItemDetail({ ...targetData, note, expense });
@@ -32,14 +37,13 @@ const AttractionRow = ({
   return (
     <div className="flex w-[350px] flex-row items-center justify-start border-b border-solid border-gray-500 bg-white">
       <DaySequenceDropDown
-        duration={duration}
-        attractionIndex={attractionIndex}
+        attractionIndex={currentAttractionIndex}
         name={name}
       />
       <InDayOrderDropdown
         daySequenceIndex={daySequenceIndex}
         name={name}
-        attractionIndex={attractionIndex}
+        attractionIndex={currentAttractionIndex}
       />
 
       <TimeSettingModal name={name} />

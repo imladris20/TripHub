@@ -1,22 +1,27 @@
-import { doc, onSnapshot, updateDoc } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { doc, updateDoc } from "firebase/firestore";
 import useStore, { scheduleStore } from "../../store/store";
 import { MenuIcon } from "../../utils/icons";
 
-const DaySequenceDropdown = ({ duration, attractionIndex, name }) => {
+const DaySequenceDropdown = ({ attractionIndex, name }) => {
   const { database } = useStore();
   const uid = localStorage.getItem("uid");
-  const { currentLoadingTrip } = scheduleStore();
-  const [trip, setTrip] = useState();
+  const { currentLoadingTripId, currentTripDuration, currentLoadingTripData } =
+    scheduleStore();
 
   const handleDropdownOptionClicked = async (
     newDaySequence,
     attractionIndex,
   ) => {
-    const newAttractions = trip?.attractions;
+    const newAttractions = currentLoadingTripData?.attractions;
 
     if (newAttractions) {
-      const tripRef = doc(database, "users", uid, "trips", currentLoadingTrip);
+      const tripRef = doc(
+        database,
+        "users",
+        uid,
+        "trips",
+        currentLoadingTripId,
+      );
       newAttractions[attractionIndex].daySequence = newDaySequence;
       newAttractions[attractionIndex].inDayOrder = 0;
       await updateDoc(tripRef, { attractions: newAttractions });
@@ -24,8 +29,8 @@ const DaySequenceDropdown = ({ duration, attractionIndex, name }) => {
   };
 
   const generateDaySequenceDropdownList = (duration, attractionIndex) => {
-    if (trip?.attractions) {
-      const currentDaySequence = trip.attractions.find(
+    if (currentLoadingTripData?.attractions) {
+      const currentDaySequence = currentLoadingTripData.attractions.find(
         (item) => item.name === name,
       )?.daySequence;
 
@@ -47,20 +52,6 @@ const DaySequenceDropdown = ({ duration, attractionIndex, name }) => {
     }
   };
 
-  useEffect(() => {
-    if (database && currentLoadingTrip) {
-      const unsubscribe = onSnapshot(
-        doc(database, "users", uid, "trips", currentLoadingTrip),
-        (doc) => {
-          setTrip(doc.data());
-        },
-      );
-      return () => {
-        unsubscribe();
-      };
-    }
-  }, [database, currentLoadingTrip]);
-
   return (
     <div className="w-[40px dropdown dropdown-hover h-8">
       <div
@@ -80,7 +71,7 @@ const DaySequenceDropdown = ({ duration, attractionIndex, name }) => {
         tabIndex={0}
         className="menu dropdown-content z-[1] w-52 rounded-box bg-base-100 p-2 shadow"
       >
-        {generateDaySequenceDropdownList(duration, attractionIndex)}
+        {generateDaySequenceDropdownList(currentTripDuration, attractionIndex)}
       </ul>
     </div>
   );

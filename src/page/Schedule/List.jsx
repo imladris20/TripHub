@@ -1,15 +1,17 @@
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import { doc, getDoc, onSnapshot } from "firebase/firestore";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import useStore, { scheduleStore } from "../../store/store";
 import DayBlock from "./DayBlock";
 
 const List = () => {
   const {
-    currentLoadingTrip,
+    currentLoadingTripId,
     currentTripDuration,
     setCurrentTripDuration,
     setAttractionsData,
+    currentLoadingTripData,
+    setCurrentLoadingTripData,
   } = scheduleStore();
   const { database } = useStore();
 
@@ -19,17 +21,15 @@ const List = () => {
   const { Marker } = useMapsLibrary("marker");
   const { InfoWindow } = useMapsLibrary("maps");
 
-  const [trip, setTrip] = useState();
-
   const markerRef = useRef([]);
 
   //  listener of loading newest data of selected trip
   useEffect(() => {
-    if (database && currentLoadingTrip) {
+    if (database && currentLoadingTripId) {
       const unsubscribe = onSnapshot(
-        doc(database, "users", uid, "trips", currentLoadingTrip),
+        doc(database, "users", uid, "trips", currentLoadingTripId),
         (doc) => {
-          setTrip(doc.data());
+          setCurrentLoadingTripData(doc.data());
           setCurrentTripDuration(doc.data()?.dayCount || 0);
         },
       );
@@ -37,7 +37,7 @@ const List = () => {
         unsubscribe();
       };
     }
-  }, [database, currentLoadingTrip]);
+  }, [database, currentLoadingTripId]);
 
   //  Add markers of attractions in trip on map
   useEffect(() => {
@@ -51,7 +51,7 @@ const List = () => {
       }
 
       const result = await Promise.all(
-        trip.attractions.map(async (attraction) => {
+        currentLoadingTripData.attractions.map(async (attraction) => {
           const { daySequence, note, expense } = attraction;
           const ref = doc(
             database,
@@ -108,20 +108,15 @@ const List = () => {
         markerRef.current.push(marker);
       });
     };
-    if (trip?.attractions) {
+    if (currentLoadingTripData?.attractions) {
       generateMarker();
     }
-  }, [trip]);
+  }, [currentLoadingTripData]);
 
-  return trip?.attractions ? (
+  return currentLoadingTripData?.attractions ? (
     [...Array(currentTripDuration + 1)].map((_, daySequenceIndex) => {
       return (
-        <DayBlock
-          key={daySequenceIndex}
-          daySequenceIndex={daySequenceIndex}
-          currentTripDuration={currentTripDuration}
-          trip={trip}
-        />
+        <DayBlock key={daySequenceIndex} daySequenceIndex={daySequenceIndex} />
       );
     })
   ) : (

@@ -202,11 +202,19 @@ export const scheduleStore = create((set, get) => ({
       }),
     );
   },
-  currentLoadingTrip: null,
-  setCurrentLoadingTrip: (tripId) => {
+  currentLoadingTripId: null,
+  setCurrentLoadingTripId: (tripId) => {
     set(
       produce((state) => {
-        state.currentLoadingTrip = tripId;
+        state.currentLoadingTripId = tripId;
+      }),
+    );
+  },
+  currentLoadingTripData: null,
+  setCurrentLoadingTripData: (docSnapData) => {
+    set(
+      produce((state) => {
+        state.currentLoadingTripData = docSnapData;
       }),
     );
   },
