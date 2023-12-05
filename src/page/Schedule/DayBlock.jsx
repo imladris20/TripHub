@@ -2,7 +2,7 @@ import { scheduleStore } from "../../store/store";
 import AttractionRow from "./AttractionRow";
 
 const DayBlock = ({ daySequenceIndex }) => {
-  const { currentTripDuration, currentLoadingTripData } = scheduleStore;
+  const { currentTripDuration, currentLoadingTripData } = scheduleStore();
 
   const generateAttractions = (daySequenceIndex, duration) => {
     let attractions = currentLoadingTripData?.attractions;

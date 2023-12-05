@@ -1,5 +1,4 @@
-import { doc, onSnapshot } from "firebase/firestore";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import useStore, { scheduleStore } from "../../store/store";
 import { TimeIcon } from "../../utils/icons";
 
@@ -23,10 +22,9 @@ const calculateEndTime = (start, hours, minutes) => {
 
 const TimeSettingModal = ({ name }) => {
   const modalRef = useRef();
-  const [trip, setTrip] = useState();
   const { database } = useStore();
   const uid = localStorage.getItem("uid");
-  const { currentLoadingTrip } = scheduleStore();
+  const { currentLoadingTripId, currentLoadingTripData } = scheduleStore();
 
   const [startTime, setStartTime] = useState("08:00");
   const [stayHours, setStayHours] = useState("");
@@ -65,25 +63,11 @@ const TimeSettingModal = ({ name }) => {
   };
 
   const handleConfirmSettingTime = () => {
-    console.log("載入中的旅程: ", trip);
+    console.log("載入中的旅程: ", currentLoadingTripData);
     console.log(`起始時間為${startTime}`);
     console.log(`停留長度為${stayHours}時${stayMinutes}分`);
     console.log(`結束時間為${endTime}`);
   };
-
-  useEffect(() => {
-    if (database && currentLoadingTrip) {
-      const unsubscribe = onSnapshot(
-        doc(database, "users", uid, "trips", currentLoadingTrip),
-        (doc) => {
-          setTrip(doc.data());
-        },
-      );
-      return () => {
-        unsubscribe();
-      };
-    }
-  }, [database, currentLoadingTrip]);
 
   return (
     <span className="h-full w-[83px] shrink-0 whitespace-nowrap border-r border-solid border-gray-500 text-center text-xs">

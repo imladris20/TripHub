@@ -13,7 +13,6 @@ const AttractionRow = ({
     setAttractionItemDetail,
     setCurrentCenter,
     setCurrentZoom,
-    currentTripDuration,
   } = scheduleStore();
 
   const { name, note, expense, inDayOrder, daySequence, poisId } =
@@ -43,7 +42,7 @@ const AttractionRow = ({
       <InDayOrderDropdown
         daySequenceIndex={daySequenceIndex}
         name={name}
-        attractionIndex={currentAttractionIndex}
+        inDayOrder={inDayOrder}
       />
 
       <TimeSettingModal name={name} />

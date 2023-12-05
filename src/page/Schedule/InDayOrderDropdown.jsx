@@ -1,29 +1,29 @@
-import { doc, onSnapshot, updateDoc } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { doc, updateDoc } from "firebase/firestore";
 import useStore, { scheduleStore } from "../../store/store";
 import { VerticalSwapIcon } from "../../utils/icons";
 
-const InDayOrderDropdown = ({ daySequenceIndex, name, attractionIndex }) => {
+const InDayOrderDropdown = ({ daySequenceIndex, name, inDayOrder }) => {
   const { database } = useStore();
   const uid = localStorage.getItem("uid");
-  const { currentLoadingTrip } = scheduleStore();
-  const [trip, setTrip] = useState();
-  const [currentOrder, setCurrentOrder] = useState();
-  const [allAttractions, setAllAttractions] = useState([]);
+  const {
+    currentLoadingTripId,
+    attractionsData: allAttractions,
+    currentLoadingTripData,
+  } = scheduleStore();
 
   const generateInDayOrderDropdown = (daySequenceIndex, name) => {
-    if (allAttractions && trip?.attractions) {
+    if (allAttractions && currentLoadingTripData?.attractions) {
       const filterAttractions = allAttractions.filter(
         (item) => item.daySequence === daySequenceIndex,
       );
 
-      const currentOrder = trip.attractions.find(
+      const currentOrder = currentLoadingTripData.attractions.find(
         (item) => item.name === name,
       )?.inDayOrder;
 
       return [...Array(filterAttractions.length + 1)].map((_, optionIndex) => {
         if (optionIndex !== 0) {
-          const isOccupied = trip.attractions.some(
+          const isOccupied = currentLoadingTripData.attractions.some(
             (item) =>
               item.inDayOrder === optionIndex &&
               item.daySequence === daySequenceIndex,
@@ -66,8 +66,14 @@ const InDayOrderDropdown = ({ daySequenceIndex, name, attractionIndex }) => {
     // console.log(`想變更到第${newOrder}項`);
 
     if (currentOrder !== newOrder) {
-      const tripRef = doc(database, "users", uid, "trips", currentLoadingTrip);
-      const newAttractions = trip.attractions;
+      const tripRef = doc(
+        database,
+        "users",
+        uid,
+        "trips",
+        currentLoadingTripId,
+      );
+      const newAttractions = currentLoadingTripData.attractions;
       const target = newAttractions.findIndex((item) => item.name === name);
 
       newAttractions[target].inDayOrder = newOrder;
@@ -78,23 +84,6 @@ const InDayOrderDropdown = ({ daySequenceIndex, name, attractionIndex }) => {
     }
   };
 
-  //  listener of loading newest data of selected trip
-  useEffect(() => {
-    if (database && currentLoadingTrip) {
-      const unsubscribe = onSnapshot(
-        doc(database, "users", uid, "trips", currentLoadingTrip),
-        (doc) => {
-          setAllAttractions(doc.data().attractions);
-          setTrip(doc.data());
-          setCurrentOrder(doc.data().attractions[attractionIndex].inDayOrder);
-        },
-      );
-      return () => {
-        unsubscribe();
-      };
-    }
-  }, [database, currentLoadingTrip]);
-
   return daySequenceIndex !== 0 ? (
     <div className="dropdown dropdown-hover h-8 w-[40px]">
       <div
@@ -102,9 +91,9 @@ const InDayOrderDropdown = ({ daySequenceIndex, name, attractionIndex }) => {
         role="button"
         className="btn m-0 h-8 min-h-0 w-[40px] rounded-none border-b-0 border-l-0 border-r border-t-0 border-solid border-gray-400 bg-white p-0 text-xs"
       >
-        {currentOrder && currentOrder !== 0 ? (
+        {inDayOrder && inDayOrder !== 0 ? (
           <span className="h-full w-[40px] whitespace-nowrap p-2 text-center text-xs">
-            {currentOrder}
+            {inDayOrder}
           </span>
         ) : (
           <svg
