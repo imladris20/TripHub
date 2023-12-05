@@ -9,10 +9,14 @@ const Header = () => {
     setCurrentTripDuration,
     currentLoadingTripData,
   } = scheduleStore();
+
+  console.log(currentLoadingTripData);
+
   const [startDate, setStartDate] = useState(
     currentLoadingTripData?.startDate || "",
   );
   const [endDate, setEndDate] = useState(currentLoadingTripData?.endDate || "");
+
   const { database } = useStore();
   const uid = localStorage.getItem("uid");
 

@@ -7,7 +7,7 @@ import Profile from "./Profile";
 
 const Header = () => {
   const { isLogin } = useStore();
-  const { currentLoadingTripId } = scheduleStore();
+  const { currentLoadingTripData } = scheduleStore();
   const currentPath = useLocation().pathname;
   useEffect(() => {
     switch (location.pathname) {
@@ -65,7 +65,7 @@ const Header = () => {
               行程規劃
             </button>
           </Link>
-          {location.pathname === "/schedule" && currentLoadingTripId && (
+          {location.pathname === "/schedule" && currentLoadingTripData && (
             <ScheduleHeader />
           )}
         </>
