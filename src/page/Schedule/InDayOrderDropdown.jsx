@@ -69,6 +69,11 @@ const InDayOrderDropdown = ({
 
       newAttractions[currentAttractionIndex].inDayOrder = newOrder;
 
+      newAttractions[currentAttractionIndex].endTime = "";
+      newAttractions[currentAttractionIndex].startTime = "";
+      newAttractions[currentAttractionIndex].stayHours = "";
+      newAttractions[currentAttractionIndex].stayMinutes = "";
+
       newAttractions.sort((a, b) => a.inDayOrder - b.inDayOrder);
 
       await updateDoc(tripRef, { attractions: newAttractions });

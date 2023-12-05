@@ -19,7 +19,6 @@ const DayBlock = ({ daySequenceIndex }) => {
             key={attractionIndex}
             daySequenceIndex={daySequenceIndex}
             currentAttraction={attraction}
-            currentAttractionIndex={attractionIndex}
           />
         );
       }
