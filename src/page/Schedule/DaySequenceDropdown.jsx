@@ -25,6 +25,7 @@ const DaySequenceDropdown = ({ currentAttractionIndex, name }) => {
       );
 
       newAttractions[currentAttractionIndex].daySequence = newDaySequence;
+
       newAttractions[currentAttractionIndex].inDayOrder = 0;
       newAttractions[currentAttractionIndex].startTime = "";
       newAttractions[currentAttractionIndex].endTime = "";

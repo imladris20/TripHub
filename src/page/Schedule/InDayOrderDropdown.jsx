@@ -1,5 +1,5 @@
 import { doc, updateDoc } from "firebase/firestore";
-import { cloneDeep } from "lodash";
+import { cloneDeep, findIndex } from "lodash";
 import useStore, { scheduleStore } from "../../store/store";
 import { VerticalSwapIcon } from "../../utils/icons";
 
@@ -65,12 +65,26 @@ const InDayOrderDropdown = ({
         "trips",
         currentLoadingTripId,
       );
+
       const newAttractions = cloneDeep(currentLoadingTripData.attractions);
 
       newAttractions[currentAttractionIndex].inDayOrder = newOrder;
 
+      const previousInDayOrderItemIndex = findIndex(newAttractions, {
+        daySequence: newAttractions[currentAttractionIndex].daySequence,
+        inDayOrder: newOrder - 1,
+      });
+
+      if (previousInDayOrderItemIndex === -1) {
+        newAttractions[currentAttractionIndex].startTime = "";
+      } else {
+        newAttractions[currentAttractionIndex].startTime =
+          addOneMinuteToTimeString(
+            newAttractions[previousInDayOrderItemIndex].endTime,
+          ) || "";
+      }
+
       newAttractions[currentAttractionIndex].endTime = "";
-      newAttractions[currentAttractionIndex].startTime = "";
       newAttractions[currentAttractionIndex].stayHours = "";
       newAttractions[currentAttractionIndex].stayMinutes = "";
 
@@ -116,3 +130,20 @@ const InDayOrderDropdown = ({
 };
 
 export default InDayOrderDropdown;
+
+function addOneMinuteToTimeString(timeString) {
+  if (timeString) {
+    const [hours, minutes] = timeString.split(":").map(Number);
+
+    const totalMinutes = (hours * 60 + minutes + 1) % (24 * 60);
+
+    const newHours = Math.floor(totalMinutes / 60);
+    const newMinutes = totalMinutes % 60;
+
+    const newTimeString = `${String(newHours).padStart(2, "0")}:${String(
+      newMinutes,
+    ).padStart(2, "0")}`;
+
+    return newTimeString;
+  }
+}

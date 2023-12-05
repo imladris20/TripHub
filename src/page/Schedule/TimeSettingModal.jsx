@@ -1,26 +1,8 @@
-import { doc, updateDoc } from "firebase/firestore";
-import { cloneDeep, find } from "lodash";
-import { useRef, useState } from "react";
+import { doc, onSnapshot, updateDoc } from "firebase/firestore";
+import { cloneDeep, findIndex } from "lodash";
+import { useEffect, useRef, useState } from "react";
 import useStore, { scheduleStore } from "../../store/store";
 import { TimeIcon } from "../../utils/icons";
-
-const calculateEndTime = (start, hours, minutes) => {
-  const startHours = parseInt(start.split(":")[0], 10);
-  const startMinutes = parseInt(start.split(":")[1], 10);
-  const stayHoursNum = parseInt(hours, 10);
-  const stayMinutesNum = parseInt(minutes, 10);
-
-  const endHours = startHours + stayHoursNum;
-  const endMinutes = startMinutes + stayMinutesNum;
-
-  const endTime = new Date(0, 0, 0, endHours, endMinutes);
-
-  const stringifyEndTime =
-    endTime.getHours().toString().padStart(2, "0") +
-    ":" +
-    endTime.getMinutes().toString().padStart(2, "0");
-  return stringifyEndTime;
-};
 
 const TimeSettingModal = ({ name, currentAttractionIndex }) => {
   const modalRef = useRef();
@@ -29,15 +11,7 @@ const TimeSettingModal = ({ name, currentAttractionIndex }) => {
   const { currentLoadingTripId, currentLoadingTripData } = scheduleStore();
 
   const [startTime, setStartTime] = useState(
-    currentLoadingTripData.attractions[currentAttractionIndex].startTime ||
-      addOneMinuteToTimeString(
-        find(currentLoadingTripData.attractions, {
-          inDayOrder:
-            currentLoadingTripData.attractions[currentAttractionIndex]
-              .inDayOrder - 1,
-        })?.endTime,
-      ) ||
-      "",
+    currentLoadingTripData.attractions[currentAttractionIndex].startTime || "",
   );
   const [stayHours, setStayHours] = useState(
     currentLoadingTripData.attractions[currentAttractionIndex].stayHours || "",
@@ -70,17 +44,28 @@ const TimeSettingModal = ({ name, currentAttractionIndex }) => {
       e.target.value,
       stayMinutes || 0,
     );
+
+    if (!stayMinutes) {
+      setStayMinutes(0);
+    }
     setEndTime(newEndTime);
   };
 
   const handleStayMinutesInput = (e) => {
     setStayMinutes(e.target.value);
-    const newEndTime = calculateEndTime(startTime, stayHours, e.target.value);
+    const newEndTime = calculateEndTime(
+      startTime,
+      stayHours || 0,
+      e.target.value,
+    );
+    if (!stayHours) {
+      setStayHours(0);
+    }
     setEndTime(newEndTime);
   };
 
   const handleConfirmSettingTime = async () => {
-    if (startTime && endTime && stayHours && stayMinutes) {
+    if (startTime && endTime) {
       const tripRef = doc(
         database,
         "users",
@@ -90,10 +75,26 @@ const TimeSettingModal = ({ name, currentAttractionIndex }) => {
       );
       const newAttractions = cloneDeep(currentLoadingTripData.attractions);
 
+      // console.log(startTime, stayHours, stayMinutes, endTime);
+      // console.log(currentAttractionIndex);
+
       newAttractions[currentAttractionIndex].startTime = startTime;
       newAttractions[currentAttractionIndex].stayHours = stayHours;
       newAttractions[currentAttractionIndex].stayMinutes = stayMinutes;
       newAttractions[currentAttractionIndex].endTime = endTime;
+
+      const { daySequence, inDayOrder } =
+        newAttractions[currentAttractionIndex];
+
+      const nextInDayOrderItemIndex = findIndex(newAttractions, {
+        daySequence: daySequence,
+        inDayOrder: inDayOrder + 1,
+      });
+
+      if (nextInDayOrderItemIndex !== -1) {
+        newAttractions[nextInDayOrderItemIndex].startTime =
+          addOneMinuteToTimeString(endTime);
+      }
 
       await updateDoc(tripRef, { attractions: newAttractions });
     } else {
@@ -101,32 +102,44 @@ const TimeSettingModal = ({ name, currentAttractionIndex }) => {
     }
   };
 
-  function addOneMinuteToTimeString(timeString) {
-    if (timeString) {
-      const [hours, minutes] = timeString.split(":").map(Number);
-
-      const totalMinutes = (hours * 60 + minutes + 1) % (24 * 60);
-
-      const newHours = Math.floor(totalMinutes / 60);
-      const newMinutes = totalMinutes % 60;
-
-      const newTimeString = `${String(newHours).padStart(2, "0")}:${String(
-        newMinutes,
-      ).padStart(2, "0")}`;
-
-      return newTimeString;
+  useEffect(() => {
+    if (database && currentLoadingTripId) {
+      const unsubscribe = onSnapshot(
+        doc(database, "users", uid, "trips", currentLoadingTripId),
+        (doc) => {
+          setStartTime(
+            doc.data().attractions[currentAttractionIndex]?.startTime,
+          );
+          setEndTime(doc.data().attractions[currentAttractionIndex]?.endTime);
+          setStayHours(
+            doc.data().attractions[currentAttractionIndex]?.stayHours,
+          );
+          setStayMinutes(
+            doc.data().attractions[currentAttractionIndex].stayMinutes,
+          );
+        },
+      );
+      return () => {
+        unsubscribe();
+      };
     }
-  }
+  }, [database, currentLoadingTripId, currentAttractionIndex]);
 
   return (
     <span className="h-full w-[83px] shrink-0 whitespace-nowrap border-r border-solid border-gray-500 text-center text-xs">
       <button
         className="btn btn-ghost h-full min-h-0 w-full rounded-none font-normal"
         onClick={() => {
-          modalRef.current.showModal();
-          console.log(currentAttractionIndex);
-          console.log(`state的起始時間：${startTime}；state的結束時間：${endTime};
-          state的時長：${stayHours}時${stayMinutes}分`);
+          if (
+            currentLoadingTripData.attractions[currentAttractionIndex]
+              .inDayOrder !== 0
+          ) {
+            modalRef.current.showModal();
+          } else {
+            window.alert("請先設定景點順序");
+          }
+          // console.log(currentAttractionIndex);
+          // console.log(`state的起始時間：${startTime}；state的結束時間：${endTime};state的時長：${stayHours}時${stayMinutes}分`);
         }}
       >
         {currentLoadingTripData.attractions[currentAttractionIndex].startTime &&
@@ -208,3 +221,38 @@ const TimeSettingModal = ({ name, currentAttractionIndex }) => {
 };
 
 export default TimeSettingModal;
+
+function calculateEndTime(start, hours, minutes) {
+  const startHours = parseInt(start.split(":")[0], 10);
+  const startMinutes = parseInt(start.split(":")[1], 10);
+  const stayHoursNum = parseInt(hours, 10);
+  const stayMinutesNum = parseInt(minutes, 10);
+
+  const endHours = startHours + stayHoursNum;
+  const endMinutes = startMinutes + stayMinutesNum;
+
+  const endTime = new Date(0, 0, 0, endHours, endMinutes);
+
+  const stringifyEndTime =
+    endTime.getHours().toString().padStart(2, "0") +
+    ":" +
+    endTime.getMinutes().toString().padStart(2, "0");
+  return stringifyEndTime;
+}
+
+function addOneMinuteToTimeString(timeString) {
+  if (timeString) {
+    const [hours, minutes] = timeString.split(":").map(Number);
+
+    const totalMinutes = (hours * 60 + minutes + 1) % (24 * 60);
+
+    const newHours = Math.floor(totalMinutes / 60);
+    const newMinutes = totalMinutes % 60;
+
+    const newTimeString = `${String(newHours).padStart(2, "0")}:${String(
+      newMinutes,
+    ).padStart(2, "0")}`;
+
+    return newTimeString;
+  }
+}
