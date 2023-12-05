@@ -1,4 +1,5 @@
 import { doc, updateDoc } from "firebase/firestore";
+import { cloneDeep } from "lodash";
 import useStore, { scheduleStore } from "../../store/store";
 import { MenuIcon } from "../../utils/icons";
 
@@ -12,7 +13,7 @@ const DaySequenceDropdown = ({ attractionIndex, name }) => {
     newDaySequence,
     attractionIndex,
   ) => {
-    const newAttractions = currentLoadingTripData?.attractions;
+    const newAttractions = cloneDeep(currentLoadingTripData?.attractions);
 
     if (newAttractions) {
       const tripRef = doc(
@@ -22,6 +23,7 @@ const DaySequenceDropdown = ({ attractionIndex, name }) => {
         "trips",
         currentLoadingTripId,
       );
+
       newAttractions[attractionIndex].daySequence = newDaySequence;
       newAttractions[attractionIndex].inDayOrder = 0;
       await updateDoc(tripRef, { attractions: newAttractions });

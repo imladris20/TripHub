@@ -1,4 +1,5 @@
 import { doc, updateDoc } from "firebase/firestore";
+import { cloneDeep } from "lodash";
 import useStore, { scheduleStore } from "../../store/store";
 import { VerticalSwapIcon } from "../../utils/icons";
 
@@ -73,7 +74,7 @@ const InDayOrderDropdown = ({ daySequenceIndex, name, inDayOrder }) => {
         "trips",
         currentLoadingTripId,
       );
-      const newAttractions = currentLoadingTripData.attractions;
+      const newAttractions = cloneDeep(currentLoadingTripData.attractions);
       const target = newAttractions.findIndex((item) => item.name === name);
 
       newAttractions[target].inDayOrder = newOrder;
