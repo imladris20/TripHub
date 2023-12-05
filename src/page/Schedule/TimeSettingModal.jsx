@@ -36,7 +36,8 @@ const TimeSettingModal = ({ name, currentAttractionIndex }) => {
             currentLoadingTripData.attractions[currentAttractionIndex]
               .inDayOrder - 1,
         })?.endTime,
-      ),
+      ) ||
+      "",
   );
   const [stayHours, setStayHours] = useState(
     currentLoadingTripData.attractions[currentAttractionIndex].stayHours || "",
@@ -79,15 +80,25 @@ const TimeSettingModal = ({ name, currentAttractionIndex }) => {
   };
 
   const handleConfirmSettingTime = async () => {
-    const tripRef = doc(database, "users", uid, "trips", currentLoadingTripId);
-    const newAttractions = cloneDeep(currentLoadingTripData.attractions);
+    if (startTime && endTime && stayHours && stayMinutes) {
+      const tripRef = doc(
+        database,
+        "users",
+        uid,
+        "trips",
+        currentLoadingTripId,
+      );
+      const newAttractions = cloneDeep(currentLoadingTripData.attractions);
 
-    newAttractions[currentAttractionIndex].startTime = startTime;
-    newAttractions[currentAttractionIndex].stayHours = stayHours;
-    newAttractions[currentAttractionIndex].stayMinutes = stayMinutes;
-    newAttractions[currentAttractionIndex].endTime = endTime;
+      newAttractions[currentAttractionIndex].startTime = startTime;
+      newAttractions[currentAttractionIndex].stayHours = stayHours;
+      newAttractions[currentAttractionIndex].stayMinutes = stayMinutes;
+      newAttractions[currentAttractionIndex].endTime = endTime;
 
-    await updateDoc(tripRef, { attractions: newAttractions });
+      await updateDoc(tripRef, { attractions: newAttractions });
+    } else {
+      window.alert("請設定完整再點選確認");
+    }
   };
 
   function addOneMinuteToTimeString(timeString) {
@@ -114,6 +125,8 @@ const TimeSettingModal = ({ name, currentAttractionIndex }) => {
         onClick={() => {
           modalRef.current.showModal();
           console.log(currentAttractionIndex);
+          console.log(`state的起始時間：${startTime}；state的結束時間：${endTime};
+          state的時長：${stayHours}時${stayMinutes}分`);
         }}
       >
         {currentLoadingTripData.attractions[currentAttractionIndex].startTime &&
@@ -148,13 +161,7 @@ const TimeSettingModal = ({ name, currentAttractionIndex }) => {
             ) : (
               <h1 className="text-base">
                 起始時間：
-                {addOneMinuteToTimeString(
-                  find(currentLoadingTripData.attractions, {
-                    inDayOrder:
-                      currentLoadingTripData.attractions[currentAttractionIndex]
-                        .inDayOrder - 1,
-                  })?.endTime,
-                )}
+                {startTime}
               </h1>
             )}
 
