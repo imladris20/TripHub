@@ -36,16 +36,20 @@ const AttractionRow = ({
   return (
     <div className="flex w-[350px] flex-row items-center justify-start border-b border-solid border-gray-500 bg-white">
       <DaySequenceDropDown
-        attractionIndex={currentAttractionIndex}
+        currentAttractionIndex={currentAttractionIndex}
         name={name}
       />
       <InDayOrderDropdown
-        daySequenceIndex={daySequenceIndex}
         name={name}
         inDayOrder={inDayOrder}
+        daySequenceIndex={daySequenceIndex}
+        currentAttractionIndex={currentAttractionIndex}
       />
 
-      <TimeSettingModal name={name} />
+      <TimeSettingModal
+        name={name}
+        currentAttractionIndex={currentAttractionIndex}
+      />
 
       {/* name(button) */}
       <button

@@ -3,7 +3,7 @@ import { cloneDeep } from "lodash";
 import useStore, { scheduleStore } from "../../store/store";
 import { MenuIcon } from "../../utils/icons";
 
-const DaySequenceDropdown = ({ attractionIndex, name }) => {
+const DaySequenceDropdown = ({ currentAttractionIndex, name }) => {
   const { database } = useStore();
   const uid = localStorage.getItem("uid");
   const { currentLoadingTripId, currentTripDuration, currentLoadingTripData } =
@@ -11,7 +11,7 @@ const DaySequenceDropdown = ({ attractionIndex, name }) => {
 
   const handleDropdownOptionClicked = async (
     newDaySequence,
-    attractionIndex,
+    currentAttractionIndex,
   ) => {
     const newAttractions = cloneDeep(currentLoadingTripData?.attractions);
 
@@ -24,13 +24,16 @@ const DaySequenceDropdown = ({ attractionIndex, name }) => {
         currentLoadingTripId,
       );
 
-      newAttractions[attractionIndex].daySequence = newDaySequence;
-      newAttractions[attractionIndex].inDayOrder = 0;
+      newAttractions[currentAttractionIndex].daySequence = newDaySequence;
+      newAttractions[currentAttractionIndex].inDayOrder = 0;
       await updateDoc(tripRef, { attractions: newAttractions });
     }
   };
 
-  const generateDaySequenceDropdownList = (duration, attractionIndex) => {
+  const generateDaySequenceDropdownList = (
+    duration,
+    currentAttractionIndex,
+  ) => {
     if (currentLoadingTripData?.attractions) {
       const currentDaySequence = currentLoadingTripData.attractions.find(
         (item) => item.name === name,
@@ -42,7 +45,10 @@ const DaySequenceDropdown = ({ attractionIndex, name }) => {
             <li key={optionIndex}>
               <button
                 onClick={() =>
-                  handleDropdownOptionClicked(optionIndex, attractionIndex)
+                  handleDropdownOptionClicked(
+                    optionIndex,
+                    currentAttractionIndex,
+                  )
                 }
               >
                 {optionIndex !== 0 ? `移至第${optionIndex}天` : "移回未分配"}
@@ -73,7 +79,10 @@ const DaySequenceDropdown = ({ attractionIndex, name }) => {
         tabIndex={0}
         className="menu dropdown-content z-[1] w-52 rounded-box bg-base-100 p-2 shadow"
       >
-        {generateDaySequenceDropdownList(currentTripDuration, attractionIndex)}
+        {generateDaySequenceDropdownList(
+          currentTripDuration,
+          currentAttractionIndex,
+        )}
       </ul>
     </div>
   );

@@ -1,3 +1,5 @@
+import { doc, updateDoc } from "firebase/firestore";
+import { cloneDeep } from "lodash";
 import { useRef, useState } from "react";
 import useStore, { scheduleStore } from "../../store/store";
 import { TimeIcon } from "../../utils/icons";
@@ -20,28 +22,41 @@ const calculateEndTime = (start, hours, minutes) => {
   return stringifyEndTime;
 };
 
-const TimeSettingModal = ({ name }) => {
+const TimeSettingModal = ({ name, currentAttractionIndex }) => {
   const modalRef = useRef();
   const { database } = useStore();
   const uid = localStorage.getItem("uid");
   const { currentLoadingTripId, currentLoadingTripData } = scheduleStore();
 
-  const [startTime, setStartTime] = useState("08:00");
-  const [stayHours, setStayHours] = useState("");
-  const [stayMinutes, setStayMinutes] = useState("");
-  const [endTime, setEndTime] = useState("");
+  const [startTime, setStartTime] = useState(
+    currentLoadingTripData.attractions[currentAttractionIndex].startTime ||
+      "08:00",
+  );
+  const [stayHours, setStayHours] = useState(
+    currentLoadingTripData.attractions[currentAttractionIndex].stayHours || "",
+  );
+  const [stayMinutes, setStayMinutes] = useState(
+    currentLoadingTripData.attractions[currentAttractionIndex].stayMinutes ||
+      "",
+  );
+  const [endTime, setEndTime] = useState(
+    currentLoadingTripData.attractions[currentAttractionIndex].endTime || "",
+  );
 
   const handleStartTimeInput = (e) => {
-    console.log("Start time", typeof e.target.value, e.target.value);
     setStartTime(e.target.value);
+    if (stayHours || stayMinutes) {
+      const newEndTime = calculateEndTime(
+        e.target.value,
+        stayHours || 0,
+        stayMinutes || 0,
+      );
+
+      setEndTime(newEndTime);
+    }
   };
 
   const handleStayHoursInput = (e) => {
-    console.log(
-      `我打算待${e.target.value}小時${
-        stayMinutes || 0
-      }分鐘, e.target.value 類型是${typeof e.target.value}`,
-    );
     setStayHours(e.target.value);
     const newEndTime = calculateEndTime(
       startTime,
@@ -52,21 +67,21 @@ const TimeSettingModal = ({ name }) => {
   };
 
   const handleStayMinutesInput = (e) => {
-    console.log(
-      `我打算待${stayHours || 0}小時${
-        e.target.value
-      }分鐘, e.target.value 類型是${typeof e.target.value}`,
-    );
     setStayMinutes(e.target.value);
     const newEndTime = calculateEndTime(startTime, stayHours, e.target.value);
     setEndTime(newEndTime);
   };
 
-  const handleConfirmSettingTime = () => {
-    console.log("載入中的旅程: ", currentLoadingTripData);
-    console.log(`起始時間為${startTime}`);
-    console.log(`停留長度為${stayHours}時${stayMinutes}分`);
-    console.log(`結束時間為${endTime}`);
+  const handleConfirmSettingTime = async () => {
+    const tripRef = doc(database, "users", uid, "trips", currentLoadingTripId);
+    const newAttractions = cloneDeep(currentLoadingTripData.attractions);
+
+    newAttractions[currentAttractionIndex].startTime = startTime;
+    newAttractions[currentAttractionIndex].stayHours = stayHours;
+    newAttractions[currentAttractionIndex].stayMinutes = stayMinutes;
+    newAttractions[currentAttractionIndex].endTime = endTime;
+
+    await updateDoc(tripRef, { attractions: newAttractions });
   };
 
   return (

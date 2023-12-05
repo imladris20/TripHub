@@ -3,7 +3,12 @@ import { cloneDeep } from "lodash";
 import useStore, { scheduleStore } from "../../store/store";
 import { VerticalSwapIcon } from "../../utils/icons";
 
-const InDayOrderDropdown = ({ daySequenceIndex, name, inDayOrder }) => {
+const InDayOrderDropdown = ({
+  daySequenceIndex,
+  name,
+  inDayOrder,
+  currentAttractionIndex,
+}) => {
   const { database } = useStore();
   const uid = localStorage.getItem("uid");
   const {
@@ -18,9 +23,8 @@ const InDayOrderDropdown = ({ daySequenceIndex, name, inDayOrder }) => {
         (item) => item.daySequence === daySequenceIndex,
       );
 
-      const currentOrder = currentLoadingTripData.attractions.find(
-        (item) => item.name === name,
-      )?.inDayOrder;
+      const currentOrder =
+        currentLoadingTripData.attractions[currentAttractionIndex]?.inDayOrder;
 
       return [...Array(filterAttractions.length + 1)].map((_, optionIndex) => {
         if (optionIndex !== 0) {
@@ -40,12 +44,7 @@ const InDayOrderDropdown = ({ daySequenceIndex, name, inDayOrder }) => {
             <li key={optionIndex}>
               <button
                 onClick={() =>
-                  handleDropdownOptionClicked(
-                    name,
-                    daySequenceIndex,
-                    currentOrder,
-                    optionIndex,
-                  )
+                  handleDropdownOptionClicked(name, currentOrder, optionIndex)
                 }
               >
                 {optionIndex !== 0 ? `設為第${optionIndex}項` : "重設順序"}
@@ -57,15 +56,7 @@ const InDayOrderDropdown = ({ daySequenceIndex, name, inDayOrder }) => {
     }
   };
 
-  const handleDropdownOptionClicked = async (
-    name,
-    daySequenceIndex,
-    currentOrder,
-    newOrder,
-  ) => {
-    // console.log(`${name}在第${daySequenceIndex}天的第${currentOrder}項`);
-    // console.log(`想變更到第${newOrder}項`);
-
+  const handleDropdownOptionClicked = async (name, currentOrder, newOrder) => {
     if (currentOrder !== newOrder) {
       const tripRef = doc(
         database,
@@ -75,9 +66,8 @@ const InDayOrderDropdown = ({ daySequenceIndex, name, inDayOrder }) => {
         currentLoadingTripId,
       );
       const newAttractions = cloneDeep(currentLoadingTripData.attractions);
-      const target = newAttractions.findIndex((item) => item.name === name);
 
-      newAttractions[target].inDayOrder = newOrder;
+      newAttractions[currentAttractionIndex].inDayOrder = newOrder;
 
       newAttractions.sort((a, b) => a.inDayOrder - b.inDayOrder);
 
