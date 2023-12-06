@@ -10,8 +10,6 @@ const Header = () => {
     currentLoadingTripData,
   } = scheduleStore();
 
-  console.log(currentLoadingTripData);
-
   const [startDate, setStartDate] = useState(
     currentLoadingTripData?.startDate || "",
   );

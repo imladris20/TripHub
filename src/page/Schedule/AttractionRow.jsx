@@ -71,7 +71,13 @@ const AttractionRow = ({ currentAttraction, daySequenceIndex }) => {
         currentAttractionIndex={targetIndex}
       />
 
-      <TimeSettingModal name={name} currentAttractionIndex={targetIndex} />
+      {daySequenceIndex !== 0 ? (
+        <TimeSettingModal name={name} currentAttractionIndex={targetIndex} />
+      ) : (
+        <span className="h-full w-[83px] whitespace-nowrap border-r border-solid border-gray-500 p-2 text-center text-xs">
+          -
+        </span>
+      )}
 
       {/* name(button) */}
       <button
