@@ -61,13 +61,19 @@ const AttractionRow = ({ currentAttraction, daySequenceIndex }) => {
               name: name,
             }),
           );
+          setRoutesParter(
+            findIndex(currentLoadingTripData.attractions, {
+              daySequence: daySequence,
+              inDayOrder: inDayOrder + 1,
+            }),
+          );
         },
       );
       return () => {
         unsubscribe();
       };
     }
-  }, [database, currentLoadingTripId]);
+  }, [database, currentLoadingTripData]);
 
   return (
     <>
@@ -96,7 +102,7 @@ const AttractionRow = ({ currentAttraction, daySequenceIndex }) => {
           {name}
         </button>
       </div>
-      {routesPartnerIndex !== -1 && (
+      {inDayOrder !== 0 && routesPartnerIndex !== -1 && (
         <RouteRow poisId={poisId} routesPartnerIndex={routesPartnerIndex} />
       )}
     </>

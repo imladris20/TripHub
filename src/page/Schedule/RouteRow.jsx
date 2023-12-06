@@ -7,8 +7,11 @@ const RouteRow = ({ poisId, routesPartnerIndex }) => {
   const { DirectionsService, DirectionsRenderer } = useMapsLibrary("routes");
   const { currentLoadingTripData } = scheduleStore();
 
-  const directionsService = new DirectionsService();
-  const directionsRenderer = new DirectionsRenderer({ map: map });
+  let directionsService = new DirectionsService();
+  let directionsRenderer = new DirectionsRenderer({
+    map: map,
+    suppressMarkers: true,
+  });
 
   const [directionsResult, setDirectionsResult] = useState();
 
@@ -19,10 +22,7 @@ const RouteRow = ({ poisId, routesPartnerIndex }) => {
       directionsService &&
       directionsRenderer
     ) {
-      console.log("activate");
       console.log(directionsRenderer);
-      console.log(directionsRenderer.setDirections);
-
       directionsRenderer.setDirections(null);
       const directionsRequest = {
         origin: { placeId: poisId },
@@ -30,23 +30,23 @@ const RouteRow = ({ poisId, routesPartnerIndex }) => {
           placeId:
             currentLoadingTripData.attractions[routesPartnerIndex].poisId,
         },
-        travelMode: "DRIVING",
+        travelMode: "TWO_WHEELER",
       };
 
       directionsService.route(directionsRequest, (result, status) => {
-        console.log(status);
-        console.log(directionsRequest);
         if (status == "OK") {
           directionsRenderer.setDirections(result);
           setDirectionsResult(result);
+          console.log(status, result.routes[0].legs[0]);
         }
       });
     }
   }, [currentLoadingTripData]);
 
   return directionsResult ? (
-    <div className="flex h-8 w-[350px] shrink-0 flex-row items-center justify-center border-b border-solid border-gray-500 bg-white">
-      點我設定交通
+    <div className="flex h-8 w-[350px] shrink-0 flex-row items-center justify-start border-b border-solid border-gray-500 bg-white">
+      <h1 className="flex h-8 w-[163px] flex-row items-center justify-center border-r border-dotted border-gray-500 text-xs">{`交通距離：${directionsResult.routes[0].legs[0].distance.text}`}</h1>
+      <h1 className="flex h-8 w-[175px] flex-row items-center justify-center text-xs">{`交通時間：${directionsResult.routes[0].legs[0].duration.text}`}</h1>
     </div>
   ) : (
     <div className="flex h-8 w-[350px] shrink-0 flex-row items-center justify-center border-b border-solid border-gray-500 bg-white">
