@@ -11,6 +11,9 @@ const RouteRow = ({ poisId, routesPartnerIndex }) => {
   let directionsRenderer = new DirectionsRenderer({
     map: map,
     suppressMarkers: true,
+    polylineOptions: {
+      strokeColor: "black",
+    },
   });
 
   const [directionsResult, setDirectionsResult] = useState();
@@ -22,7 +25,7 @@ const RouteRow = ({ poisId, routesPartnerIndex }) => {
       directionsService &&
       directionsRenderer
     ) {
-      console.log(directionsRenderer);
+      // console.log(directionsRenderer);
       directionsRenderer.setDirections(null);
       const directionsRequest = {
         origin: { placeId: poisId },
@@ -30,14 +33,17 @@ const RouteRow = ({ poisId, routesPartnerIndex }) => {
           placeId:
             currentLoadingTripData.attractions[routesPartnerIndex].poisId,
         },
-        travelMode: "TWO_WHEELER",
+        travelMode: "DRIVING",
+        // travelMode: "TWO_WHEELER",
       };
 
       directionsService.route(directionsRequest, (result, status) => {
         if (status == "OK") {
-          directionsRenderer.setDirections(result);
+          directionsRenderer.setOptions({
+            directions: result,
+          });
           setDirectionsResult(result);
-          console.log(status, result.routes[0].legs[0]);
+          // console.log(status, result.routes[0].legs[0]);
         }
       });
     }
