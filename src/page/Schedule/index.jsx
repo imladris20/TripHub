@@ -14,8 +14,8 @@ const Schedule = () => {
   const {
     currentCenter,
     currentZoom,
-    currentLoadingTrip,
-    setCurrentLoadingTrip,
+    currentLoadingTripId,
+    setCurrentLoadingTripId,
     setTripSelectModal,
     attractionItemDetail,
   } = scheduleStore();
@@ -126,7 +126,7 @@ const Schedule = () => {
               <button
                 className="btn btn-primary w-36 whitespace-nowrap"
                 onClick={() => {
-                  setCurrentLoadingTrip(tripIdToLoad);
+                  setCurrentLoadingTripId(tripIdToLoad);
                 }}
               >
                 確認選擇
@@ -162,7 +162,7 @@ const Schedule = () => {
         </div>
       </dialog>
       <div className="relative flex h-[calc(100vh-64px)] flex-row items-center">
-        {map && currentLoadingTrip && (
+        {map && currentLoadingTripId && (
           <div className="flex h-full w-auto min-w-[350px] shrink-0 flex-col items-center justify-start overflow-y-scroll bg-yellow-100">
             <List />
           </div>

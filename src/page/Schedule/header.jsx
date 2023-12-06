@@ -1,14 +1,21 @@
-import { doc, getDoc, setDoc } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { doc, setDoc } from "firebase/firestore";
+import { useState } from "react";
 import useStore, { scheduleStore } from "../../store/store";
 
 const Header = () => {
-  const [currentTrip, setCurrentTrip] = useState();
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const {
+    currentLoadingTripId,
+    tripSelectModal,
+    setCurrentTripDuration,
+    currentLoadingTripData,
+  } = scheduleStore();
+
+  const [startDate, setStartDate] = useState(
+    currentLoadingTripData?.startDate || "",
+  );
+  const [endDate, setEndDate] = useState(currentLoadingTripData?.endDate || "");
+
   const { database } = useStore();
-  const { currentLoadingTrip, tripSelectModal, setCurrentTripDuration } =
-    scheduleStore();
   const uid = localStorage.getItem("uid");
 
   const calculateDayCount = (startDateStr, endDateStr) => {
@@ -42,7 +49,7 @@ const Header = () => {
 
     const newDayCount = calculateDayCount(startDate, newEndDate);
     setCurrentTripDuration(newDayCount);
-    const docRef = doc(database, "users", uid, "trips", currentLoadingTrip);
+    const docRef = doc(database, "users", uid, "trips", currentLoadingTripId);
     await setDoc(
       docRef,
       { dayCount: newDayCount, startDate, endDate: newEndDate },
@@ -50,27 +57,12 @@ const Header = () => {
     );
   };
 
-  useEffect(() => {
-    const getTrip = async () => {
-      const docRef = doc(database, "users", uid, "trips", currentLoadingTrip);
-      const docSnap = await getDoc(docRef);
-
-      setCurrentTrip(docSnap.data());
-      setStartDate(docSnap.data()?.startDate || "");
-      setEndDate(docSnap.data()?.endDate || "");
-    };
-
-    if (currentLoadingTrip && database) {
-      getTrip();
-    }
-  }, [currentLoadingTrip]);
-
-  return currentTrip ? (
+  return currentLoadingTripData ? (
     <>
       <div className="flex h-10 flex-row items-center justify-start ">
         <div className="flex h-full flex-row items-center rounded-l-lg border-2 border-solid border-sand px-3">
           <h1 className="whitespace-nowrap text-base font-bold text-slate-800">
-            {currentTrip.name}
+            {currentLoadingTripData.name}
           </h1>
         </div>
         <div className="flex h-full flex-row items-center border-b-2 border-r-2 border-t-2 border-solid border-sand px-3">
