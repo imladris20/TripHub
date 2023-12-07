@@ -10,8 +10,8 @@ const RouteRow = ({ poisId, routesPartnerIndex }) => {
   const [travelMode, setTravelMode] = useState("DRIVING");
   const [directionsResult, setDirectionsResult] = useState();
 
-  let directionsService = new DirectionsService();
-  let directionsRenderer = new DirectionsRenderer({
+  const directionsService = new DirectionsService();
+  const directionsRenderer = new DirectionsRenderer({
     map: map,
     suppressMarkers: true,
     polylineOptions: {
@@ -52,8 +52,10 @@ const RouteRow = ({ poisId, routesPartnerIndex }) => {
           setTravelMode={setTravelMode}
         />
       </div>
-      <h1 className="flex h-8 w-[123px] flex-row items-center justify-center border-r border-dotted border-gray-500 text-xs">{`交通距離：${directionsResult.routes[0].legs[0].distance.text}`}</h1>
-      <h1 className="flex h-8 w-[175px] flex-row items-center justify-center text-xs">{`交通時間：${directionsResult.routes[0].legs[0].duration.text}`}</h1>
+      <h1 className="flex h-8 w-[123px] flex-row items-center justify-center border-r border-solid border-gray-500 text-xs">
+        08:00-09:00
+      </h1>
+      <h1 className="flex h-8 w-[187px] flex-row items-center justify-center text-xs">{`${directionsResult.routes[0].legs[0].duration.text}`}</h1>
     </div>
   ) : (
     <div className="flex h-8 w-[350px] shrink-0 flex-row items-center justify-center border-b border-solid border-gray-500 bg-white">
