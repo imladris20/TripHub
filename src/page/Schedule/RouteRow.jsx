@@ -17,6 +17,7 @@ const RouteRow = ({ poisId, routesPartnerIndex }) => {
     polylineOptions: {
       strokeColor: "black",
     },
+    preserveViewport: true,
   });
 
   useEffect(() => {
