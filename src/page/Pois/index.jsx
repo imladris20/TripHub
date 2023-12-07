@@ -51,7 +51,7 @@ const Pois = () => {
     <div className="relative flex h-[calc(100vh-64px)] flex-row items-center">
       {!uid && <Navigate to="/" replace={true} />}
       {map && (
-        <div className="flex h-full w-1/4 flex-col items-center justify-start bg-yellow-100">
+        <div className="flex h-full w-1/4 flex-col items-center justify-start bg-white">
           <List />
         </div>
       )}

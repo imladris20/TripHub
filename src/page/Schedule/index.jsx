@@ -181,7 +181,7 @@ const Schedule = () => {
       </dialog>
       <div className="relative flex h-[calc(100vh-64px)] flex-row items-center">
         {map && currentLoadingTripId && (
-          <div className="flex h-full w-auto min-w-[350px] shrink-0 flex-col items-center justify-start overflow-y-scroll bg-yellow-100">
+          <div className="flex h-full w-auto min-w-[350px] shrink-0 flex-col items-center justify-start overflow-y-scroll bg-white">
             <List />
           </div>
         )}

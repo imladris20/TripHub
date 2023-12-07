@@ -119,8 +119,9 @@ const List = () => {
       );
     })
   ) : (
-    <div className="flex h-full w-full flex-row items-center justify-center">
-      <span className="loading loading-bars loading-lg"></span>
+    <div className="flex h-full w-full flex-col items-center justify-center">
+      <h1>你的行程空空如也~</h1>
+      <h1>去口袋清單加入一些景點進來吧！</h1>
     </div>
   );
 };

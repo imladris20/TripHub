@@ -1,8 +1,19 @@
+import { useEffect, useRef, useState } from "react";
 import { scheduleStore } from "../../store/store";
 import AttractionRow from "./AttractionRow";
 
 const DayBlock = ({ daySequenceIndex }) => {
   const { currentTripDuration, currentLoadingTripData } = scheduleStore();
+
+  const dayBlockRef = useRef();
+
+  const [startTime, setStartTime] = useState(
+    currentLoadingTripData.startTime[daySequenceIndex - 1] || "07:00",
+  );
+
+  const handleStartTimeInput = (e) => {
+    setStartTime(e.target.value);
+  };
 
   const generateAttractions = (daySequenceIndex, duration) => {
     let attractions = currentLoadingTripData?.attractions;
@@ -31,6 +42,10 @@ const DayBlock = ({ daySequenceIndex }) => {
     return arr;
   };
 
+  useEffect(()=>{
+    setStartTime(currentLoadingTripData.startTime[daySequenceIndex - 1]);
+  }, [currentLoadingTripData])
+
   return (
     <>
       <div
@@ -39,9 +54,18 @@ const DayBlock = ({ daySequenceIndex }) => {
           daySequenceIndex === 0 ? "bg-gray-500" : "bg-deyork"
         } py-3`}
       >
-        <h1 className="text-base font-bold tracking-widest text-gray-100">
-          {daySequenceIndex === 0 ? "未分配的景點" : `第${daySequenceIndex}天`}
-        </h1>
+        {daySequenceIndex === 0 ? (
+          <h1 className="text-base font-bold tracking-widest text-gray-100">
+            未分配的景點
+          </h1>
+        ) : (
+          <h1
+            className="cursor-pointer text-base font-bold tracking-widest text-gray-100"
+            onClick={() => dayBlockRef.current.showModal()}
+          >
+            第{daySequenceIndex}天
+          </h1>
+        )}
         {}
       </div>
       <div className="flex w-[350px] flex-col border-b border-solid border-gray-500 bg-white">
@@ -61,6 +85,27 @@ const DayBlock = ({ daySequenceIndex }) => {
         </div>
       </div>
       {generateAttractions(daySequenceIndex, currentTripDuration)}
+      <dialog ref={dayBlockRef} className="modal">
+        <div className="modal-box relative">
+          <h3 className="text-lg font-bold">
+            第{daySequenceIndex}天想從幾點開始玩呢？
+          </h3>
+          <input
+            type="time"
+            step="60"
+            className="input input-bordered input-sm mb-3 mt-4 w-full max-w-[205px]"
+            value={startTime}
+            onChange={(e) => handleStartTimeInput(e)}
+          />
+          <div className="modal-action absolute bottom-4 right-4">
+            <form method="dialog">
+              <button className="btn btn-secondary h-8 min-h-0">
+                設定完成
+              </button>
+            </form>
+          </div>
+        </div>
+      </dialog>
     </>
   );
 };

@@ -1,5 +1,5 @@
 import { doc, setDoc } from "firebase/firestore";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useStore, { scheduleStore } from "../../store/store";
 
 const Header = () => {
@@ -50,12 +50,38 @@ const Header = () => {
     const newDayCount = calculateDayCount(startDate, newEndDate);
     setCurrentTripDuration(newDayCount);
     const docRef = doc(database, "users", uid, "trips", currentLoadingTripId);
+
+    let startTime = [];
+
+    if (currentLoadingTripData.startTime) {
+      startTime = [...currentLoadingTripData.startTime];
+    }
+
+    if (newDayCount > startTime.length) {
+      startTime = [
+        ...startTime,
+        ...Array(newDayCount - startTime.length).fill("07:00"),
+      ];
+    } else if (newDayCount < startTime.length) {
+      startTime = startTime.slice(0, newDayCount);
+    }
+
     await setDoc(
       docRef,
-      { dayCount: newDayCount, startDate, endDate: newEndDate },
+      {
+        dayCount: newDayCount,
+        startDate,
+        endDate: newEndDate,
+        startTime,
+      },
       { merge: true },
     );
   };
+
+  useEffect(() => {
+    setStartDate(currentLoadingTripData?.startDate);
+    setEndDate(currentLoadingTripData?.endDate);
+  }, [currentLoadingTripData]);
 
   return currentLoadingTripData ? (
     <>
@@ -88,7 +114,10 @@ const Header = () => {
           />
         </div>
         <div className="flex h-full flex-row items-center rounded-r-lg border-y-2 border-r-2 border-solid border-sand">
-          <button className="h-full w-full whitespace-nowrap bg-sand px-4 font-bold">
+          <button
+            className="h-full w-full whitespace-nowrap bg-sand px-4 font-bold"
+            onClick={() => console.log(currentLoadingTripData)}
+          >
             預覽行程
           </button>
         </div>
