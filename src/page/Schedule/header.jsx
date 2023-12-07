@@ -60,7 +60,7 @@ const Header = () => {
     if (newDayCount > startTime.length) {
       startTime = [
         ...startTime,
-        ...Array(newDayCount - startTime.length).fill("07:00"),
+        ...Array(newDayCount - startTime.length).fill("09:00"),
       ];
     } else if (newDayCount < startTime.length) {
       startTime = startTime.slice(0, newDayCount);

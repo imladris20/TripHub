@@ -1,18 +1,29 @@
+import { doc, updateDoc } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
-import { scheduleStore } from "../../store/store";
+import useStore, { scheduleStore } from "../../store/store";
 import AttractionRow from "./AttractionRow";
 
 const DayBlock = ({ daySequenceIndex }) => {
-  const { currentTripDuration, currentLoadingTripData } = scheduleStore();
+  const { currentTripDuration, currentLoadingTripData, currentLoadingTripId } =
+    scheduleStore();
+  const { database } = useStore();
+  const uid = localStorage.getItem("uid");
 
   const dayBlockRef = useRef();
 
   const [startTime, setStartTime] = useState(
-    currentLoadingTripData.startTime[daySequenceIndex - 1] || "07:00",
+    currentLoadingTripData.startTime[daySequenceIndex - 1] || "09:00",
   );
 
   const handleStartTimeInput = (e) => {
     setStartTime(e.target.value);
+  };
+
+  const handleConfirmStartTime = async (daySequenceIndex) => {
+    const docRef = doc(database, "users", uid, "trips", currentLoadingTripId);
+    const newStartTime = [...currentLoadingTripData.startTime];
+    newStartTime[daySequenceIndex - 1] = startTime;
+    await updateDoc(docRef, { startTime: newStartTime });
   };
 
   const generateAttractions = (daySequenceIndex, duration) => {
@@ -42,9 +53,9 @@ const DayBlock = ({ daySequenceIndex }) => {
     return arr;
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     setStartTime(currentLoadingTripData.startTime[daySequenceIndex - 1]);
-  }, [currentLoadingTripData])
+  }, [currentLoadingTripData]);
 
   return (
     <>
@@ -99,7 +110,10 @@ const DayBlock = ({ daySequenceIndex }) => {
           />
           <div className="modal-action absolute bottom-4 right-4">
             <form method="dialog">
-              <button className="btn btn-secondary h-8 min-h-0">
+              <button
+                className="btn btn-secondary h-8 min-h-0"
+                onClick={() => handleConfirmStartTime(daySequenceIndex)}
+              >
                 設定完成
               </button>
             </form>
