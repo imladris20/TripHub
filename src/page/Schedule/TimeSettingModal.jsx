@@ -15,18 +15,15 @@ const TimeSettingModal = ({
   const uid = localStorage.getItem("uid");
   const { currentLoadingTripId, currentLoadingTripData } = scheduleStore();
 
-  const [startTime, setStartTime] = useState(
-    currentLoadingTripData.attractions[currentAttractionIndex].startTime || "",
-  );
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
+
   const [stayHours, setStayHours] = useState(
     currentLoadingTripData.attractions[currentAttractionIndex].stayHours || "",
   );
   const [stayMinutes, setStayMinutes] = useState(
     currentLoadingTripData.attractions[currentAttractionIndex].stayMinutes ||
       "",
-  );
-  const [endTime, setEndTime] = useState(
-    currentLoadingTripData.attractions[currentAttractionIndex].endTime || "",
   );
 
   const handleStartTimeInput = (e) => {
@@ -80,9 +77,6 @@ const TimeSettingModal = ({
       );
       const newAttractions = cloneDeep(currentLoadingTripData.attractions);
 
-      // console.log(startTime, stayHours, stayMinutes, endTime);
-      // console.log(currentAttractionIndex);
-
       newAttractions[currentAttractionIndex].startTime = startTime;
       newAttractions[currentAttractionIndex].stayHours = stayHours;
       newAttractions[currentAttractionIndex].stayMinutes = stayMinutes;
@@ -104,6 +98,22 @@ const TimeSettingModal = ({
       await updateDoc(tripRef, { attractions: newAttractions });
     } else {
       window.alert("請設定完整再點選確認");
+    }
+  };
+
+  const handleButtonClicked = () => {
+    if (
+      currentLoadingTripData.attractions[currentAttractionIndex].inDayOrder ===
+      0
+    ) {
+      window.alert("請先設定景點順序");
+      return;
+    }
+
+    if (!currentLoadingTripData.startTime[daySequenceIndex - 1].haveSetted) {
+      dayBlockRef.current.showModal();
+    } else {
+      modalRef.current.showModal();
     }
   };
 
@@ -130,28 +140,24 @@ const TimeSettingModal = ({
     }
   }, [database, currentLoadingTripId, currentAttractionIndex]);
 
+  useEffect(() => {
+    console.log(
+      currentLoadingTripData.attractions[currentAttractionIndex].inDayOrder,
+    );
+    if (
+      currentLoadingTripData.attractions[currentAttractionIndex].inDayOrder ===
+      1
+    ) {
+      setStartTime("10:00");
+      setEndTime("11:00");
+    }
+  }, [dayBlockRef.current]);
+
   return (
     <span className="h-full w-[83px] shrink-0 whitespace-nowrap border-r border-solid border-gray-500 text-center text-xs">
       <button
         className="btn btn-ghost h-full min-h-0 w-full rounded-none font-normal"
-        onClick={() => {
-          if (
-            currentLoadingTripData.attractions[currentAttractionIndex]
-              .inDayOrder !== 0
-          ) {
-            if (
-              !currentLoadingTripData.startTime[daySequenceIndex - 1].haveSetted
-            ) {
-              dayBlockRef.current.showModal();
-            } else {
-              modalRef.current.showModal();
-            }
-          } else {
-            window.alert("請先設定景點順序");
-          }
-          // console.log(currentAttractionIndex);
-          // console.log(`state的起始時間：${startTime}；state的結束時間：${endTime};state的時長：${stayHours}時${stayMinutes}分`);
-        }}
+        onClick={() => handleButtonClicked()}
       >
         {currentLoadingTripData.attractions[currentAttractionIndex].startTime &&
         currentLoadingTripData.attractions[currentAttractionIndex].endTime ? (
@@ -170,25 +176,7 @@ const TimeSettingModal = ({
         <div className="modal-box relative">
           <div className="flex flex-col items-start justify-start gap-2">
             <h3 className="mb-4 text-lg font-bold">想要在{name}停留多久呢？</h3>
-            {currentLoadingTripData.attractions[currentAttractionIndex]
-              .inDayOrder === 1 ? (
-              <>
-                <h1 className="text-base">起始時間：</h1>
-                <input
-                  type="time"
-                  step="60"
-                  className="input input-bordered h-6 w-44 max-w-xs p-0 pl-1"
-                  value={startTime}
-                  onChange={(e) => handleStartTimeInput(e)}
-                />
-              </>
-            ) : (
-              <h1 className="text-base">
-                起始時間：
-                {startTime}
-              </h1>
-            )}
-
+            <h1 className="text-base">起始時間：{startTime}</h1>
             <h1 className="mt-4 text-base">停留長度：</h1>
             <div className="flex flex-row items-center justify-start gap-2">
               <input
