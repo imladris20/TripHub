@@ -1,3 +1,4 @@
+import { useMap } from "@vis.gl/react-google-maps";
 import { doc, onSnapshot } from "firebase/firestore";
 import { findIndex } from "lodash";
 import { useEffect, useState } from "react";
@@ -19,6 +20,7 @@ const AttractionRow = ({ currentAttraction, daySequenceIndex }) => {
 
   const { database } = useStore();
   const uid = localStorage.getItem("uid");
+  const map = useMap("tripMap");
 
   const { name, note, expense, inDayOrder, daySequence, poisId } =
     currentAttraction;
@@ -46,6 +48,7 @@ const AttractionRow = ({ currentAttraction, daySequenceIndex }) => {
     );
     if (targetData) {
       setAttractionItemDetail({ ...targetData, note, expense });
+      map.panTo(targetData.location);
       setCurrentCenter(targetData.location);
       setCurrentZoom(18);
     }

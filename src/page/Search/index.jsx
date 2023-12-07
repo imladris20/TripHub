@@ -1,4 +1,5 @@
 import { Map, useApiIsLoaded, useMap } from "@vis.gl/react-google-maps";
+import { useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import CurrentPositionBtn from "../../components/CurrentPositionBtn/CurrentPositionBtn";
 import useStore from "../../store/store";
@@ -13,8 +14,11 @@ const Search = () => {
     currentZoom,
     placeResult,
     searchItemDetailInfo,
+    setCurrentCenter,
+    setCurrentZoom,
   } = useStore();
   const apiIsLoaded = useApiIsLoaded();
+
   const map = useMap("searchMap");
 
   const uid = localStorage.getItem("uid");
@@ -27,6 +31,22 @@ const Search = () => {
     streetViewControl: false,
   };
 
+  useEffect(() => {
+    if (map) {
+      map.addListener("dragend", () => {
+        const newCenter = {
+          lat: map.getCenter().lat(),
+          lng: map.getCenter().lng(),
+        };
+        setCurrentCenter(newCenter);
+      });
+
+      map.addListener("zoom_changed", () => {
+        setCurrentZoom(map.getZoom());
+      });
+    }
+  }, [map]);
+
   return (
     <div className="relative flex h-[calc(100vh-64px)] flex-row items-center">
       {!uid && <Navigate to="/" replace={true} />}
@@ -35,7 +55,19 @@ const Search = () => {
         {placeResult ? (
           <ResultList />
         ) : (
-          <h1 className="m-auto text-slate-500">快來搜尋景點吧~~</h1>
+          <h1
+            className="m-auto text-slate-500"
+            onClick={() => {
+              console.log(currentCenter);
+              console.log(
+                `currentCenter in store: ${JSON.stringify(
+                  currentCenter,
+                )}, currentZoom in store: ${currentZoom}`,
+              );
+            }}
+          >
+            快來搜尋景點吧~~
+          </h1>
         )}
       </div>
       <Map id={"searchMap"} options={initialMapOptions} />

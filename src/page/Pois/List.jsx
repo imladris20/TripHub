@@ -89,6 +89,7 @@ const List = () => {
 
   const handleItemClicked = (place) => {
     setPoisItemDetailInfo(place);
+    map.panTo(place.data.location);
     setCurrentCenter(place.data.location);
     setCurrentZoom(18);
   };

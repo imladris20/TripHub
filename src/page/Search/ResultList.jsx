@@ -1,3 +1,4 @@
+import { useMap } from "@vis.gl/react-google-maps";
 import { collection, doc, getDoc, onSnapshot, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import useStore from "../../store/store";
@@ -15,12 +16,15 @@ const ResultList = () => {
   let labelIndex = 0;
   const uid = localStorage.getItem("uid");
   const [isInPoisArr, setIsInPoisArr] = useState(new Array(20).fill(false));
+  const map = useMap("searchMap");
 
   const handleItemClicked = (place, label) => {
     setSearchItemDetailInfo({
       data: place,
       label,
     });
+
+    map.panTo(place.geometry.location);
     setCurrentCenter(place.geometry.location);
     setCurrentZoom(18);
   };
