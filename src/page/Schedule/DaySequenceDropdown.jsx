@@ -67,7 +67,7 @@ const DaySequenceDropdown = ({ currentAttractionIndex, name }) => {
   };
 
   return (
-    <div className="w-[40px dropdown dropdown-hover h-8">
+    <div className="dropdown dropdown-hover h-8 w-[40px]">
       <div
         tabIndex={0}
         role="button"
