@@ -43,6 +43,7 @@ const InputBlock = () => {
     if (place) {
       setSearchValue(place.name);
       marker.setPosition(place.geometry.location);
+      map.panTo(place.geometry.location);
       setCurrentZoom(14);
       setCurrentCenter(place.geometry.location);
       inputRef.current && inputRef.current.focus();
@@ -145,6 +146,7 @@ const InputBlock = () => {
 
     const textSearchCallback = (results, status) => {
       if (status === "OK") {
+        map.panTo(results[0].geometry.location);
         setCurrentZoom(13.8);
         setCurrentCenter(results[0].geometry.location);
 
@@ -172,6 +174,7 @@ const InputBlock = () => {
         onChange={(e) => setSearchValue(e.target.value)}
         placeholder="想找什麼景點呢？"
         ref={inputRef}
+        onClick={() => console.log(autoCompleteOptions.bounds)}
       />
       <button
         className="row-flex mt-[2px] flex h-[30px] w-[30px] items-center justify-center bg-gray-400"

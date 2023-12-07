@@ -18,6 +18,8 @@ const CurrentPositionBtn = () => {
         lat: position.coords.latitude,
         lng: position.coords.longitude,
       };
+
+      map.panTo(newPos);
       setCurrentCenter(newPos);
       setCurrentZoom(17);
 

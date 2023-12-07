@@ -1,4 +1,5 @@
 import { Map, useApiIsLoaded, useMap } from "@vis.gl/react-google-maps";
+import { useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import useStore, { poisStore } from "../../store/store";
 import Detail from "./Detail";
@@ -6,7 +7,13 @@ import List from "./List";
 
 const Pois = () => {
   const { mapId } = useStore();
-  const { currentCenter, currentZoom, poisItemDetailInfo } = poisStore();
+  const {
+    currentCenter,
+    currentZoom,
+    poisItemDetailInfo,
+    setCurrentCenter,
+    setCurrentZoom,
+  } = poisStore();
   const apiIsLoaded = useApiIsLoaded();
   const map = useMap("poisMap");
 
@@ -19,6 +26,22 @@ const Pois = () => {
     mapTypeControl: false,
     streetViewControl: false,
   };
+
+  useEffect(() => {
+    if (map) {
+      map.addListener("dragend", () => {
+        const newCenter = {
+          lat: map.getCenter().lat(),
+          lng: map.getCenter().lng(),
+        };
+        setCurrentCenter(newCenter);
+      });
+
+      map.addListener("zoom_changed", () => {
+        setCurrentZoom(map.getZoom());
+      });
+    }
+  }, [map]);
 
   if (!apiIsLoaded) {
     return <h1>Api is Loading...</h1>;

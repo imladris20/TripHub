@@ -18,6 +18,8 @@ const Schedule = () => {
     setCurrentLoadingTripId,
     setTripSelectModal,
     attractionItemDetail,
+    setCurrentCenter,
+    setCurrentZoom,
   } = scheduleStore();
   const map = useMap("tripMap");
   const [tripsOption, setTripsOption] = useState([]);
@@ -94,6 +96,22 @@ const Schedule = () => {
       };
     }
   }, [database]);
+
+  useEffect(() => {
+    if (map) {
+      map.addListener("dragend", () => {
+        const newCenter = {
+          lat: map.getCenter().lat(),
+          lng: map.getCenter().lng(),
+        };
+        setCurrentCenter(newCenter);
+      });
+
+      map.addListener("zoom_changed", () => {
+        setCurrentZoom(map.getZoom());
+      });
+    }
+  }, [map]);
 
   if (!apiIsLoaded) {
     return <h1>Api is Loading...</h1>;

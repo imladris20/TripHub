@@ -10,7 +10,7 @@ const Home = () => {
       <div className="flex h-full w-full flex-row items-center justify-center bg-gradient-to-b from-white to-transparent">
         <div className="flex flex-col items-center justify-start gap-7">
           <h1 className="text-center text-4xl font-bold">
-            TribHub 讓你規劃行程從未如此輕鬆！
+            TripHub 讓你規劃行程從未如此輕鬆！
           </h1>
           {isLogin ? (
             <Link to="/search">
