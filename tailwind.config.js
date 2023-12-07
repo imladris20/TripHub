@@ -4,7 +4,7 @@ export default {
     themes: [
       {
         mytheme: {
-          primary: "#34d399",
+          primary: "#45BB89",
           secondary: "#bbf7d0",
           accent: "#67e8f9",
           neutral: "#bbf7d0",
@@ -28,6 +28,7 @@ export default {
         mypurple: "#EDB7ED",
         mygray: "#E8F1F2",
         sand: "#ead6db",
+        deyork: "#87C488",
       },
     },
   },
