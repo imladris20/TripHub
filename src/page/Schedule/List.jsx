@@ -76,7 +76,6 @@ const List = () => {
         const marker = new Marker({
           map,
           position: location,
-          animation: 2,
           label: `${daySequence !== 0 ? `D${daySequence}` : "-"}`,
         });
         const windowContent = `
