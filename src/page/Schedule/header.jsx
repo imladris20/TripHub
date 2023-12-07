@@ -1,4 +1,5 @@
 import { doc, setDoc } from "firebase/firestore";
+import { cloneDeep } from "lodash";
 import { useEffect, useState } from "react";
 import useStore, { scheduleStore } from "../../store/store";
 
@@ -54,13 +55,16 @@ const Header = () => {
     let startTime = [];
 
     if (currentLoadingTripData.startTime) {
-      startTime = [...currentLoadingTripData.startTime];
+      startTime = cloneDeep(currentLoadingTripData.startTime);
     }
 
     if (newDayCount > startTime.length) {
       startTime = [
-        ...startTime,
-        ...Array(newDayCount - startTime.length).fill("09:00"),
+        ...cloneDeep(startTime),
+        ...Array(newDayCount - startTime.length).fill({
+          value: "09:00",
+          haveSetted: false,
+        }),
       ];
     } else if (newDayCount < startTime.length) {
       startTime = startTime.slice(0, newDayCount);

@@ -8,7 +8,11 @@ import InDayOrderDropdown from "./InDayOrderDropdown";
 import RouteRow from "./RouteRow";
 import TimeSettingModal from "./TimeSettingModal";
 
-const AttractionRow = ({ currentAttraction, daySequenceIndex }) => {
+const AttractionRow = ({
+  currentAttraction,
+  daySequenceIndex,
+  dayBlockRef,
+}) => {
   const {
     attractionsData: allAttractions,
     setAttractionItemDetail,
@@ -90,7 +94,12 @@ const AttractionRow = ({ currentAttraction, daySequenceIndex }) => {
         />
 
         {daySequenceIndex !== 0 ? (
-          <TimeSettingModal name={name} currentAttractionIndex={targetIndex} />
+          <TimeSettingModal
+            name={name}
+            currentAttractionIndex={targetIndex}
+            dayBlockRef={dayBlockRef}
+            daySequenceIndex={daySequenceIndex}
+          />
         ) : (
           <span className="h-full w-[83px] whitespace-nowrap border-r border-solid border-gray-500 p-2 text-center text-xs">
             -

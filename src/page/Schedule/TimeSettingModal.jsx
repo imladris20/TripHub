@@ -4,7 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import useStore, { scheduleStore } from "../../store/store";
 import { TimeIcon } from "../../utils/icons";
 
-const TimeSettingModal = ({ name, currentAttractionIndex }) => {
+const TimeSettingModal = ({
+  name,
+  currentAttractionIndex,
+  dayBlockRef,
+  daySequenceIndex,
+}) => {
   const modalRef = useRef();
   const { database } = useStore();
   const uid = localStorage.getItem("uid");
@@ -134,7 +139,13 @@ const TimeSettingModal = ({ name, currentAttractionIndex }) => {
             currentLoadingTripData.attractions[currentAttractionIndex]
               .inDayOrder !== 0
           ) {
-            modalRef.current.showModal();
+            if (
+              !currentLoadingTripData.startTime[daySequenceIndex - 1].haveSetted
+            ) {
+              dayBlockRef.current.showModal();
+            } else {
+              modalRef.current.showModal();
+            }
           } else {
             window.alert("請先設定景點順序");
           }

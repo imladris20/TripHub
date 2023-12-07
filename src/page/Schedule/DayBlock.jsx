@@ -1,4 +1,5 @@
 import { doc, updateDoc } from "firebase/firestore";
+import { cloneDeep } from "lodash";
 import { useEffect, useRef, useState } from "react";
 import useStore, { scheduleStore } from "../../store/store";
 import AttractionRow from "./AttractionRow";
@@ -12,7 +13,7 @@ const DayBlock = ({ daySequenceIndex }) => {
   const dayBlockRef = useRef();
 
   const [startTime, setStartTime] = useState(
-    currentLoadingTripData.startTime[daySequenceIndex - 1] || "09:00",
+    currentLoadingTripData.startTime[daySequenceIndex - 1]?.value || "09:00",
   );
 
   const handleStartTimeInput = (e) => {
@@ -21,8 +22,9 @@ const DayBlock = ({ daySequenceIndex }) => {
 
   const handleConfirmStartTime = async (daySequenceIndex) => {
     const docRef = doc(database, "users", uid, "trips", currentLoadingTripId);
-    const newStartTime = [...currentLoadingTripData.startTime];
-    newStartTime[daySequenceIndex - 1] = startTime;
+    const newStartTime = cloneDeep(currentLoadingTripData.startTime);
+    newStartTime[daySequenceIndex - 1].value = startTime;
+    newStartTime[daySequenceIndex - 1].haveSetted = true;
     await updateDoc(docRef, { startTime: newStartTime });
   };
 
@@ -41,6 +43,7 @@ const DayBlock = ({ daySequenceIndex }) => {
             key={attractionIndex}
             daySequenceIndex={daySequenceIndex}
             currentAttraction={attraction}
+            dayBlockRef={dayBlockRef}
           />
         );
       }
@@ -54,7 +57,7 @@ const DayBlock = ({ daySequenceIndex }) => {
   };
 
   useEffect(() => {
-    setStartTime(currentLoadingTripData.startTime[daySequenceIndex - 1]);
+    setStartTime(currentLoadingTripData.startTime[daySequenceIndex - 1]?.value);
   }, [currentLoadingTripData]);
 
   return (
@@ -96,30 +99,32 @@ const DayBlock = ({ daySequenceIndex }) => {
         </div>
       </div>
       {generateAttractions(daySequenceIndex, currentTripDuration)}
-      <dialog ref={dayBlockRef} className="modal">
-        <div className="modal-box relative">
-          <h3 className="text-lg font-bold">
-            第{daySequenceIndex}天想從幾點開始玩呢？
-          </h3>
-          <input
-            type="time"
-            step="60"
-            className="input input-bordered input-sm mb-3 mt-4 w-full max-w-[205px]"
-            value={startTime}
-            onChange={(e) => handleStartTimeInput(e)}
-          />
-          <div className="modal-action absolute bottom-4 right-4">
-            <form method="dialog">
-              <button
-                className="btn btn-secondary h-8 min-h-0"
-                onClick={() => handleConfirmStartTime(daySequenceIndex)}
-              >
-                設定完成
-              </button>
-            </form>
+      {daySequenceIndex !== 0 && (
+        <dialog ref={dayBlockRef} className="modal">
+          <div className="modal-box relative">
+            <h3 className="text-lg font-bold">
+              第{daySequenceIndex}天想從幾點開始玩呢？
+            </h3>
+            <input
+              type="time"
+              step="60"
+              className="input input-bordered input-sm mb-3 mt-4 w-full max-w-[205px]"
+              value={startTime}
+              onChange={(e) => handleStartTimeInput(e)}
+            />
+            <div className="modal-action absolute bottom-4 right-4">
+              <form method="dialog">
+                <button
+                  className="btn btn-secondary h-8 min-h-0"
+                  onClick={() => handleConfirmStartTime(daySequenceIndex)}
+                >
+                  設定完成
+                </button>
+              </form>
+            </div>
           </div>
-        </div>
-      </dialog>
+        </dialog>
+      )}
     </>
   );
 };
