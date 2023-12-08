@@ -1,5 +1,5 @@
-import { doc, onSnapshot, updateDoc } from "firebase/firestore";
-import { cloneDeep, findIndex } from "lodash";
+import { doc, updateDoc } from "firebase/firestore";
+import { cloneDeep, filter, orderBy } from "lodash";
 import { useEffect, useRef, useState } from "react";
 import useStore, { scheduleStore } from "../../store/store";
 import { TimeIcon } from "../../utils/icons";
@@ -15,29 +15,76 @@ const TimeSettingModal = ({
   const uid = localStorage.getItem("uid");
   const { currentLoadingTripId, currentLoadingTripData } = scheduleStore();
 
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
+  const initStartTime = () => {
+    const n =
+      currentLoadingTripData.attractions[currentAttractionIndex].inDayOrder;
 
-  const [stayHours, setStayHours] = useState(
-    currentLoadingTripData.attractions[currentAttractionIndex].stayHours || "",
-  );
-  const [stayMinutes, setStayMinutes] = useState(
-    currentLoadingTripData.attractions[currentAttractionIndex].stayMinutes ||
-      "",
-  );
+    const filterAttractions = filter(
+      currentLoadingTripData.attractions,
+      ({ daySequence, inDayOrder }) => daySequence === 1 && inDayOrder > 0,
+    );
 
-  const handleStartTimeInput = (e) => {
-    setStartTime(e.target.value);
-    if (stayHours || stayMinutes) {
-      const newEndTime = calculateEndTime(
-        e.target.value,
-        stayHours || 0,
-        stayMinutes || 0,
+    const sortedAttractions = orderBy(filterAttractions, "inDayOrder", "asc");
+
+    console.log("in start time", sortedAttractions);
+
+    if (n === 1) {
+      return (
+        currentLoadingTripData.startTime[daySequenceIndex - 1]?.value || ""
       );
-
-      setEndTime(newEndTime);
+    } else if (n > 1) {
+      let totalDuration = 0;
+      for (let i = 0; i < n - 1; i++) {
+        if (sortedAttractions[i]?.duration)
+          totalDuration = totalDuration + sortedAttractions[i].duration;
+      }
+      const result = addDurationToTime(
+        currentLoadingTripData.startTime[daySequenceIndex - 1]?.value,
+        totalDuration,
+      );
+      return result;
     }
   };
+
+  const [startTime, setStartTime] = useState(() => initStartTime());
+
+  const [stayHours, setStayHours] = useState(
+    Math.floor(
+      currentLoadingTripData.attractions[currentAttractionIndex].duration / 60,
+    ),
+  );
+
+  const [stayMinutes, setStayMinutes] = useState(
+    currentLoadingTripData.attractions[currentAttractionIndex].duration % 60,
+  );
+
+  const initEndTime = () => {
+    const n =
+      currentLoadingTripData.attractions[currentAttractionIndex].inDayOrder;
+
+    const filterAttractions = filter(
+      currentLoadingTripData.attractions,
+      ({ daySequence, inDayOrder }) => daySequence === 1 && inDayOrder > 0,
+    );
+
+    const sortedAttractions = orderBy(filterAttractions, "inDayOrder", "asc");
+
+    console.log("in end time", sortedAttractions);
+
+    let totalDuration = 0;
+
+    for (let i = 0; i < n; i++) {
+      if (sortedAttractions[i]?.duration)
+        totalDuration = totalDuration + sortedAttractions[i].duration;
+    }
+    const result = addDurationToTime(
+      currentLoadingTripData.startTime[daySequenceIndex - 1]?.value,
+      totalDuration,
+    );
+    return result;
+  };
+
+  const [endTime, setEndTime] = useState(() => initEndTime());
 
   const handleStayHoursInput = (e) => {
     setStayHours(e.target.value);
@@ -76,25 +123,8 @@ const TimeSettingModal = ({
         currentLoadingTripId,
       );
       const newAttractions = cloneDeep(currentLoadingTripData.attractions);
-
-      newAttractions[currentAttractionIndex].startTime = startTime;
-      newAttractions[currentAttractionIndex].stayHours = stayHours;
-      newAttractions[currentAttractionIndex].stayMinutes = stayMinutes;
-      newAttractions[currentAttractionIndex].endTime = endTime;
-
-      const { daySequence, inDayOrder } =
-        newAttractions[currentAttractionIndex];
-
-      const nextInDayOrderItemIndex = findIndex(newAttractions, {
-        daySequence: daySequence,
-        inDayOrder: inDayOrder + 1,
-      });
-
-      if (nextInDayOrderItemIndex !== -1) {
-        newAttractions[nextInDayOrderItemIndex].startTime =
-          addOneMinuteToTimeString(endTime);
-      }
-
+      const duration = parseInt(stayHours) * 60 + parseInt(stayMinutes);
+      newAttractions[currentAttractionIndex].duration = duration;
       await updateDoc(tripRef, { attractions: newAttractions });
     } else {
       window.alert("請設定完整再點選確認");
@@ -118,40 +148,18 @@ const TimeSettingModal = ({
   };
 
   useEffect(() => {
-    if (database && currentLoadingTripId) {
-      const unsubscribe = onSnapshot(
-        doc(database, "users", uid, "trips", currentLoadingTripId),
-        (doc) => {
-          setStartTime(
-            doc.data().attractions[currentAttractionIndex]?.startTime,
-          );
-          setEndTime(doc.data().attractions[currentAttractionIndex]?.endTime);
-          setStayHours(
-            doc.data().attractions[currentAttractionIndex]?.stayHours,
-          );
-          setStayMinutes(
-            doc.data().attractions[currentAttractionIndex].stayMinutes,
-          );
-        },
-      );
-      return () => {
-        unsubscribe();
-      };
-    }
-  }, [database, currentLoadingTripId, currentAttractionIndex]);
-
-  useEffect(() => {
-    console.log(
-      currentLoadingTripData.attractions[currentAttractionIndex].inDayOrder,
+    setStartTime(() => initStartTime());
+    setEndTime(() => initEndTime());
+    setStayHours(
+      Math.floor(
+        currentLoadingTripData.attractions[currentAttractionIndex].duration /
+          60,
+      ),
     );
-    if (
-      currentLoadingTripData.attractions[currentAttractionIndex].inDayOrder ===
-      1
-    ) {
-      setStartTime("10:00");
-      setEndTime("11:00");
-    }
-  }, [dayBlockRef.current]);
+    setStayMinutes(
+      currentLoadingTripData.attractions[currentAttractionIndex].duration % 60,
+    );
+  }, [currentLoadingTripData]);
 
   return (
     <span className="h-full w-[83px] shrink-0 whitespace-nowrap border-r border-solid border-gray-500 text-center text-xs">
@@ -159,8 +167,7 @@ const TimeSettingModal = ({
         className="btn btn-ghost h-full min-h-0 w-full rounded-none font-normal"
         onClick={() => handleButtonClicked()}
       >
-        {currentLoadingTripData.attractions[currentAttractionIndex].startTime &&
-        currentLoadingTripData.attractions[currentAttractionIndex].endTime ? (
+        {startTime && endTime ? (
           <h1 className="text-[10px]">{`${startTime} 至 ${endTime}`}</h1>
         ) : (
           <svg
@@ -210,7 +217,7 @@ const TimeSettingModal = ({
               >
                 確認
               </button>
-              <button className="btn btn-warning">取消</button>
+              {/* <button className="btn btn-warning">取消</button> */}
             </form>
           </div>
         </div>
@@ -237,6 +244,28 @@ function calculateEndTime(start, hours, minutes) {
     ":" +
     endTime.getMinutes().toString().padStart(2, "0");
   return stringifyEndTime;
+}
+
+function addDurationToTime(startTime, duration) {
+  // 將開始時間解析為 Date 物件
+  const startTimeParts = startTime.split(":");
+  const startHours = parseInt(startTimeParts[0], 10);
+  const startMinutes = parseInt(startTimeParts[1], 10);
+  const startDate = new Date(0, 0, 0, startHours, startMinutes);
+
+  // 加上持續時間
+  startDate.setMinutes(startDate.getMinutes() + duration);
+
+  // 取得新的小時和分鐘
+  const newHours = startDate.getHours();
+  const newMinutes = startDate.getMinutes();
+
+  // 格式化成 HH:mm 的字串
+  const result = `${String(newHours).padStart(2, "0")}:${String(
+    newMinutes,
+  ).padStart(2, "0")}`;
+
+  return result;
 }
 
 function addOneMinuteToTimeString(timeString) {

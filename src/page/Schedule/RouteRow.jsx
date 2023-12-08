@@ -38,8 +38,8 @@ const RouteRow = ({ poisId, routesPartnerIndex }) => {
             directions: result,
           });
           setDirectionsResult(result);
-          console.log(result.request);
-          console.log(status, result.routes[0].legs[0]);
+          // console.log(result.request);
+          // console.log(status, result.routes[0].legs[0]);
         }
       });
     }

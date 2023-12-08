@@ -1,5 +1,5 @@
 import { doc, updateDoc } from "firebase/firestore";
-import { cloneDeep, findIndex } from "lodash";
+import { cloneDeep } from "lodash";
 import useStore, { scheduleStore } from "../../store/store";
 import { VerticalSwapIcon } from "../../utils/icons";
 
@@ -70,23 +70,7 @@ const InDayOrderDropdown = ({
 
       newAttractions[currentAttractionIndex].inDayOrder = newOrder;
 
-      const previousInDayOrderItemIndex = findIndex(newAttractions, {
-        daySequence: newAttractions[currentAttractionIndex].daySequence,
-        inDayOrder: newOrder - 1,
-      });
-
-      if (previousInDayOrderItemIndex === -1) {
-        newAttractions[currentAttractionIndex].startTime = "";
-      } else {
-        newAttractions[currentAttractionIndex].startTime =
-          addOneMinuteToTimeString(
-            newAttractions[previousInDayOrderItemIndex].endTime,
-          ) || "";
-      }
-
-      newAttractions[currentAttractionIndex].endTime = "";
-      newAttractions[currentAttractionIndex].stayHours = "";
-      newAttractions[currentAttractionIndex].stayMinutes = "";
+      newAttractions[currentAttractionIndex].duration = 60;
 
       newAttractions.sort((a, b) => a.inDayOrder - b.inDayOrder);
 
