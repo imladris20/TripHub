@@ -27,13 +27,47 @@ const Header = () => {
     return count;
   };
 
-  const handleStartDateInput = (e) => {
-    const newStartDate = e.target.value;
-    setStartDate(newStartDate);
-    if (endDate && endDate < newStartDate) {
+  const handleStartDateInput = async (e) => {
+    if (endDate && endDate < e.target.value) {
       setEndDate("");
       window.alert("起始日期不可晚於結束日期");
+      return;
     }
+    const newStartDate = e.target.value;
+    setStartDate(newStartDate);
+
+    const newDayCount = calculateDayCount(newStartDate, endDate);
+    setCurrentTripDuration(newDayCount);
+    const docRef = doc(database, "users", uid, "trips", currentLoadingTripId);
+
+    let startTime = [];
+
+    if (currentLoadingTripData.startTime) {
+      startTime = cloneDeep(currentLoadingTripData.startTime);
+    }
+
+    if (newDayCount > startTime.length) {
+      startTime = [
+        ...cloneDeep(startTime),
+        ...Array(newDayCount - startTime.length).fill({
+          value: "09:00",
+          haveSetted: false,
+        }),
+      ];
+    } else if (newDayCount < startTime.length) {
+      startTime = startTime.slice(0, newDayCount);
+    }
+
+    await setDoc(
+      docRef,
+      {
+        dayCount: newDayCount,
+        startDate: newStartDate,
+        endDate,
+        startTime,
+      },
+      { merge: true },
+    );
   };
 
   const handleEndDateInput = async (e) => {
@@ -41,11 +75,11 @@ const Header = () => {
       window.alert("請先設定起始日期");
       return;
     }
-    const newEndDate = e.target.value;
-    if (startDate && newEndDate < startDate) {
+    if (startDate && e.target.value < startDate) {
       window.alert("結束日期不可早於開始日期");
       return;
     }
+    const newEndDate = e.target.value;
     setEndDate(newEndDate);
 
     const newDayCount = calculateDayCount(startDate, newEndDate);

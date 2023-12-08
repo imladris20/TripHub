@@ -26,8 +26,6 @@ const TimeSettingModal = ({
 
     const sortedAttractions = orderBy(filterAttractions, "inDayOrder", "asc");
 
-    console.log("in start time", sortedAttractions);
-
     if (n === 1) {
       return (
         currentLoadingTripData.startTime[daySequenceIndex - 1]?.value || ""
@@ -68,8 +66,6 @@ const TimeSettingModal = ({
     );
 
     const sortedAttractions = orderBy(filterAttractions, "inDayOrder", "asc");
-
-    console.log("in end time", sortedAttractions);
 
     let totalDuration = 0;
 
