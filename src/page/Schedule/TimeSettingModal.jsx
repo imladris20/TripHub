@@ -33,8 +33,12 @@ const TimeSettingModal = ({
     } else if (n > 1) {
       let totalDuration = 0;
       for (let i = 0; i < n - 1; i++) {
-        if (sortedAttractions[i]?.duration)
+        if (sortedAttractions[i]?.duration) {
           totalDuration = totalDuration + sortedAttractions[i].duration;
+        }
+        if (sortedAttractions[i]?.routeDuration) {
+          totalDuration = totalDuration + sortedAttractions[i].routeDuration;
+        }
       }
       const result = addDurationToTime(
         currentLoadingTripData.startTime[daySequenceIndex - 1]?.value,
@@ -70,8 +74,15 @@ const TimeSettingModal = ({
     let totalDuration = 0;
 
     for (let i = 0; i < n; i++) {
-      if (sortedAttractions[i]?.duration)
+      if (sortedAttractions[i]?.duration) {
         totalDuration = totalDuration + sortedAttractions[i].duration;
+      }
+      if (
+        sortedAttractions[i]?.routeDuration &&
+        sortedAttractions[i].inDayOrder !== n
+      ) {
+        totalDuration = totalDuration + sortedAttractions[i].routeDuration;
+      }
     }
     const result = addDurationToTime(
       currentLoadingTripData.startTime[daySequenceIndex - 1]?.value,
@@ -164,7 +175,7 @@ const TimeSettingModal = ({
         onClick={() => handleButtonClicked()}
       >
         {startTime && endTime ? (
-          <h1 className="text-[10px]">{`${startTime} 至 ${endTime}`}</h1>
+          <h1 className="text-[10px]">{`${startTime} - ${endTime}`}</h1>
         ) : (
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -243,20 +254,16 @@ function calculateEndTime(start, hours, minutes) {
 }
 
 function addDurationToTime(startTime, duration) {
-  // 將開始時間解析為 Date 物件
   const startTimeParts = startTime.split(":");
   const startHours = parseInt(startTimeParts[0], 10);
   const startMinutes = parseInt(startTimeParts[1], 10);
   const startDate = new Date(0, 0, 0, startHours, startMinutes);
 
-  // 加上持續時間
   startDate.setMinutes(startDate.getMinutes() + duration);
 
-  // 取得新的小時和分鐘
   const newHours = startDate.getHours();
   const newMinutes = startDate.getMinutes();
 
-  // 格式化成 HH:mm 的字串
   const result = `${String(newHours).padStart(2, "0")}:${String(
     newMinutes,
   ).padStart(2, "0")}`;

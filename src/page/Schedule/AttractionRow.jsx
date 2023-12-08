@@ -115,7 +115,12 @@ const AttractionRow = ({
         </button>
       </div>
       {inDayOrder !== 0 && routesPartnerIndex !== -1 && (
-        <RouteRow poisId={poisId} routesPartnerIndex={routesPartnerIndex} />
+        <RouteRow
+          poisId={poisId}
+          routesPartnerIndex={routesPartnerIndex}
+          currentAttractionIndex={targetIndex}
+          daySequenceIndex={daySequenceIndex}
+        />
       )}
     </>
   );
