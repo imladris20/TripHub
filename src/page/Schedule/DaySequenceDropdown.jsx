@@ -28,6 +28,7 @@ const DaySequenceDropdown = ({ currentAttractionIndex, name }) => {
       newAttractions[currentAttractionIndex].inDayOrder = 0;
       newAttractions[currentAttractionIndex].routeDuration = 0;
       newAttractions[currentAttractionIndex].duration = 60;
+      newAttractions[currentAttractionIndex].travelMode = "DRIVING";
 
       await updateDoc(tripRef, { attractions: newAttractions });
     }
