@@ -44,7 +44,11 @@ const Pois = () => {
   }, [map]);
 
   if (!apiIsLoaded) {
-    return <h1>Api is Loading...</h1>;
+    return (
+      <div className="relative flex h-[calc(100vh-64px)] flex-row items-center justify-center">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
   }
 
   return (

@@ -16,12 +16,11 @@ const RouteRow = ({
   const { database } = useStore();
   const uid = localStorage.getItem("uid");
   const { currentLoadingTripData, currentLoadingTripId } = scheduleStore();
-  const [travelMode, setTravelMode] = useState("DRIVING");
   const [directionsResult, setDirectionsResult] = useState();
+  const [travelMode, setTravelMode] = useState();
 
   const directionsService = new DirectionsService();
-  let directionsRenderer = new DirectionsRenderer({
-    map: map,
+  const directionsRenderer = new DirectionsRenderer({
     suppressMarkers: true,
     polylineOptions: {
       strokeColor: "#4B5563BF",
@@ -33,18 +32,20 @@ const RouteRow = ({
     if (currentLoadingTripData && directionsService && directionsRenderer) {
       // directionsRenderer.setMap(null);
       // directionsRenderer.setDirections(null);
-      if (directionsRenderer.getDirections() !== null) {
-        directionsRenderer.setMap(null);
-        directionsRenderer = new window.google.maps.DirectionsRenderer({
-          suppressMarkers: true,
-          polylineOptions: {
-            strokeColor: "#4B5563BF",
-          },
-          preserveViewport: true,
-        });
-        directionsRenderer.setMap(map);
-      }
-      console.log(directionsRenderer);
+
+      // if (directionsRenderer.getDirections() !== null) {
+      //   directionsRenderer.setMap(null);
+      //   directionsRenderer = new window.google.maps.DirectionsRenderer({
+      //     suppressMarkers: true,
+      //     polylineOptions: {
+      //       strokeColor: "#4B5563BF",
+      //     },
+      //     preserveViewport: true,
+      //   });
+      //   directionsRenderer.setMap(map);
+      // }
+
+      // console.log(directionsRenderer);
       const directionsRequest = {
         origin: { placeId: poisId },
         destination: {
@@ -56,7 +57,6 @@ const RouteRow = ({
 
       directionsService.route(directionsRequest, async (result, status) => {
         if (status == "OK") {
-          console.log(result);
           directionsRenderer.setOptions({
             directions: result,
           });
@@ -80,7 +80,7 @@ const RouteRow = ({
           await updateDoc(tripRef, { attractions: newAttractions });
         }
       });
-      // directionsRenderer.setMap(map);
+      directionsRenderer.setMap(map);
     }
   }, [currentLoadingTripData, travelMode]);
 
@@ -144,6 +144,9 @@ const RouteRow = ({
   const [endTime, setEndTime] = useState(() => initEndTime());
 
   useEffect(() => {
+    setTravelMode(
+      currentLoadingTripData.attractions[currentAttractionIndex].travelMode,
+    );
     setStartTime(() => initStartTime());
     setEndTime(() => initEndTime());
   }, [currentLoadingTripData]);
