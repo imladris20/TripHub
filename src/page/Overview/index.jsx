@@ -5,7 +5,14 @@ const Overview = () => {
 
   // console.log(tripId);
 
-  return <h1>here is overview of trip {tripId}</h1>;
+  return (
+    <>
+      <h1>here is overview of trip {tripId}</h1>
+      <a href="/" target="_blank">
+        what the fuck
+      </a>
+    </>
+  );
 };
 
 export default Overview;
