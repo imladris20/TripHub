@@ -69,8 +69,8 @@ const InDayOrderDropdown = ({
       const newAttractions = cloneDeep(currentLoadingTripData.attractions);
 
       newAttractions[currentAttractionIndex].inDayOrder = newOrder;
-
       newAttractions[currentAttractionIndex].duration = 60;
+      newAttractions[currentAttractionIndex].travelMode = "DRIVING";
 
       newAttractions.sort((a, b) => a.inDayOrder - b.inDayOrder);
 

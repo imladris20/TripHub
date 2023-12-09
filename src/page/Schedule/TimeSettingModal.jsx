@@ -174,7 +174,9 @@ const TimeSettingModal = ({
         className="btn btn-ghost h-full min-h-0 w-full rounded-none font-normal"
         onClick={() => handleButtonClicked()}
       >
-        {startTime && endTime ? (
+        {startTime &&
+        endTime &&
+        currentLoadingTripData.startTime[daySequenceIndex - 1].haveSetted ? (
           <h1 className="text-xs">{`${startTime} - ${endTime}`}</h1>
         ) : (
           <svg

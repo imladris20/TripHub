@@ -144,9 +144,6 @@ const RouteRow = ({
   const [endTime, setEndTime] = useState(() => initEndTime());
 
   useEffect(() => {
-    setTravelMode(
-      currentLoadingTripData.attractions[currentAttractionIndex].travelMode,
-    );
     setStartTime(() => initStartTime());
     setEndTime(() => initEndTime());
   }, [currentLoadingTripData]);
