@@ -25,12 +25,10 @@ const DaySequenceDropdown = ({ currentAttractionIndex, name }) => {
       );
 
       newAttractions[currentAttractionIndex].daySequence = newDaySequence;
-
       newAttractions[currentAttractionIndex].inDayOrder = 0;
-      newAttractions[currentAttractionIndex].startTime = "";
-      newAttractions[currentAttractionIndex].endTime = "";
-      newAttractions[currentAttractionIndex].stayHours = "";
-      newAttractions[currentAttractionIndex].stayMinutes = "";
+      newAttractions[currentAttractionIndex].routeDuration = 0;
+      newAttractions[currentAttractionIndex].duration = 60;
+      newAttractions[currentAttractionIndex].travelMode = "DRIVING";
 
       await updateDoc(tripRef, { attractions: newAttractions });
     }

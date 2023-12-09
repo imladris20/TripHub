@@ -1,5 +1,4 @@
 import { useMap } from "@vis.gl/react-google-maps";
-import { doc, onSnapshot } from "firebase/firestore";
 import { findIndex } from "lodash";
 import { useEffect, useState } from "react";
 import useStore, { scheduleStore } from "../../store/store";
@@ -8,7 +7,11 @@ import InDayOrderDropdown from "./InDayOrderDropdown";
 import RouteRow from "./RouteRow";
 import TimeSettingModal from "./TimeSettingModal";
 
-const AttractionRow = ({ currentAttraction, daySequenceIndex }) => {
+const AttractionRow = ({
+  currentAttraction,
+  daySequenceIndex,
+  dayBlockRef,
+}) => {
   const {
     attractionsData: allAttractions,
     setAttractionItemDetail,
@@ -27,7 +30,7 @@ const AttractionRow = ({ currentAttraction, daySequenceIndex }) => {
 
   const [targetIndex, setTargetIndex] = useState(
     findIndex(currentLoadingTripData.attractions, {
-      name: name,
+      poisId: poisId,
     }),
   );
 
@@ -55,28 +58,18 @@ const AttractionRow = ({ currentAttraction, daySequenceIndex }) => {
   };
 
   useEffect(() => {
-    if (database && currentLoadingTripId) {
-      const unsubscribe = onSnapshot(
-        doc(database, "users", uid, "trips", currentLoadingTripId),
-        (doc) => {
-          setTargetIndex(
-            findIndex(currentLoadingTripData.attractions, {
-              name: name,
-            }),
-          );
-          setRoutesParter(
-            findIndex(currentLoadingTripData.attractions, {
-              daySequence: daySequence,
-              inDayOrder: inDayOrder + 1,
-            }),
-          );
-        },
-      );
-      return () => {
-        unsubscribe();
-      };
-    }
-  }, [database, currentLoadingTripData]);
+    setTargetIndex(
+      findIndex(currentLoadingTripData.attractions, {
+        poisId: poisId,
+      }),
+    );
+    setRoutesParter(
+      findIndex(currentLoadingTripData.attractions, {
+        daySequence: daySequence,
+        inDayOrder: inDayOrder + 1,
+      }),
+    );
+  }, [currentLoadingTripData]);
 
   return (
     <>
@@ -90,23 +83,33 @@ const AttractionRow = ({ currentAttraction, daySequenceIndex }) => {
         />
 
         {daySequenceIndex !== 0 ? (
-          <TimeSettingModal name={name} currentAttractionIndex={targetIndex} />
+          <TimeSettingModal
+            name={name}
+            currentAttractionIndex={targetIndex}
+            dayBlockRef={dayBlockRef}
+            daySequenceIndex={daySequenceIndex}
+          />
         ) : (
-          <span className="h-full w-[83px] whitespace-nowrap border-r border-solid border-gray-500 p-2 text-center text-xs">
+          <span className="h-full w-[90px] whitespace-nowrap border-r border-solid border-gray-500 p-2 text-center text-xs">
             -
           </span>
         )}
 
         {/* name(button) */}
         <button
-          className="h-full w-[187px] shrink-0 grow cursor-pointer p-2 text-center text-xs"
+          className="h-full w-[180px] shrink-0 grow cursor-pointer p-2 text-center text-xs"
           onClick={() => handleAttractionNameClicked(name, note, expense)}
         >
           {name}
         </button>
       </div>
       {inDayOrder !== 0 && routesPartnerIndex !== -1 && (
-        <RouteRow poisId={poisId} routesPartnerIndex={routesPartnerIndex} />
+        <RouteRow
+          poisId={poisId}
+          routesPartnerIndex={routesPartnerIndex}
+          currentAttractionIndex={targetIndex}
+          daySequenceIndex={daySequenceIndex}
+        />
       )}
     </>
   );

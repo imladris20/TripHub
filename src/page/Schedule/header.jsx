@@ -1,5 +1,6 @@
 import { doc, setDoc } from "firebase/firestore";
-import { useState } from "react";
+import { cloneDeep } from "lodash";
+import { useEffect, useState } from "react";
 import useStore, { scheduleStore } from "../../store/store";
 
 const Header = () => {
@@ -26,13 +27,47 @@ const Header = () => {
     return count;
   };
 
-  const handleStartDateInput = (e) => {
-    const newStartDate = e.target.value;
-    setStartDate(newStartDate);
-    if (endDate && endDate < newStartDate) {
+  const handleStartDateInput = async (e) => {
+    if (endDate && endDate < e.target.value) {
       setEndDate("");
       window.alert("起始日期不可晚於結束日期");
+      return;
     }
+    const newStartDate = e.target.value;
+    setStartDate(newStartDate);
+
+    const newDayCount = calculateDayCount(newStartDate, endDate);
+    setCurrentTripDuration(newDayCount);
+    const docRef = doc(database, "users", uid, "trips", currentLoadingTripId);
+
+    let startTime = [];
+
+    if (currentLoadingTripData.startTime) {
+      startTime = cloneDeep(currentLoadingTripData.startTime);
+    }
+
+    if (newDayCount > startTime.length) {
+      startTime = [
+        ...cloneDeep(startTime),
+        ...Array(newDayCount - startTime.length).fill({
+          value: "09:00",
+          haveSetted: false,
+        }),
+      ];
+    } else if (newDayCount < startTime.length) {
+      startTime = startTime.slice(0, newDayCount);
+    }
+
+    await setDoc(
+      docRef,
+      {
+        dayCount: newDayCount,
+        startDate: newStartDate,
+        endDate,
+        startTime,
+      },
+      { merge: true },
+    );
   };
 
   const handleEndDateInput = async (e) => {
@@ -40,22 +75,51 @@ const Header = () => {
       window.alert("請先設定起始日期");
       return;
     }
-    const newEndDate = e.target.value;
-    if (startDate && newEndDate < startDate) {
+    if (startDate && e.target.value < startDate) {
       window.alert("結束日期不可早於開始日期");
       return;
     }
+    const newEndDate = e.target.value;
     setEndDate(newEndDate);
 
     const newDayCount = calculateDayCount(startDate, newEndDate);
     setCurrentTripDuration(newDayCount);
     const docRef = doc(database, "users", uid, "trips", currentLoadingTripId);
+
+    let startTime = [];
+
+    if (currentLoadingTripData.startTime) {
+      startTime = cloneDeep(currentLoadingTripData.startTime);
+    }
+
+    if (newDayCount > startTime.length) {
+      startTime = [
+        ...cloneDeep(startTime),
+        ...Array(newDayCount - startTime.length).fill({
+          value: "09:00",
+          haveSetted: false,
+        }),
+      ];
+    } else if (newDayCount < startTime.length) {
+      startTime = startTime.slice(0, newDayCount);
+    }
+
     await setDoc(
       docRef,
-      { dayCount: newDayCount, startDate, endDate: newEndDate },
+      {
+        dayCount: newDayCount,
+        startDate,
+        endDate: newEndDate,
+        startTime,
+      },
       { merge: true },
     );
   };
+
+  useEffect(() => {
+    setStartDate(currentLoadingTripData?.startDate);
+    setEndDate(currentLoadingTripData?.endDate);
+  }, [currentLoadingTripData]);
 
   return currentLoadingTripData ? (
     <>
@@ -88,7 +152,10 @@ const Header = () => {
           />
         </div>
         <div className="flex h-full flex-row items-center rounded-r-lg border-y-2 border-r-2 border-solid border-sand">
-          <button className="h-full w-full whitespace-nowrap bg-sand px-4 font-bold">
+          <button
+            className="h-full w-full whitespace-nowrap bg-sand px-4 font-bold"
+            onClick={() => console.log(currentLoadingTripData)}
+          >
             預覽行程
           </button>
         </div>

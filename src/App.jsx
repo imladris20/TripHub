@@ -5,8 +5,8 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import Header from "./components/Header";
 import Pois from "./page/Pois";
 import Schedule from "./page/Schedule";
+import Search from "./page/Search";
 import Home from "./page/home";
-import Search from "./page/search";
 import useStore from "./store/store";
 import { initFirebase } from "./utils/firebaseSDK";
 
