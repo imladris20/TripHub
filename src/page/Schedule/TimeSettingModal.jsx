@@ -169,13 +169,13 @@ const TimeSettingModal = ({
   }, [currentLoadingTripData]);
 
   return (
-    <span className="h-full w-[83px] shrink-0 whitespace-nowrap border-r border-solid border-gray-500 text-center text-xs">
+    <span className="h-full w-[90px] shrink-0 whitespace-nowrap border-r border-solid border-gray-500 text-center text-xs">
       <button
         className="btn btn-ghost h-full min-h-0 w-full rounded-none font-normal"
         onClick={() => handleButtonClicked()}
       >
         {startTime && endTime ? (
-          <h1 className="text-[10px]">{`${startTime} - ${endTime}`}</h1>
+          <h1 className="text-xs">{`${startTime} - ${endTime}`}</h1>
         ) : (
           <svg
             xmlns="http://www.w3.org/2000/svg"

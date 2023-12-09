@@ -86,7 +86,7 @@ const RouteRow = ({
       if (sortedAttractions[i]?.duration) {
         totalDuration = totalDuration + sortedAttractions[i].duration;
       }
-      if (sortedAttractions[i]?.routeDuration && i > 0) {
+      if (sortedAttractions[i]?.routeDuration && n - 1 !== i) {
         totalDuration = totalDuration + sortedAttractions[i].routeDuration;
       }
     }
@@ -135,17 +135,17 @@ const RouteRow = ({
   }, [currentLoadingTripData]);
 
   return directionsResult ? (
-    <div className="flex h-8 w-[350px] shrink-0 flex-row items-center justify-start border-b border-solid border-gray-500 bg-white">
-      <div className="flex h-full w-[40px] flex-row items-center justify-center">
+    <div className="flex h-8 w-[350px] shrink-0 flex-row items-center justify-start gap-2 border-b border-solid border-gray-500 bg-white pl-[44px]">
+      <div className="flex h-full flex-row items-center justify-center">
         <TravelTypeDropdown
           travelMode={travelMode}
           setTravelMode={setTravelMode}
         />
       </div>
-      <h1 className="flex h-8 w-[123px] flex-row items-center justify-center border-r border-solid border-gray-500 text-xs">
-        {`${startTime} - ${endTime}`}
+      <h1 className="flex h-8 flex-row items-center justify-center text-xs">{`${directionsResult.routes[0].legs[0].duration.text}`}</h1>
+      <h1 className="flex h-8  flex-row items-center justify-center  text-xs">
+        {`(${startTime} - ${endTime})`}
       </h1>
-      <h1 className="flex h-8 w-[187px] flex-row items-center justify-center text-xs">{`${directionsResult.routes[0].legs[0].duration.text}`}</h1>
     </div>
   ) : (
     <div className="flex h-8 w-[350px] shrink-0 flex-row items-center justify-center border-b border-solid border-gray-500 bg-white">
@@ -157,8 +157,6 @@ const RouteRow = ({
 export default RouteRow;
 
 function addDurationToTime(startTime, duration) {
-  console.log(duration);
-  console.log(startTime);
   const startTimeParts = startTime.split(":");
   const startHours = parseInt(startTimeParts[0], 10);
   const startMinutes = parseInt(startTimeParts[1], 10);

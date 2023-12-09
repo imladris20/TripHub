@@ -101,14 +101,14 @@ const AttractionRow = ({
             daySequenceIndex={daySequenceIndex}
           />
         ) : (
-          <span className="h-full w-[83px] whitespace-nowrap border-r border-solid border-gray-500 p-2 text-center text-xs">
+          <span className="h-full w-[90px] whitespace-nowrap border-r border-solid border-gray-500 p-2 text-center text-xs">
             -
           </span>
         )}
 
         {/* name(button) */}
         <button
-          className="h-full w-[187px] shrink-0 grow cursor-pointer p-2 text-center text-xs"
+          className="h-full w-[180px] shrink-0 grow cursor-pointer p-2 text-center text-xs"
           onClick={() => handleAttractionNameClicked(name, note, expense)}
         >
           {name}

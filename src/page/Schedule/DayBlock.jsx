@@ -90,10 +90,10 @@ const DayBlock = ({ daySequenceIndex }) => {
           <span className="h-full w-[40px] whitespace-nowrap border-r border-solid border-gray-500 p-2 text-center text-xs font-bold">
             順序
           </span>
-          <span className="h-full w-[83px] whitespace-nowrap border-r border-solid border-gray-500 p-2 text-center text-xs font-bold">
+          <span className="h-full w-[90px] whitespace-nowrap border-r border-solid border-gray-500 p-2 text-center text-xs font-bold">
             時間
           </span>
-          <span className="h-full w-[187px] p-2 text-center text-xs font-bold">
+          <span className="h-full w-[180px] p-2 text-center text-xs font-bold">
             景點名稱
           </span>
         </div>

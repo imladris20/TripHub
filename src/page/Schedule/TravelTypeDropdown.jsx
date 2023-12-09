@@ -32,10 +32,10 @@ const TravelTypeDropdown = ({ travelMode, setTravelMode }) => {
 
   return (
     <details
-      className="dropdown flex h-full w-[40px] flex-row items-center justify-center"
+      className="dropdown flex h-7 w-[30px] flex-row items-center justify-center"
       ref={dropdownRef}
     >
-      <summary className="btn m-0 h-8 min-h-0 w-[40px] rounded-none border-l-0 border-t-0 border-gray-500 bg-white p-0">
+      <summary className="btn m-0 h-7 min-h-0 w-[30px] rounded-none border-none bg-white p-0">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 512 512"
