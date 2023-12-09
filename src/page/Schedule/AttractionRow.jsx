@@ -1,5 +1,4 @@
 import { useMap } from "@vis.gl/react-google-maps";
-import { doc, onSnapshot } from "firebase/firestore";
 import { findIndex } from "lodash";
 import { useEffect, useState } from "react";
 import useStore, { scheduleStore } from "../../store/store";
@@ -31,7 +30,7 @@ const AttractionRow = ({
 
   const [targetIndex, setTargetIndex] = useState(
     findIndex(currentLoadingTripData.attractions, {
-      name: name,
+      poisId: poisId,
     }),
   );
 
@@ -59,28 +58,18 @@ const AttractionRow = ({
   };
 
   useEffect(() => {
-    if (database && currentLoadingTripId) {
-      const unsubscribe = onSnapshot(
-        doc(database, "users", uid, "trips", currentLoadingTripId),
-        (doc) => {
-          setTargetIndex(
-            findIndex(currentLoadingTripData.attractions, {
-              name: name,
-            }),
-          );
-          setRoutesParter(
-            findIndex(currentLoadingTripData.attractions, {
-              daySequence: daySequence,
-              inDayOrder: inDayOrder + 1,
-            }),
-          );
-        },
-      );
-      return () => {
-        unsubscribe();
-      };
-    }
-  }, [database, currentLoadingTripData]);
+    setTargetIndex(
+      findIndex(currentLoadingTripData.attractions, {
+        poisId: poisId,
+      }),
+    );
+    setRoutesParter(
+      findIndex(currentLoadingTripData.attractions, {
+        daySequence: daySequence,
+        inDayOrder: inDayOrder + 1,
+      }),
+    );
+  }, [currentLoadingTripData]);
 
   return (
     <>

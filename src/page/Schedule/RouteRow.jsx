@@ -17,7 +17,9 @@ const RouteRow = ({
   const uid = localStorage.getItem("uid");
   const { currentLoadingTripData, currentLoadingTripId } = scheduleStore();
   const [directionsResult, setDirectionsResult] = useState();
-  const [travelMode, setTravelMode] = useState();
+  const [travelMode, setTravelMode] = useState(
+    currentLoadingTripData.attractions[currentAttractionIndex].travelMode,
+  );
 
   const directionsService = new DirectionsService();
   const directionsRenderer = new DirectionsRenderer({
@@ -30,22 +32,23 @@ const RouteRow = ({
 
   useEffect(() => {
     if (currentLoadingTripData && directionsService && directionsRenderer) {
-      // directionsRenderer.setMap(null);
-      // directionsRenderer.setDirections(null);
+      /*       directionsRenderer.setMap(null);
+      directionsRenderer.setDirections(null);
 
-      // if (directionsRenderer.getDirections() !== null) {
-      //   directionsRenderer.setMap(null);
-      //   directionsRenderer = new window.google.maps.DirectionsRenderer({
-      //     suppressMarkers: true,
-      //     polylineOptions: {
-      //       strokeColor: "#4B5563BF",
-      //     },
-      //     preserveViewport: true,
-      //   });
-      //   directionsRenderer.setMap(map);
-      // }
+      if (directionsRenderer.getDirections() !== null) {
+        directionsRenderer.setMap(null);
+        directionsRenderer = new window.google.maps.DirectionsRenderer({
+          suppressMarkers: true,
+          polylineOptions: {
+            strokeColor: "#4B5563BF",
+          },
+          preserveViewport: true,
+        });
+        directionsRenderer.setMap(map);
+      }
 
-      // console.log(directionsRenderer);
+      console.log(directionsRenderer); */
+
       const directionsRequest = {
         origin: { placeId: poisId },
         destination: {
