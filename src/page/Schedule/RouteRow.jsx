@@ -24,14 +24,14 @@ const RouteRow = ({
     map: map,
     suppressMarkers: true,
     polylineOptions: {
-      strokeColor: "black",
+      strokeColor: "#4B556380",
     },
     preserveViewport: true,
   });
 
   useEffect(() => {
     if (currentLoadingTripData && directionsService && directionsRenderer) {
-      directionsRenderer.setDirections(null);
+      // directionsRenderer.setMap(null);
       const directionsRequest = {
         origin: { placeId: poisId },
         destination: {
@@ -50,7 +50,6 @@ const RouteRow = ({
           const minutes = Math.round(
             result.routes[0].legs[0].duration.value / 60,
           );
-          // console.log(`${Math.floor(minutes / 60)}小時${minutes % 60}分鐘`);
 
           const tripRef = doc(
             database,
@@ -67,6 +66,7 @@ const RouteRow = ({
           await updateDoc(tripRef, { attractions: newAttractions });
         }
       });
+      // directionsRenderer.setMap(map);
     }
   }, [currentLoadingTripData, travelMode]);
 

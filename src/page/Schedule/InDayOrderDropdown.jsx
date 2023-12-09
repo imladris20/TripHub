@@ -79,8 +79,12 @@ const InDayOrderDropdown = ({
   };
 
   return daySequenceIndex !== 0 ? (
-    <details className="dropdown h-8 w-[40px]">
-      <summary className="btn m-0 h-8 min-h-0 w-[40px] rounded-none border-b-0 border-l-0 border-r border-t-0 border-solid border-gray-400 bg-white p-0 text-xs">
+    <div className="dropdown dropdown-hover">
+      <div
+        tabIndex={0}
+        role="button"
+        className="btn m-0 h-8 min-h-0 w-[40px] rounded-none border-b-0 border-l-0 border-r border-t-0 border-solid border-gray-400 bg-white p-0 text-xs"
+      >
         {inDayOrder && inDayOrder !== 0 ? (
           <span className="h-full w-[40px] whitespace-nowrap p-2 text-center text-xs">
             {inDayOrder}
@@ -94,11 +98,14 @@ const InDayOrderDropdown = ({
             <VerticalSwapIcon />
           </svg>
         )}
-      </summary>
-      <ul className="menu dropdown-content z-[1] w-52 rounded-box bg-base-100 p-2 shadow">
+      </div>
+      <ul
+        tabIndex={0}
+        className="menu dropdown-content z-[1] w-52 rounded-box bg-base-100 p-2 shadow"
+      >
         {generateInDayOrderDropdown(daySequenceIndex, name)}
       </ul>
-    </details>
+    </div>
   ) : (
     <span className="h-full w-[40px] whitespace-nowrap border-r border-solid border-gray-500 p-2 text-center text-xs">
       -
