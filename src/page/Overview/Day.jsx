@@ -1,3 +1,5 @@
+import { filter, sumBy } from "lodash";
+
 const numberToChinese = (num) => {
   const chineseNumbers = [
     "零",
@@ -53,18 +55,21 @@ const addDaysToDate = (dateString, days) => {
 };
 
 const Day = ({ trip, daySequence }) => {
-  console.log(trip);
+  // console.log(trip);
+
+  const filterArr = filter(trip.attractions, { daySequence: daySequence });
+  const sum = sumBy(filterArr, (item) => parseInt(item.expense) || 0);
 
   return (
     <>
       <div className="divider-gray divider"></div>
-      <div className="collapse bg-base-200">
-        <input type="checkbox" className="peer" />
-        <div className="collapse-title bg-primary text-white peer-checked:bg-secondary peer-checked:text-secondary-content">
-          {`第${numberToChinese(daySequence + 1)}天：${addDaysToDate(
-            trip.startDate,
-            daySequence,
-          )}`}
+      <div className="collapse collapse-arrow bg-base-200">
+        <input type="checkbox" className="peer" defaultChecked={true} />
+        <div className="collapse-title flex flex-row items-center gap-10 bg-primary text-white peer-checked:bg-secondary peer-checked:text-secondary-content">
+          <h1 className="font-bold">{`第${numberToChinese(
+            daySequence + 1,
+          )}天：${addDaysToDate(trip.startDate, daySequence)}`}</h1>
+          <h1>當日預計花費：{sum}元</h1>
         </div>
         <div className="collapse-content bg-primary text-primary-content peer-checked:bg-secondary peer-checked:text-secondary-content">
           <p>hello</p>
