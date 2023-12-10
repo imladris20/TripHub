@@ -23,10 +23,7 @@ function App() {
   const [isFbInited, setIsFbInited] = useState(false);
   const navigate = useNavigate();
   const { pathname } = useLocation();
-
-  console.log(pathname);
   const isOverviewPath = pathname.startsWith("/overview");
-  console.log(isOverviewPath);
 
   useEffect(() => {
     if (!isFbInited) {
