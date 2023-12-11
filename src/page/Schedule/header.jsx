@@ -159,7 +159,7 @@ const Header = () => {
             }}
           >
             <a href={`/overview/${currentLoadingTripId}`} target="_blank">
-              預覽行程
+              行程總覽
             </a>
           </button>
         </div>
