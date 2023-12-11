@@ -18,14 +18,18 @@ const ResultList = () => {
   const [isInPoisArr, setIsInPoisArr] = useState(new Array(20).fill(false));
   const map = useMap("searchMap");
 
-  const handleItemClicked = (place, label) => {
+  const handleItemClicked = (place, label, isInPois) => {
     setSearchItemDetailInfo({
       data: place,
       label,
+      isInPois,
     });
 
-    map.panTo(place.geometry.location);
-    setCurrentCenter(place.geometry.location);
+    const lat = place.geometry.location.lat();
+    const lng = place.geometry.location.lng();
+
+    map.panTo({ lat, lng });
+    setCurrentCenter({ lat, lng });
     setCurrentZoom(18);
   };
 
@@ -67,7 +71,7 @@ const ResultList = () => {
         return (
           <div
             key={place.place_id}
-            onClick={() => handleItemClicked(place, label)}
+            onClick={() => handleItemClicked(place, label, isInPoisArr[index])}
             className="relative flex w-full cursor-pointer flex-col items-start gap-[6px] border-b-2 border-solid border-gray-200 bg-white p-2"
           >
             <div className="flex w-full flex-row items-center justify-start gap-2">

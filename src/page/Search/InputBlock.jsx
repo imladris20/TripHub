@@ -167,10 +167,11 @@ const InputBlock = () => {
 
   const handleEnterPress = (e) => {
     if (e.key === "Enter") {
+      e.preventDefault();
       console.log("activate");
-      setSearchItemDetailInfo(null);
-      if (!searchValue) return;
-      clearMarkerAndSearch(searchValue);
+      // setSearchItemDetailInfo(null);
+      // if (!searchValue) return;
+      // clearMarkerAndSearch(searchValue);
     }
   };
 

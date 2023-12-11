@@ -14,7 +14,7 @@ const Detail = () => {
     database,
   } = useStore();
   const uid = localStorage.getItem("uid");
-  const [categoryTags, setCategoryTags] = useState(new Array(3).fill("請選擇"));
+  const [categoryTags, setCategoryTags] = useState([]);
 
   const setDocMutation = useMutation(({ database, uid, place_id, docData }) => {
     setDoc(doc(database, `users/${uid}/pointOfInterests`, place_id), docData, {
@@ -76,7 +76,10 @@ const Detail = () => {
   };
 
   return (
-    <div className="absolute left-[21%] top-8 z-[999] flex h-[calc(100%-32px)] w-1/4 flex-col items-start gap-3 rounded-lg border-b-2 border-solid border-gray-200 bg-white p-3 shadow-2xl 2xl:w-1/5">
+    <div
+      onClick={() => console.log(categoryTags)}
+      className="absolute left-[21%] top-8 z-[999] flex h-[calc(100%-32px)] w-1/4 flex-col items-start gap-3 rounded-lg border-b-2 border-solid border-gray-200 bg-white p-3 shadow-2xl 2xl:w-1/5"
+    >
       <div className="flex w-[88%] flex-row items-center justify-start gap-2">
         <div className="flex h-4 w-4 flex-shrink-0 flex-row items-center justify-center rounded-full border border-dotted border-red-500 p-0 ">
           <h1 className="text-xs text-red-500">{searchItemDetailInfo.label}</h1>
@@ -157,7 +160,9 @@ const Detail = () => {
           為景點加上標籤再放入口袋清單吧~
         </h1>
         <div className="flex w-full flex-row items-center justify-start gap-4 px-[2px]">
-          {[...Array(3)].map((_, index) => (
+          {[
+            ...Array(categoryTags.length === 3 ? 3 : categoryTags.length + 1),
+          ].map((_, index) => (
             <select
               key={index}
               className="h-7 w-[84px] cursor-pointer rounded-lg bg-lime-200 p-1 text-xs text-black shadow outline-none"
@@ -184,12 +189,9 @@ const Detail = () => {
         </div>
       </div>
       <div className="mt-auto flex w-full flex-row items-center justify-center shadow-2xl">
-        {setDocMutation.isSuccess ? (
-          <button
-            className="h-10 w-full cursor-default rounded-xl bg-sky-200 p-2 font-bold text-gray-800"
-            onClick={() => handleAddToPoisBtnClicked()}
-          >
-            加入成功！
+        {setDocMutation.isSuccess || searchItemDetailInfo.isInPois ? (
+          <button className="h-10 w-full cursor-default rounded-xl bg-sky-200 p-2 font-bold text-gray-800">
+            已加入口袋清單！
           </button>
         ) : (
           <button
