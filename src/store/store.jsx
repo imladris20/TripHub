@@ -3,7 +3,7 @@ import { create } from "zustand";
 
 const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const mapId = import.meta.env.VITE_GOOGLE_MAPS_ID;
-const TAIWAN = { lat: 23.553118, lng: 121.0211024 };
+const TAIWAN = { lat: 23.62758169093335, lng: 121.01767227950151 };
 
 const useStore = create((set, get) => ({
   apiKey,
@@ -51,7 +51,7 @@ const useStore = create((set, get) => ({
     "連江縣",
   ],
   currentCenter: TAIWAN,
-  currentZoom: 8.5,
+  currentZoom: 7.7895,
   setCurrentCenter: (geolocation) => {
     set(
       produce((state) => {

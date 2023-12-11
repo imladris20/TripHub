@@ -13,7 +13,6 @@ const InputBlock = () => {
   const { Marker } = useMapsLibrary("marker");
   const { InfoWindow } = useMapsLibrary("maps");
   const { PlacesService } = useMapsLibrary("places");
-  const marker = new Marker({ map });
   const service = new PlacesService(map);
 
   const [searchValue, setSearchValue] = useState("");
@@ -39,13 +38,44 @@ const InputBlock = () => {
     strictBounds: true,
   };
 
+  const textSearchCallback = (results, status) => {
+    if (status === "OK") {
+      const lat = results[0].geometry.location.lat();
+      const lng = results[0].geometry.location.lng();
+      map.panTo({ lat, lng });
+      setCurrentZoom(13.8);
+      setCurrentCenter({ lat, lng });
+      fetchPlaceDetails(markerRef.current, results).then((place) => {
+        setPlaceResult(place);
+      });
+    }
+  };
+
+  const clearMarkerAndSearch = (keyword) => {
+    console.log("inside clearMarkerAndSearch", currentCenter);
+    const textSearchRequest = {
+      location: currentCenter,
+      radius: "5000",
+      query: keyword,
+      rankBy: "DISTANCE",
+    };
+
+    if (markerRef.current.length) {
+      markerRef.current.forEach((marker) => {
+        marker.setVisible(false);
+        marker.setMap(null);
+      });
+      markerRef.current = [];
+    }
+
+    service.textSearch(textSearchRequest, textSearchCallback);
+  };
+
   const onPlaceChanged = (place) => {
     if (place) {
       setSearchValue(place.name);
-      marker.setPosition(place.geometry.location);
-      map.panTo(place.geometry.location);
-      setCurrentZoom(14);
-      setCurrentCenter(place.geometry.location);
+      setSearchItemDetailInfo(null);
+      clearMarkerAndSearch(place.name);
       inputRef.current && inputRef.current.focus();
     }
   };
@@ -89,13 +119,6 @@ const InputBlock = () => {
                   color: "white",
                 },
                 animation: 2,
-                // icon: {
-                //   path: 0,
-                //   scale: 10,
-                //   fillColor: "#00FF00", // 綠色
-                //   fillOpacity: 1,
-                //   strokeWeight: 0,
-                // },
               });
 
               const windowContent = `
@@ -136,38 +159,19 @@ const InputBlock = () => {
     return details;
   };
 
-  const handleSearchButtonClicked = () => {
+  const handleSearchSubmit = () => {
     setSearchItemDetailInfo(null);
     if (!searchValue) return;
+    clearMarkerAndSearch(searchValue);
+  };
 
-    const textSearchRequest = {
-      location: currentCenter,
-      radius: "5000",
-      query: searchValue,
-      rankBy: "DISTANCE",
-    };
-
-    if (markerRef.current.length) {
-      markerRef.current.forEach((marker) => {
-        marker.setVisible(false);
-        marker.setMap(null);
-      });
-      markerRef.current = [];
+  const handleEnterPress = (e) => {
+    if (e.key === "Enter") {
+      console.log("activate");
+      setSearchItemDetailInfo(null);
+      if (!searchValue) return;
+      clearMarkerAndSearch(searchValue);
     }
-
-    const textSearchCallback = (results, status) => {
-      if (status === "OK") {
-        map.panTo(results[0].geometry.location);
-        setCurrentZoom(13.8);
-        setCurrentCenter(results[0].geometry.location);
-
-        fetchPlaceDetails(markerRef.current, results).then((place) => {
-          setPlaceResult(place);
-        });
-      }
-    };
-
-    service.textSearch(textSearchRequest, textSearchCallback);
   };
 
   useAutocomplete({
@@ -185,11 +189,12 @@ const InputBlock = () => {
         onChange={(e) => setSearchValue(e.target.value)}
         placeholder="想找什麼景點呢？"
         ref={inputRef}
-        onClick={() => console.log(autoCompleteOptions.bounds)}
+        onKeyDown={(e) => handleEnterPress(e)}
+        onClick={() => console.log(currentCenter)}
       />
       <button
         className="row-flex mt-[2px] flex h-[30px] w-[30px] items-center justify-center bg-gray-400"
-        onClick={() => handleSearchButtonClicked()}
+        onClick={() => handleSearchSubmit()}
       >
         <SearchIcon />
       </button>
