@@ -274,20 +274,3 @@ function addDurationToTime(startTime, duration) {
 
   return result;
 }
-
-function addOneMinuteToTimeString(timeString) {
-  if (timeString) {
-    const [hours, minutes] = timeString.split(":").map(Number);
-
-    const totalMinutes = (hours * 60 + minutes + 1) % (24 * 60);
-
-    const newHours = Math.floor(totalMinutes / 60);
-    const newMinutes = totalMinutes % 60;
-
-    const newTimeString = `${String(newHours).padStart(2, "0")}:${String(
-      newMinutes,
-    ).padStart(2, "0")}`;
-
-    return newTimeString;
-  }
-}

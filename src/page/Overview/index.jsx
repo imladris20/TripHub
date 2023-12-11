@@ -24,8 +24,6 @@ const Overview = () => {
     }
   }, [database]);
 
-  console.log(trip);
-
   return (
     <div className="h-screen w-screen pt-3">
       <div className="flex w-full flex-row items-center justify-center gap-2">

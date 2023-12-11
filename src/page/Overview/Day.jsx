@@ -1,4 +1,5 @@
 import { filter, sumBy } from "lodash";
+import TimeCard from "./TimeCard";
 
 const numberToChinese = (num) => {
   const chineseNumbers = [
@@ -55,10 +56,10 @@ const addDaysToDate = (dateString, days) => {
 };
 
 const Day = ({ trip, daySequence }) => {
-  // console.log(trip);
-
-  const filterArr = filter(trip.attractions, { daySequence: daySequence });
-  const sum = sumBy(filterArr, (item) => parseInt(item.expense) || 0);
+  const matchDayAttraction = filter(trip.attractions, {
+    daySequence: daySequence + 1,
+  });
+  const sum = sumBy(matchDayAttraction, (item) => parseInt(item.expense) || 0);
 
   return (
     <>
@@ -72,7 +73,23 @@ const Day = ({ trip, daySequence }) => {
           <h1>當日預計花費：{sum}元</h1>
         </div>
         <div className="collapse-content bg-primary text-primary-content peer-checked:bg-secondary peer-checked:text-secondary-content">
-          <p>hello</p>
+          <ul className="timeline timeline-vertical timeline-snap-icon max-md:timeline-compact">
+            {matchDayAttraction.map((item, index, arr) => {
+              if (item.inDayOrder !== 0) {
+                return (
+                  <TimeCard
+                    key={index}
+                    trip={trip}
+                    attraction={item}
+                    cardOrder={item.inDayOrder}
+                    isLastOne={arr.length === index + 1}
+                    dayStartTime={trip.startTime[daySequence].value}
+                    wholeDay={arr}
+                  />
+                );
+              }
+            })}
+          </ul>
         </div>
       </div>
     </>
