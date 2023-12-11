@@ -21,7 +21,8 @@ const TimeSettingModal = ({
 
     const filterAttractions = filter(
       currentLoadingTripData.attractions,
-      ({ daySequence, inDayOrder }) => daySequence === 1 && inDayOrder > 0,
+      ({ daySequence, inDayOrder }) =>
+        daySequence === daySequenceIndex && inDayOrder > 0,
     );
 
     const sortedAttractions = orderBy(filterAttractions, "inDayOrder", "asc");
@@ -66,7 +67,8 @@ const TimeSettingModal = ({
 
     const filterAttractions = filter(
       currentLoadingTripData.attractions,
-      ({ daySequence, inDayOrder }) => daySequence === 1 && inDayOrder > 0,
+      ({ daySequence, inDayOrder }) =>
+        daySequence === daySequenceIndex && inDayOrder > 0,
     );
 
     const sortedAttractions = orderBy(filterAttractions, "inDayOrder", "asc");
@@ -271,21 +273,4 @@ function addDurationToTime(startTime, duration) {
   ).padStart(2, "0")}`;
 
   return result;
-}
-
-function addOneMinuteToTimeString(timeString) {
-  if (timeString) {
-    const [hours, minutes] = timeString.split(":").map(Number);
-
-    const totalMinutes = (hours * 60 + minutes + 1) % (24 * 60);
-
-    const newHours = Math.floor(totalMinutes / 60);
-    const newMinutes = totalMinutes % 60;
-
-    const newTimeString = `${String(newHours).padStart(2, "0")}:${String(
-      newMinutes,
-    ).padStart(2, "0")}`;
-
-    return newTimeString;
-  }
 }

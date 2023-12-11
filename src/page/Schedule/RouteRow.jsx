@@ -93,7 +93,8 @@ const RouteRow = ({
 
     const filterAttractions = filter(
       currentLoadingTripData.attractions,
-      ({ daySequence, inDayOrder }) => daySequence === 1 && inDayOrder > 0,
+      ({ daySequence, inDayOrder }) =>
+        daySequence === daySequenceIndex && inDayOrder > 0,
     );
 
     const sortedAttractions = orderBy(filterAttractions, "inDayOrder", "asc");
@@ -122,7 +123,8 @@ const RouteRow = ({
 
     const filterAttractions = filter(
       currentLoadingTripData.attractions,
-      ({ daySequence, inDayOrder }) => daySequence === 1 && inDayOrder > 0,
+      ({ daySequence, inDayOrder }) =>
+        daySequence === daySequenceIndex && inDayOrder > 0,
     );
 
     const sortedAttractions = orderBy(filterAttractions, "inDayOrder", "asc");

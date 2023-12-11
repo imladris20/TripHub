@@ -154,9 +154,13 @@ const Header = () => {
         <div className="flex h-full flex-row items-center rounded-r-lg border-y-2 border-r-2 border-solid border-sand">
           <button
             className="h-full w-full whitespace-nowrap bg-sand px-4 font-bold"
-            onClick={() => console.log(currentLoadingTripData)}
+            onClick={() => {
+              console.log(currentLoadingTripData);
+            }}
           >
-            預覽行程
+            <a href={`/overview/${currentLoadingTripId}`} target="_blank">
+              行程總覽
+            </a>
           </button>
         </div>
         <button
