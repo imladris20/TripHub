@@ -8,10 +8,12 @@ const Profile = () => {
   return (
     <div className="ml-auto flex h-6 w-auto flex-row items-center gap-4">
       {username && location.pathname !== "/schedule" && (
-        <h1 className="-mr-4 w-28 p-1 text-[13px] leading-4 text-slate-500">
-          哈囉！{username}，
+        <h1 className="max-w-[100px] overflow-hidden whitespace-nowrap p-1 text-[13px] leading-4 text-slate-500">
+          <span className="inline-block max-w-full overflow-hidden text-ellipsis">
+            哈囉！{username}，
+          </span>
           <br />
-          想去哪裡玩呢？
+          <span>想去哪裡玩呢</span>
         </h1>
       )}
       <button>
