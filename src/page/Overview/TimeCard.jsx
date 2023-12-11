@@ -2,6 +2,7 @@ import axios from "axios";
 import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import useStore from "../../store/store";
+import TravelModeAlert from "./TravelModeAlert";
 
 function addDurationToTime(startTime, duration) {
   const startTimeParts = startTime.split(":");
@@ -89,7 +90,6 @@ const TimeCard = ({
 
     const init = async () => {
       const detail = await getPlaceDetails(attraction.poisId);
-      console.log(detail);
       setPlaceNewestDetail(detail);
       const photoUri = await getPlacePhoto(detail?.photos[0].name);
       setPlacePhoto(photoUri);
@@ -135,17 +135,23 @@ const TimeCard = ({
                 className="aspect-video w-full object-cover"
               />
             </figure>
-            <div className="card-body pb-5 pt-3">
-              <a href={placeNewestDetail?.googleMapsUri} target="_blank">
-                <h2 className="card-title">
-                  {placeNewestDetail?.displayName?.text}
-                  {placeNewestDetail?.regularOpeningHours.openNow ? (
-                    <div className="badge badge-secondary">營業中</div>
-                  ) : (
-                    <div className="badge badge-warning">休息中</div>
-                  )}
-                </h2>
-              </a>
+            <div className="card-body pb-6 pt-4">
+              <div className="flex flex-row items-center gap-4">
+                <a
+                  href={placeNewestDetail?.googleMapsUri}
+                  target="_blank"
+                  className="link text-deyork"
+                >
+                  <h2 className="card-title">
+                    {placeNewestDetail?.displayName?.text}
+                  </h2>
+                </a>
+                {placeNewestDetail?.regularOpeningHours.openNow ? (
+                  <div className="badge badge-secondary">營業中</div>
+                ) : (
+                  <div className="badge badge-warning">休息中</div>
+                )}
+              </div>
               <div className="flex flex-row items-center justify-start">
                 <h2 className="text-xs">
                   {placeNewestDetail?.rating} ⭐ (
@@ -227,24 +233,10 @@ const TimeCard = ({
       {!isLastOne && (
         <li>
           <hr />
-          <div className="timeline-middle">
-            <div role="alert" className="alert alert-info w-96">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 shrink-0 stroke-current"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <span>{attraction.travelMode}</span>
-            </div>
-          </div>
+          <TravelModeAlert
+            mode={attraction.travelMode}
+            duration={attraction.routeDuration}
+          />
           <hr />
         </li>
       )}

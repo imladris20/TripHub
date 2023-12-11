@@ -67,10 +67,10 @@ const Day = ({ trip, daySequence }) => {
       <div className="collapse collapse-arrow bg-base-200">
         <input type="checkbox" className="peer" defaultChecked={true} />
         <div className="collapse-title flex flex-row items-center gap-10 bg-primary text-white peer-checked:bg-secondary peer-checked:text-secondary-content">
-          <h1 className="font-bold">{`第${numberToChinese(
+          <h1 className="text-xl font-bold">{`第${numberToChinese(
             daySequence + 1,
           )}天：${addDaysToDate(trip.startDate, daySequence)}`}</h1>
-          <h1>當日預計花費：{sum}元</h1>
+          <h1 className="text-xl">當日預計總花費：{sum}元</h1>
         </div>
         <div className="collapse-content bg-primary text-primary-content peer-checked:bg-secondary peer-checked:text-secondary-content">
           <ul className="timeline timeline-vertical timeline-snap-icon max-md:timeline-compact">
