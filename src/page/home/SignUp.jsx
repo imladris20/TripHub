@@ -101,7 +101,7 @@ const SignUp = ({ inputRef }) => {
             disabled={signUpMutation.isLoading}
           >
             <h3 className="text-sm font-bold ">
-              {signUpMutation.isLoading ? "登入中..." : "送出"}
+              {signUpMutation.isLoading ? "註冊中..." : "送出"}
             </h3>
           </button>
           <label className="label mt-1">
