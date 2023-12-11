@@ -90,14 +90,6 @@ const useStore = create((set, get) => ({
       }),
     );
   },
-  isSignWindowOpen: false,
-  setIsSignWindowOpen: (boolean) => {
-    set(
-      produce((state) => {
-        state.isSignWindowOpen = boolean;
-      }),
-    );
-  },
   database: null,
   setDatabase: (db) => {
     set(
