@@ -52,7 +52,7 @@ const Header = () => {
               }`}
               onClick={() => setActivePageTag(2)}
             >
-              口袋名單
+              口袋清單
             </button>
           </Link>
           <Link to="/schedule">
