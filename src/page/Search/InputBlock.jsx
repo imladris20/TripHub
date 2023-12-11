@@ -72,6 +72,7 @@ const InputBlock = () => {
             "rating",
             "user_ratings_total",
             "address_components",
+            "url",
           ],
         };
 

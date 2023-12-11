@@ -34,6 +34,7 @@ const Detail = () => {
     user_ratings_total,
     address_components,
     geometry,
+    url,
   } = searchItemDetailInfo.data;
 
   const city = address_components.find((element) =>
@@ -80,7 +81,13 @@ const Detail = () => {
         <div className="flex h-4 w-4 flex-shrink-0 flex-row items-center justify-center rounded-full border border-dotted border-red-500 p-0 ">
           <h1 className="text-xs text-red-500">{searchItemDetailInfo.label}</h1>
         </div>
-        <h1 className="text-left text-base font-bold">{name}</h1>
+        <a
+          href={url}
+          traget="_blank"
+          className="link truncate text-left text-base font-bold"
+        >
+          {name}
+        </a>
       </div>
       {photos ? (
         <a href={photos[0].getUrl()} target="_blank">
