@@ -40,7 +40,7 @@ const DayBlock = ({ daySequenceIndex }) => {
       ) {
         return (
           <AttractionRow
-            key={attractionIndex}
+            key={attraction.poisId}
             daySequenceIndex={daySequenceIndex}
             currentAttraction={attraction}
             dayBlockRef={dayBlockRef}

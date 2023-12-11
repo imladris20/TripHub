@@ -84,8 +84,18 @@ const InputBlock = () => {
               const marker = new Marker({
                 map,
                 position: place.geometry.location,
-                label: markerLabel,
+                label: {
+                  text: markerLabel,
+                  color: "white",
+                },
                 animation: 2,
+                // icon: {
+                //   path: 0,
+                //   scale: 10,
+                //   fillColor: "#00FF00", // 綠色
+                //   fillOpacity: 1,
+                //   strokeWeight: 0,
+                // },
               });
 
               const windowContent = `

@@ -83,7 +83,7 @@ const Detail = () => {
         </div>
         <a
           href={url}
-          traget="_blank"
+          target="_blank"
           className="link truncate text-left text-base font-bold"
         >
           {name}
