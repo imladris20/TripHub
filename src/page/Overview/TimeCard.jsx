@@ -165,7 +165,7 @@ const TimeCard = ({
                   target="_blank"
                   className="link text-deyork"
                 >
-                  <h2 className="card-title">
+                  <h2 className="w-220px card-title max-w-[220px] truncate">
                     {placeNewestDetail?.displayName?.text}
                   </h2>
                 </a>
