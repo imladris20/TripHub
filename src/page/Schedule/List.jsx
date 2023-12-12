@@ -76,7 +76,11 @@ const List = () => {
         const marker = new Marker({
           map,
           position: location,
-          label: `${daySequence !== 0 ? `D${daySequence}` : "-"}`,
+          label: {
+            text: `${daySequence !== 0 ? `D${daySequence}` : "-"}`,
+            color: "white",
+          },
+          // label: `${daySequence !== 0 ? `D${daySequence}` : "-"}`,
         });
         const windowContent = `
           <div class='flex flex-col h-auto w-auto gap-1 justify-start items-start'>

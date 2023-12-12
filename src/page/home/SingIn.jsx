@@ -3,7 +3,7 @@ import { useMutation } from "react-query";
 import useStore from "../../store/store";
 import { nativeSignIn } from "../../utils/firebaseSDK";
 
-const SignIn = () => {
+const SignIn = ({ inputRef }) => {
   const [insertEmail, setInsertEmail] = useState("");
   const [insertPassword, setInsertPassword] = useState("");
   const { setUsername } = useStore();
@@ -25,38 +25,61 @@ const SignIn = () => {
   };
 
   return (
-    <div className="flex h-full w-[400px] flex-col items-center justify-between">
-      <h1 className="text-2xl font-bold ">登入</h1>
-      <div className="justify-betwee flex h-10 w-full flex-row items-center gap-4">
-        <h2 className="whitespace-nowrap">信箱</h2>
-        <input
-          type="email"
-          className="w-full border border-solid border-gray-500 pl-2"
-          value={insertEmail}
-          onChange={(e) => setInsertEmail(e.target.value)}
-        />
-      </div>
-      <div className="justify-betwee flex h-10 w-full flex-row items-center gap-4">
-        <h2 className="whitespace-nowrap">密碼</h2>
-        <input
-          type="password"
-          className="w-full border border-solid border-gray-500 pl-2"
-          value={insertPassword}
-          onChange={(e) => setInsertPassword(e.target.value)}
-        />
-      </div>
-
-      <button
-        onClick={() => handleSignInClicked(insertEmail, insertPassword)}
-        className={`h-10 w-auto px-4 py-2 ${
-          mutation.isLoading ? "bg-red-200" : "bg-green-200"
-        }`}
-        disabled={mutation.isLoading}
-      >
-        <h3 className="text-sm font-bold ">
-          {mutation.isLoading ? "登入中..." : "送出"}
-        </h3>
-      </button>
+    <div className="swap-off w-full">
+      <form className="card-body flex w-full px-0">
+        <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white md:text-2xl">
+          歡迎回來！
+        </h1>
+        <div className="form-control mt-10">
+          <label className="label">
+            <span className="label-text">信箱</span>
+          </label>
+          <input
+            type="email"
+            placeholder="email"
+            value={insertEmail}
+            className="input input-bordered"
+            onChange={(e) => setInsertEmail(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-control mt-4">
+          <label className="label">
+            <span className="label-text">密碼</span>
+          </label>
+          <input
+            type="password"
+            placeholder="password"
+            className="input input-bordered"
+            value={insertPassword}
+            onChange={(e) => setInsertPassword(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-control mt-6 items-end">
+          <button
+            onClick={() => handleSignInClicked(insertEmail, insertPassword)}
+            className={`btn w-full ${
+              mutation.isLoading ? "bg-red-200" : "bg-green-200"
+            }`}
+            disabled={mutation.isLoading}
+          >
+            <h3 className="text-sm font-bold ">
+              {mutation.isLoading ? "登入中..." : "送出"}
+            </h3>
+          </button>
+          <label className="label">
+            <h1
+              className="link label-text-alt mt-3"
+              onClick={() =>
+                (inputRef.current.checked = !inputRef.current.checked)
+              }
+            >
+              還沒有帳號嗎？點我註冊！
+            </h1>
+          </label>
+        </div>
+      </form>
     </div>
   );
 };

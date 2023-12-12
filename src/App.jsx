@@ -13,13 +13,7 @@ import useStore from "./store/store";
 import { initFirebase } from "./utils/firebaseSDK";
 
 function App() {
-  const {
-    apiKey,
-    setDatabase,
-    setIsLogin,
-    setIsSignWindowOpen,
-    setPlaceResult,
-  } = useStore();
+  const { apiKey, setDatabase, setIsLogin, setPlaceResult } = useStore();
   const [isFbInited, setIsFbInited] = useState(false);
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -33,7 +27,6 @@ function App() {
       onAuthStateChanged(auth, (user) => {
         if (user !== null) {
           setIsLogin(true);
-          setIsSignWindowOpen(false);
         } else {
           setPlaceResult(null);
           setIsLogin(false);

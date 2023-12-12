@@ -291,3 +291,15 @@ export const WalkingIcon = () => {
     </>
   );
 };
+
+export const PlusIcon = () => {
+  return (
+    <path
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="32"
+      d="M256 112v288M400 256H112"
+    />
+  );
+};

@@ -1,9 +1,12 @@
+import { useRef } from "react";
 import { Link } from "react-router-dom";
 import useStore from "../../store/store";
 import SignWindow from "./SignWindow";
 
 const Home = () => {
-  const { isLogin, isSignWindowOpen, setIsSignWindowOpen } = useStore();
+  const { isLogin } = useStore();
+
+  const signRef = useRef();
 
   return (
     <div className="relative flex h-[calc(100vh-64px)] w-full flex-col items-center justify-center gap-8 bg-[url('/welcome.jpg')] bg-cover bg-no-repeat">
@@ -19,18 +22,22 @@ const Home = () => {
               </button>
             </Link>
           ) : (
-            <button
-              className="btn btn-primary h-16 w-auto rounded-lg border-none bg-green-200 p-4 text-xl text-slate-800"
-              onClick={() => {
-                setIsSignWindowOpen(true);
-              }}
-            >
-              點我登入或註冊以開始規劃
-            </button>
+            <>
+              <button
+                className="btn btn-primary h-16 w-auto rounded-lg border-none bg-green-200 p-4 text-xl text-slate-800"
+                onClick={() => {
+                  signRef.current.showModal();
+                }}
+              >
+                登入以開始規劃
+              </button>
+              <dialog ref={signRef} className="modal">
+                <SignWindow />
+              </dialog>
+            </>
           )}
         </div>
       </div>
-      {isSignWindowOpen && <SignWindow />}
     </div>
   );
 };

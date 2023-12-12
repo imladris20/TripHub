@@ -1,27 +1,25 @@
-import useStore from "../../store/store";
-import { CloseIcon } from "../../utils/icons";
+import { useRef } from "react";
 import SignUp from "./SignUp";
 import SignIn from "./SingIn";
 
 const SingWindow = () => {
-  const { setIsSignWindowOpen } = useStore();
+  const inputRef = useRef();
   return (
-    <div className="flex-start absolute left-1/2 top-1/2 z-50 flex h-1/2 w-auto -translate-x-1/2 -translate-y-1/2 flex-row items-center gap-10 rounded-2xl border border-dotted border-red-300 bg-white p-10 opacity-95 shadow-2xl">
-      <button
-        className="absolute right-2 top-2 h-8 w-8"
-        onClick={() => setIsSignWindowOpen(false)}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 512 512"
-          className="stroke-slate-600 stroke-2"
-        >
-          <CloseIcon />
-        </svg>
-      </button>
-      <SignUp />
-      <div className="h-full w-[1px] bg-slate-600"></div>
-      <SignIn />
+    <div className="card modal-box flex w-full max-w-sm shrink-0 flex-row justify-center bg-base-100 shadow-2xl">
+      <form method="dialog">
+        <button className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">
+          ✕
+        </button>
+      </form>
+      <label className="swap swap-flip w-full cursor-default text-9xl">
+        <input
+          type="checkbox"
+          className="w-full cursor-default"
+          ref={inputRef}
+        />
+        <SignIn inputRef={inputRef} />
+        <SignUp inputRef={inputRef} />
+      </label>
     </div>
   );
 };

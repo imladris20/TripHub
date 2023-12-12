@@ -3,17 +3,63 @@ import { create } from "zustand";
 
 const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const mapId = import.meta.env.VITE_GOOGLE_MAPS_ID;
-const TAIWAN = { lat: 23.553118, lng: 121.0211024 };
+const TAIWAN = { lat: 23.62758169093335, lng: 121.01767227950151 };
+const colors = [
+  "sand",
+  "deyork",
+  "blueWillow",
+  "sage",
+  "flame",
+  "fawn",
+  "tundra",
+  "glacierBlue",
+  "cider",
+  "myslate",
+  "charcoal",
+  "oxford",
+  "chinchilla",
+  "grape",
+  "havelock",
+  "tawny",
+  "moss",
+  "lipstick",
+  "ballet",
+  "opium",
+  "steelBlue",
+  "rust",
+  "fruitSalad",
+  "labrodorite",
+  "apricot",
+  "smoke",
+  "thistle",
+  "monarch",
+  "olivine",
+  "casablanca",
+  "shrimp",
+  "yam",
+  "copper",
+  "tabasco",
+  "brandy",
+  "peach",
+  "azalea",
+  "pacific",
+  "keppel",
+  "lavender",
+  "seafoam",
+  "carrot",
+];
 
 const useStore = create((set, get) => ({
   apiKey,
   mapId,
+  prepareColor: colors,
   typeOptions: [
     { name: "自然景點", bg: "bg-[#7BC5AE]" },
     { name: "人文景點", bg: "bg-[#A67F78]" },
     { name: "打卡拍照", bg: "bg-[#FE7773]" },
     { name: "博物館", bg: "bg-[#BD8E62]" },
     { name: "伴手禮", bg: "bg-[#BC5F6A]" },
+    { name: "紀念品店", bg: "bg-blueWillow" },
     { name: "古蹟", bg: "bg-[#915C4C]" },
     { name: "購物", bg: "bg-[#689C97]" },
     { name: "餐廳", bg: "bg-[#B78338]" },
@@ -25,7 +71,18 @@ const useStore = create((set, get) => ({
     { name: "麻糬", bg: "bg-[#A46843]" },
     { name: "山", bg: "bg-[#028C6A]" },
     { name: "海", bg: "bg-[#85B8CB]" },
+    { name: "咖啡廳", bg: "bg-tundra" },
+    { name: "歷史名勝", bg: "bg-fawn" },
+    { name: "甜點店", bg: "bg-lipstick" },
+    { name: "娛樂放鬆", bg: "bg-flame" },
   ],
+  setTypeOptions: (option) => {
+    set(
+      produce((state) => {
+        state.typeOptions.push(option);
+      }),
+    );
+  },
   taiwanCities: [
     "基隆市",
     "台北市",
@@ -51,7 +108,7 @@ const useStore = create((set, get) => ({
     "連江縣",
   ],
   currentCenter: TAIWAN,
-  currentZoom: 8.5,
+  currentZoom: 7.7895,
   setCurrentCenter: (geolocation) => {
     set(
       produce((state) => {
@@ -87,14 +144,6 @@ const useStore = create((set, get) => ({
     set(
       produce((state) => {
         state.isLogin = boolean;
-      }),
-    );
-  },
-  isSignWindowOpen: false,
-  setIsSignWindowOpen: (boolean) => {
-    set(
-      produce((state) => {
-        state.isSignWindowOpen = boolean;
       }),
     );
   },

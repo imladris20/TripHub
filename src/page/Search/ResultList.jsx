@@ -2,7 +2,7 @@ import { useMap } from "@vis.gl/react-google-maps";
 import { collection, doc, getDoc, onSnapshot, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import useStore from "../../store/store";
-import { AddToPoisIcon, AlreadyAddedPoisIcon } from "../../utils/icons";
+import { AlreadyAddedPoisIcon } from "../../utils/icons";
 
 const ResultList = () => {
   const {
@@ -18,14 +18,18 @@ const ResultList = () => {
   const [isInPoisArr, setIsInPoisArr] = useState(new Array(20).fill(false));
   const map = useMap("searchMap");
 
-  const handleItemClicked = (place, label) => {
+  const handleItemClicked = (place, label, isInPois) => {
     setSearchItemDetailInfo({
       data: place,
       label,
+      isInPois,
     });
 
-    map.panTo(place.geometry.location);
-    setCurrentCenter(place.geometry.location);
+    const lat = place.geometry.location.lat();
+    const lng = place.geometry.location.lng();
+
+    map.panTo({ lat, lng });
+    setCurrentCenter({ lat, lng });
     setCurrentZoom(18);
   };
 
@@ -67,17 +71,17 @@ const ResultList = () => {
         return (
           <div
             key={place.place_id}
-            className="relative flex w-full flex-col items-start gap-[6px] border-b-2 border-solid border-gray-200 bg-white p-2"
+            onClick={() => handleItemClicked(place, label, isInPoisArr[index])}
+            className="relative flex w-full cursor-pointer flex-col items-start gap-[6px] border-b-2 border-solid border-gray-200 bg-white p-2"
           >
-            <button
-              className="flex w-full flex-row items-center justify-start gap-2"
-              onClick={() => handleItemClicked(place, label)}
-            >
+            <div className="flex w-full flex-row items-center justify-start gap-2">
               <div className="flex h-5 w-5 flex-shrink-0 flex-row items-center justify-center rounded-full border border-dotted border-red-500 p-0 ">
                 <h1 className="text-sm text-red-500">{label}</h1>
               </div>
-              <h1 className="mb-0 text-left text-lg font-bold">{place.name}</h1>
-            </button>
+              <h1 className="mb-0 truncate text-left text-lg font-bold">
+                {place.name}
+              </h1>
+            </div>
             <h2 className="text-xs">
               {place.rating} ⭐ ({place.user_ratings_total}則)
             </h2>
@@ -98,20 +102,7 @@ const ResultList = () => {
                 }
               })()}
             </h2>
-            {!isInPoisArr[index] ? (
-              <button
-                className="absolute bottom-2 right-2 h-6 w-6"
-                onClick={() => handleItemClicked(place, label)}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 512 512"
-                  className="h-6 w-6 fill-orange-200 stroke-slate-600 stroke-2"
-                >
-                  <AddToPoisIcon />
-                </svg>
-              </button>
-            ) : (
+            {isInPoisArr[index] && (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 512 512"

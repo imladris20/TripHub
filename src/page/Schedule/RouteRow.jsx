@@ -1,7 +1,7 @@
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { cloneDeep, filter, orderBy } from "lodash";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useStore, { scheduleStore } from "../../store/store";
 import TravelTypeDropdown from "./TravelTypeDropDown";
 
@@ -22,32 +22,20 @@ const RouteRow = ({
   );
 
   const directionsService = new DirectionsService();
-  const directionsRenderer = new DirectionsRenderer({
-    suppressMarkers: true,
-    polylineOptions: {
-      strokeColor: "#4B5563BF",
-    },
-    preserveViewport: true,
-  });
+  const directionsRendererRef = useRef(
+    new DirectionsRenderer({
+      suppressMarkers: true,
+      preserveViewport: true,
+    }),
+  );
 
   useEffect(() => {
-    if (currentLoadingTripData && directionsService && directionsRenderer) {
-      /*       directionsRenderer.setMap(null);
-      directionsRenderer.setDirections(null);
-
-      if (directionsRenderer.getDirections() !== null) {
-        directionsRenderer.setMap(null);
-        directionsRenderer = new window.google.maps.DirectionsRenderer({
-          suppressMarkers: true,
-          polylineOptions: {
-            strokeColor: "#4B5563BF",
-          },
-          preserveViewport: true,
-        });
-        directionsRenderer.setMap(map);
-      }
-
-      console.log(directionsRenderer); */
+    if (
+      currentLoadingTripData &&
+      directionsService &&
+      directionsRendererRef.current
+    ) {
+      console.log(directionsRendererRef.current);
 
       const directionsRequest = {
         origin: { placeId: poisId },
@@ -60,9 +48,9 @@ const RouteRow = ({
 
       directionsService.route(directionsRequest, async (result, status) => {
         if (status == "OK") {
-          directionsRenderer.setOptions({
-            directions: result,
-          });
+          console.log(result);
+          directionsRendererRef.current.setDirections({ routes: [] });
+          directionsRendererRef.current.setDirections(result);
           setDirectionsResult(result);
           const minutes = Math.round(
             result.routes[0].legs[0].duration.value / 60,
@@ -83,7 +71,7 @@ const RouteRow = ({
           await updateDoc(tripRef, { attractions: newAttractions });
         }
       });
-      directionsRenderer.setMap(map);
+      directionsRendererRef.current.setMap(map);
     }
   }, [currentLoadingTripData, travelMode]);
 
