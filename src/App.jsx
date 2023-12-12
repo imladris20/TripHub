@@ -52,7 +52,6 @@ function App() {
 
   useEffect(() => {
     if (uid) {
-      console.log(uid);
       const unsubscribe = onSnapshot(doc(database, "users", uid), (docSnap) => {
         docSnap.data().categories.map((item, index) => {
           const userDefinitedOption = {

@@ -52,7 +52,7 @@ const InputBlock = () => {
   };
 
   const clearMarkerAndSearch = (keyword) => {
-    console.log("inside clearMarkerAndSearch", currentCenter);
+    // console.log("inside clearMarkerAndSearch", currentCenter);
     const textSearchRequest = {
       location: currentCenter,
       radius: "5000",
@@ -168,7 +168,7 @@ const InputBlock = () => {
   const handleEnterPress = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      console.log("activate");
+      // console.log("activate");
       // setSearchItemDetailInfo(null);
       // if (!searchValue) return;
       // clearMarkerAndSearch(searchValue);
@@ -191,7 +191,7 @@ const InputBlock = () => {
         placeholder="想找什麼景點呢？"
         ref={inputRef}
         onKeyDown={(e) => handleEnterPress(e)}
-        onClick={() => console.log(currentCenter)}
+        // onClick={() => console.log(currentCenter)}
       />
       <button
         className="row-flex mt-[2px] flex h-[30px] w-[30px] items-center justify-center bg-gray-400"
