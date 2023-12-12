@@ -24,9 +24,9 @@ const CityFilter = () => {
   };
 
   return (
-    <div className="flex h-10 w-full flex-row items-center justify-start border-b-2 border-dashed border-violet-200 bg-white outline-none">
+    <div className="flex h-10 w-full cursor-pointer flex-row items-center justify-start border-b-2 border-dashed border-violet-200 bg-white outline-none">
       <select
-        className="h-full w-full text-sm text-violet-600 outline-none"
+        className="h-full w-full cursor-pointer text-sm text-violet-600 outline-none"
         value={selectedCity}
         onChange={(e) => handleSelectedCityChange(e)}
       >

@@ -58,18 +58,15 @@ const CategoryFilter = () => {
   };
 
   return (
-    <div className="relative flex h-10 w-full flex-row items-center justify-between border-b-2 border-dashed border-rose-200 bg-white px-2 outline-none">
-      <h1
-        className="cursor-pointer text-sm text-rose-500"
-        onClick={() => setIsFilterWindowOpen()}
-      >
-        篩選類別
-      </h1>
+    <div
+      className="relative flex h-10 w-full cursor-pointer flex-row items-center justify-between border-b-2 border-dashed border-rose-200 bg-white px-2 outline-none"
+      onClick={() => setIsFilterWindowOpen()}
+    >
+      <h1 className="cursor-pointer text-sm text-rose-500">篩選類別</h1>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 512 512"
         className="h-3 w-3 cursor-pointer stroke-rose-400 stroke-2"
-        onClick={() => setIsFilterWindowOpen()}
       >
         <FilterIcon />
       </svg>
@@ -82,9 +79,9 @@ const CategoryFilter = () => {
         <div className="grid grid-cols-2 gap-x-12 gap-y-2">
           {typeOptions.map((type, index) => {
             return (
-              <div
+              <label
                 key={index}
-                className="flex h-5 flex-row items-center justify-start gap-1"
+                className="flex h-5 cursor-pointer flex-row items-center justify-start gap-1"
               >
                 <input
                   type="checkbox"
@@ -93,7 +90,7 @@ const CategoryFilter = () => {
                   onChange={(e) => handleCheckboxChanged(e)}
                 />
                 <span className="text-[14px]">{type.name}</span>
-              </div>
+              </label>
             );
           })}
         </div>

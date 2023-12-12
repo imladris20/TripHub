@@ -118,7 +118,8 @@ const List = () => {
             return (
               <div
                 key={id}
-                className="relative flex w-full flex-col items-start gap-[6px] border-b-2 border-solid border-gray-200 bg-white p-2"
+                onClick={() => handleItemClicked(item)}
+                className="relative flex w-full cursor-pointer flex-col items-start gap-[6px] border-b-2 border-solid border-gray-200 bg-white p-2"
               >
                 <div className="flex w-full flex-row items-center justify-start gap-2">
                   {categories.map((category, index) => {
@@ -141,9 +142,11 @@ const List = () => {
                     );
                   })}
                 </div>
-                <button onClick={() => handleItemClicked(item)}>
-                  <h1 className="mb-0 text-left text-lg font-bold">{name}</h1>
-                </button>
+
+                <h1 className="text mb-0 truncate text-left text-lg font-bold">
+                  {name}
+                </h1>
+
                 <h2 className="text-xs">
                   {rating} ⭐ {ratingTotal}則
                 </h2>
