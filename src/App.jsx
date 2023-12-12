@@ -27,6 +27,7 @@ function App() {
     setPlaceResult,
   } = useStore();
   const [isFbInited, setIsFbInited] = useState(false);
+  const [uid, setUid] = useState();
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const isOverviewPath = pathname.startsWith("/overview");
@@ -39,6 +40,7 @@ function App() {
       onAuthStateChanged(auth, (user) => {
         if (user !== null) {
           setIsLogin(true);
+          setUid(user.uid);
         } else {
           setPlaceResult(null);
           setIsLogin(false);
@@ -49,8 +51,8 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (isLogin && database) {
-      const uid = localStorage.getItem("uid");
+    if (uid) {
+      console.log(uid);
       const unsubscribe = onSnapshot(doc(database, "users", uid), (docSnap) => {
         docSnap.data().categories.map((item, index) => {
           const userDefinitedOption = {
@@ -64,7 +66,7 @@ function App() {
       });
       return () => unsubscribe();
     }
-  }, [isLogin]);
+  }, [uid]);
 
   return (
     <APIProvider
