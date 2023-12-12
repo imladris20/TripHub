@@ -1,5 +1,7 @@
 import { APIProvider } from "@vis.gl/react-google-maps";
 import { onAuthStateChanged } from "firebase/auth";
+import { doc, onSnapshot } from "firebase/firestore";
+import { find } from "lodash";
 import React, { useEffect, useState } from "react";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import Header from "./components/Header";
@@ -13,7 +15,17 @@ import useStore from "./store/store";
 import { initFirebase } from "./utils/firebaseSDK";
 
 function App() {
-  const { apiKey, setDatabase, setIsLogin, setPlaceResult } = useStore();
+  const {
+    isLogin,
+    typeOptions,
+    setTypeOptions,
+    prepareColor,
+    database,
+    apiKey,
+    setDatabase,
+    setIsLogin,
+    setPlaceResult,
+  } = useStore();
   const [isFbInited, setIsFbInited] = useState(false);
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -35,6 +47,24 @@ function App() {
       });
     }
   }, []);
+
+  useEffect(() => {
+    if ((isLogin, database)) {
+      const uid = localStorage.getItem("uid");
+      const unsubscribe = onSnapshot(doc(database, "users", uid), (docSnap) => {
+        docSnap.data().categories.map((item, index) => {
+          const userDefinitedOption = {
+            name: item,
+            bg: `bg-${prepareColor[index]}`,
+          };
+          if (!find(typeOptions, { name: item })) {
+            setTypeOptions(userDefinitedOption);
+          }
+        });
+      });
+      return () => unsubscribe();
+    }
+  }, [isLogin]);
 
   return (
     <APIProvider

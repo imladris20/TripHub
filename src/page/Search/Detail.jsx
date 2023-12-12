@@ -1,13 +1,7 @@
-import {
-  arrayUnion,
-  doc,
-  onSnapshot,
-  setDoc,
-  updateDoc,
-} from "firebase/firestore";
+import { arrayUnion, doc, setDoc, updateDoc } from "firebase/firestore";
 import { produce } from "immer";
 import { find, includes, indexOf } from "lodash";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useMutation } from "react-query";
 import PlaceHolderPhoto from "../../assets/pois_photo_placeholder.png";
 import useStore from "../../store/store";
@@ -116,21 +110,6 @@ const Detail = () => {
     }
     setNewCategoryToAdd("");
   };
-
-  useEffect(() => {
-    const unsubscribe = onSnapshot(doc(database, "users", uid), (docSnap) => {
-      docSnap.data().categories.map((item, index) => {
-        const userDefinitedOption = {
-          name: item,
-          bg: `bg-${prepareColor[index]}`,
-        };
-        if (!find(typeOptions, { name: item })) {
-          setTypeOptions(userDefinitedOption);
-        }
-      });
-    });
-    return () => unsubscribe();
-  }, []);
 
   return (
     <div
@@ -250,7 +229,7 @@ const Detail = () => {
             ))}
           </div>
           <div className="mt-1 flex flex-row items-center justify-start">
-            <h1 className="whitespace-nowrap text-xs">或新增自訂標籤：</h1>
+            <h1 className="mr-1 whitespace-nowrap text-xs">或新增自訂標籤：</h1>
             <input
               type="text"
               placeholder=""
