@@ -1,5 +1,6 @@
 import axios from "axios";
 import { doc, getDoc } from "firebase/firestore";
+import { find } from "lodash";
 import { useEffect, useState } from "react";
 import useStore from "../../store/store";
 import TravelModeAlert from "./TravelModeAlert";
@@ -30,7 +31,7 @@ const TimeCard = ({
   dayStartTime,
   wholeDay,
 }) => {
-  const { apiKey, database } = useStore();
+  const { apiKey, database, typeOptions } = useStore();
   const uid = localStorage.getItem("uid");
 
   const initAttractionStartTime = () => {
@@ -67,6 +68,17 @@ const TimeCard = ({
   const [placePhoto, setPlacePhoto] = useState();
 
   const [categories, setCategories] = useState([]);
+
+  const calculateDurationText = (duration) => {
+    const hours = Math.floor(duration / 60);
+    const minutes = duration % 60;
+
+    return (
+      <h1 className="text-left text-sm">
+        {hours}小時{minutes}分鐘
+      </h1>
+    );
+  };
 
   useEffect(() => {
     const getPlaceDetails = async (placeId) => {
@@ -127,14 +139,25 @@ const TimeCard = ({
           <time className="font-mono text-xl italic">
             {attractionStartTime}
           </time>
-          <div className="card w-96 bg-base-100 shadow-xl">
-            <figure>
+          <div className="card h-60 w-96 bg-base-100 shadow-xl">
+            <figure className="rounded-xl">
               <img
                 src={placePhoto}
                 alt="attraction"
-                className="aspect-video w-full object-cover"
+                className="h-60 w-96 object-cover"
               />
             </figure>
+          </div>
+        </div>
+        <div
+          className={
+            cardOrder % 2 === 1 ? "timeline-end" : "timeline-start md:text-end"
+          }
+        >
+          <time className="font-mono text-xl italic text-secondary">
+            {attractionStartTime}
+          </time>
+          <div className="card h-60 w-96 bg-base-100 shadow-xl">
             <div className="card-body pb-6 pt-4">
               <div className="flex flex-row items-center gap-4">
                 <a
@@ -190,11 +213,21 @@ const TimeCard = ({
                   {attraction.expense || 0}元
                 </h1>
               </div>
-              <div className="card-actions justify-end">
+              <div className="flex flex-row items-center justify-start">
+                <h1 className="whitespace-nowrap text-left text-sm font-bold">
+                  預計停留時間：
+                </h1>
+                <h1 className="text-left text-sm">
+                  {calculateDurationText(attraction.duration)}
+                </h1>
+              </div>
+              <div className="card-actions absolute bottom-4 right-4">
                 {categories.map((item, index) => {
+                  let bgColor;
+                  bgColor = find(typeOptions, { name: item }).bg;
                   return (
                     <div
-                      className="badge badge-primary badge-outline"
+                      className={`badge badge-outline ${bgColor} text-white`}
                       key={index}
                     >
                       {item}
