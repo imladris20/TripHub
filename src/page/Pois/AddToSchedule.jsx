@@ -9,6 +9,7 @@ import {
 } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
 import useStore, { poisStore } from "../../store/store";
+import { PlusIcon } from "../../utils/icons";
 
 const AddToSchedule = () => {
   const modalRef = useRef();
@@ -185,13 +186,7 @@ const AddToSchedule = () => {
                   viewBox="0 0 512 512"
                   className="stroke-green-500"
                 >
-                  <path
-                    fill="none"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="32"
-                    d="M256 112v288M400 256H112"
-                  />
+                  <PlusIcon />
                 </svg>
               </button>
             </div>
