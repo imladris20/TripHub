@@ -117,7 +117,7 @@ const List = () => {
   }, [currentLoadingTripData]);
 
   return currentLoadingTripData?.attractions ? (
-    [...Array(currentTripDuration + 1)].map((_, daySequenceIndex) => {
+    [...Array((currentTripDuration || 0) + 1)].map((_, daySequenceIndex) => {
       return (
         <DayBlock key={daySequenceIndex} daySequenceIndex={daySequenceIndex} />
       );

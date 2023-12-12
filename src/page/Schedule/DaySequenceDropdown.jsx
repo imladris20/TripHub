@@ -43,7 +43,7 @@ const DaySequenceDropdown = ({ currentAttractionIndex, name }) => {
         (item) => item.name === name,
       )?.daySequence;
 
-      return [...Array(duration + 1)].map((_, optionIndex) => {
+      return [...Array((duration || 0) + 1)].map((_, optionIndex) => {
         return (
           optionIndex !== currentDaySequence && (
             <li key={optionIndex}>

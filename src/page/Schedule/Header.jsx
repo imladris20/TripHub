@@ -59,16 +59,18 @@ const Header = () => {
       startTime = startTime.slice(0, newDayCount);
     }
 
-    await setDoc(
-      docRef,
-      {
-        dayCount: newDayCount,
-        startDate: newStartDate,
-        endDate,
-        startTime,
-      },
-      { merge: true },
-    );
+    if (endDate) {
+      await setDoc(
+        docRef,
+        {
+          dayCount: newDayCount,
+          startDate: newStartDate,
+          endDate,
+          startTime,
+        },
+        { merge: true },
+      );
+    }
   };
 
   const handleEndDateInput = async (e) => {
@@ -105,16 +107,18 @@ const Header = () => {
       startTime = startTime.slice(0, newDayCount);
     }
 
-    await setDoc(
-      docRef,
-      {
-        dayCount: newDayCount,
-        startDate,
-        endDate: newEndDate,
-        startTime,
-      },
-      { merge: true },
-    );
+    if (startDate) {
+      await setDoc(
+        docRef,
+        {
+          dayCount: newDayCount,
+          startDate,
+          endDate: newEndDate,
+          startTime,
+        },
+        { merge: true },
+      );
+    }
   };
 
   useEffect(() => {
