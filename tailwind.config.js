@@ -34,7 +34,7 @@ export default {
         flame: "#D5683D",
         fawn: "#865B2E",
         tundra: "#9EA2AB",
-        glacierBlue: "6D8DB6",
+        glacierBlue: "#6D8DB6",
         cider: "#A16F3A",
         myslate: "#607178",
         charcoal: "#353C42",

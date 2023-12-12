@@ -162,13 +162,14 @@ const TimeCard = ({
                     ｜　☎️ {placeNewestDetail?.nationalPhoneNumber}
                   </h2>
                 )}
+                <h2 className="ml-3 text-xs">|　</h2>
                 {placeNewestDetail?.websiteUri && (
                   <a
-                    className="ml-3 text-xs"
+                    className="text-xs text-sky-500 underline"
                     href={placeNewestDetail.websiteUri}
                   >
                     {" "}
-                    |　官網
+                    官網
                   </a>
                 )}
               </div>
@@ -185,7 +186,9 @@ const TimeCard = ({
                 <h1 className="whitespace-nowrap text-left text-sm font-bold">
                   預計花費：
                 </h1>
-                <h1 className="text-left text-sm">{attraction.expense}元</h1>
+                <h1 className="text-left text-sm">
+                  {attraction.expense || 0}元
+                </h1>
               </div>
               <div className="card-actions justify-end">
                 {categories.map((item, index) => {

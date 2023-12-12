@@ -35,8 +35,6 @@ const RouteRow = ({
       directionsService &&
       directionsRendererRef.current
     ) {
-      console.log(directionsRendererRef.current);
-
       const directionsRequest = {
         origin: { placeId: poisId },
         destination: {
@@ -48,7 +46,6 @@ const RouteRow = ({
 
       directionsService.route(directionsRequest, async (result, status) => {
         if (status == "OK") {
-          console.log(result);
           directionsRendererRef.current.setDirections({ routes: [] });
           directionsRendererRef.current.setDirections(result);
           setDirectionsResult(result);
