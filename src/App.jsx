@@ -49,7 +49,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if ((isLogin, database)) {
+    if (isLogin && database) {
       const uid = localStorage.getItem("uid");
       const unsubscribe = onSnapshot(doc(database, "users", uid), (docSnap) => {
         docSnap.data().categories.map((item, index) => {
