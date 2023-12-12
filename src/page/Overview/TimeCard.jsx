@@ -217,9 +217,7 @@ const TimeCard = ({
                 <h1 className="whitespace-nowrap text-left text-sm font-bold">
                   預計停留時間：
                 </h1>
-                <h1 className="text-left text-sm">
-                  {calculateDurationText(attraction.duration)}
-                </h1>
+                {calculateDurationText(attraction.duration)}
               </div>
               <div className="card-actions absolute bottom-4 right-4">
                 {categories.map((item, index) => {
