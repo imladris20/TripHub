@@ -224,10 +224,14 @@ const TimeCard = ({
               <div className="card-actions absolute bottom-4 right-4">
                 {categories.map((item, index) => {
                   let bgColor;
+                  let textColor;
                   bgColor = find(typeOptions, { name: item })?.bg;
+                  textColor = find(typeOptions, { name: item })?.shouldTextDark
+                    ? "text-slate-800"
+                    : "text-slate-50";
                   return (
                     <div
-                      className={`badge badge-outline ${bgColor} text-white`}
+                      className={`badge badge-outline ${bgColor} badge-lg ${textColor}`}
                       key={index}
                     >
                       {item}

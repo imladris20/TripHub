@@ -1,5 +1,6 @@
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import { collection, onSnapshot, query } from "firebase/firestore";
+import { find } from "lodash";
 import { useEffect, useRef } from "react";
 import useStore, { poisStore } from "../../store/store";
 import CategoryFilter from "./CategoryFilter";
@@ -119,23 +120,26 @@ const List = () => {
               <div
                 key={id}
                 onClick={() => handleItemClicked(item)}
-                className="relative flex w-full cursor-pointer flex-col items-start gap-[6px] border-b-2 border-solid border-gray-200 bg-white p-2"
+                className="relative flex w-full cursor-pointer flex-col items-start gap-2 border-b-2 border-solid border-gray-200 bg-white p-2"
               >
-                <div className="flex w-full flex-row items-center justify-start gap-2">
+                <div className="mt-2 flex w-full flex-row items-center justify-start gap-2">
                   {categories.map((category, index) => {
-                    let color;
-                    for (var i = 0; i < typeOptions.length; i++) {
-                      if (typeOptions[i].name === category) {
-                        color = typeOptions[i].bg;
-                      }
-                    }
-                    color = color || "bg-gray-700";
+                    let bgColor;
+                    let textColor;
+                    bgColor = find(typeOptions, { name: category })?.bg;
+                    textColor = find(typeOptions, { name: category })
+                      ?.shouldTextDark
+                      ? "text-slate-800"
+                      : "text-slate-50";
+
                     return (
                       <div
                         key={index}
-                        className={`flex h-4 w-1/4 flex-row items-center justify-center rounded-full ${color}`}
+                        className={`badge badge-lg ${bgColor} py-2`}
                       >
-                        <h1 className="text-justify text-[10px] text-white">
+                        <h1
+                          className={`text-center text-xs font-bold ${textColor}`}
+                        >
                           {category}
                         </h1>
                       </div>
@@ -147,13 +151,18 @@ const List = () => {
                   {name}
                 </h1>
 
-                <h2 className="text-xs">
-                  {rating} ⭐ {ratingTotal}則
-                </h2>
-                <h2 className="text-xs">{address}</h2>
-                <h2 className="text-xs">
-                  {phoneNumber ? `電話：${phoneNumber}` : "店家未提供連絡電話"}
-                </h2>
+                <div className="flex flex-row items-end justify-start gap-2">
+                  <h2 className="text-sm">
+                    {ratingTotal !== "店家未提供"
+                      ? `${rating} ⭐ ${ratingTotal}則`
+                      : "尚無評價"}
+                  </h2>
+                  <h2 className="text-sm">|</h2>
+                  <h2 className="text-xs leading-5">
+                    {phoneNumber && `☎️ 電話：${phoneNumber}`}
+                  </h2>
+                </div>
+                <h2 className="text-xs">🗺️ {address}</h2>
                 <h2 className="text-xs">
                   {(() => {
                     switch (priceLevel) {
@@ -166,7 +175,7 @@ const List = () => {
                       case 4:
                         return "💰💰💰💰 800~1600元 / 人";
                       default:
-                        return "🤔 店家未提供價位參考";
+                        return;
                     }
                   })()}
                 </h2>
@@ -187,7 +196,6 @@ const List = () => {
               <div className="skeleton h-4 w-full"></div>
               <div className="skeleton h-4 w-full"></div>
             </div>
-            {/* <div className="h-[120px] w-[120px] animate-[spin_1.5s_linear_infinite] rounded-[50%] border-[16px] border-t-[16px] border-solid border-gray-300 border-t-[solid] border-t-blue-500"></div> */}
           </div>
         )}
       </div>

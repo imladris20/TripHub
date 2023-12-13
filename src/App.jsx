@@ -57,7 +57,8 @@ function App() {
         docSnap.data().categories.map((item, index) => {
           const userDefinitedOption = {
             name: item,
-            bg: `bg-${prepareColor[index]}`,
+            bg: `${prepareColor[index].bg}`,
+            shouldTextDark: prepareColor[index].shouldTextDark,
           };
           if (!find(typeOptions, { name: item })) {
             setTypeOptions(userDefinitedOption);
