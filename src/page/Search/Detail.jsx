@@ -1,4 +1,4 @@
-import { arrayUnion, doc, setDoc, updateDoc } from "firebase/firestore";
+import { arrayUnion, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { produce } from "immer";
 import { find, includes, indexOf } from "lodash";
 import { useState } from "react";
@@ -97,6 +97,15 @@ const Detail = () => {
       return;
     }
 
+    const docSnap = await getDoc(doc(database, "users", uid));
+
+    const newOption = {
+      name: newCategoryToAdd,
+      bg: `bg-${prepareColor[docSnap.data()?.categories.length || 0]}`,
+    };
+
+    setTypeOptions(newOption);
+
     await updateDoc(doc(database, "users", uid), {
       categories: arrayUnion(newCategoryToAdd),
     });
@@ -193,7 +202,10 @@ const Detail = () => {
       </div>
       {!searchItemDetailInfo.isInPois && (
         <div className="mt-4 flex w-full flex-col gap-2">
-          <h1 className="text-left text-base font-bold">
+          <h1
+            className="text-left text-base font-bold"
+            onClick={() => console.log(typeOptions)}
+          >
             為景點加上標籤再放入口袋清單吧~
           </h1>
           <div className="flex w-full flex-row items-center justify-start gap-4 px-[2px]">

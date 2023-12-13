@@ -1,6 +1,6 @@
 import { APIProvider } from "@vis.gl/react-google-maps";
 import { onAuthStateChanged } from "firebase/auth";
-import { doc, onSnapshot } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { find } from "lodash";
 import React, { useEffect, useState } from "react";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
@@ -51,8 +51,9 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (uid) {
-      const unsubscribe = onSnapshot(doc(database, "users", uid), (docSnap) => {
+    const syncCategory = async () => {
+      const docSnap = await getDoc(doc(database, "users", uid));
+      if (docSnap.data().categories) {
         docSnap.data().categories.map((item, index) => {
           const userDefinitedOption = {
             name: item,
@@ -62,8 +63,10 @@ function App() {
             setTypeOptions(userDefinitedOption);
           }
         });
-      });
-      return () => unsubscribe();
+      }
+    };
+    if (uid) {
+      syncCategory();
     }
   }, [uid]);
 
