@@ -19,12 +19,25 @@ const Detail = () => {
     ratingTotal,
     note,
     expense,
+    gmapUrl,
   } = attractionItemDetail;
 
+  console.log(attractionItemDetail);
+
   return (
-    <div className="absolute left-[30%] z-[997] flex h-full w-1/4 flex-col items-start gap-3 rounded-lg border-b-2 border-solid border-gray-200 bg-gray-100 p-3 shadow-2xl 2xl:w-1/5">
+    <div className="absolute left-[30%] z-[997] flex h-full max-h-[calc(100vh-64px)] w-1/4 flex-col items-start gap-3 overflow-y-auto rounded-lg border-b-2 border-solid border-gray-200 bg-gray-100 p-3 shadow-2xl 2xl:w-1/5">
       <div className="flex w-[88%] flex-row items-center justify-start gap-2">
-        <h1 className="text-left text-base font-bold">{name}</h1>
+        {gmapUrl ? (
+          <a
+            href={gmapUrl}
+            target="_blank"
+            className="link text-left text-base font-bold"
+          >
+            {name}
+          </a>
+        ) : (
+          <h1 className="text-left text-base font-bold">{name}</h1>
+        )}
       </div>
       {photoLink ? (
         <a href={photoLink} target="_blank">
@@ -36,7 +49,7 @@ const Detail = () => {
           className="aspect-video w-full object-cover"
         />
       )}
-      <div className="flex w-full flex-col items-start justify-start gap-3 overflow-y-auto">
+      <div className="flex h-[240px] w-full shrink-0 flex-col items-start justify-start gap-3 overflow-y-auto">
         <div className="flex flex-row items-center justify-start">
           <h2 className="text-xs">
             {rating} ⭐ ({ratingTotal} 則)　｜
@@ -86,7 +99,7 @@ const Detail = () => {
       </div>
       <div>
         <h1 className="text-sm font-bold">備註：</h1>
-        <h2 className="text-xs">{note}</h2>
+        <h2 className="text-sm">{note}</h2>
       </div>
       <button
         className="absolute right-3 top-3 h-7 w-7"

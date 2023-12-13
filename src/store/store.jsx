@@ -15,7 +15,6 @@ const colors = [
   "glacierBlue",
   "cider",
   "myslate",
-  "charcoal",
   "oxford",
   "chinchilla",
   "grape",

@@ -61,6 +61,7 @@ const Detail = () => {
       categories: categoryTags.filter((value) => value !== "請選擇"),
       photoLink: (photos && photos[0]?.getUrl()) || "店家未提供",
       openingHours: opening_hours?.weekday_text || "店家未提供",
+      gmapUrl: url,
     };
 
     await setDocMutation.mutateAsync({

@@ -37,7 +37,6 @@ export default {
         glacierBlue: "#6D8DB6",
         cider: "#A16F3A",
         myslate: "#607178",
-        charcoal: "#353C42",
         oxford: "#01273C",
         chinchilla: "#928A99",
         grape: "#9D6AB9",
