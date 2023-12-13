@@ -240,6 +240,7 @@ const Detail = () => {
             <button
               className="btn btn-circle btn-xs h-4 min-h-0 w-4 border-green-500 bg-white p-0"
               onClick={handleAddNewCategoryTag}
+              disabled={!newCategoryToAdd}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
