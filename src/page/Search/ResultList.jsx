@@ -85,7 +85,9 @@ const ResultList = () => {
             <h2 className="text-xs">
               {place.rating} ⭐ ({place.user_ratings_total}則)
             </h2>
-            <h2 className="text-xs">{place.formatted_address}</h2>
+            <h2 className="max-w-[210px] truncate text-xs">
+              {place.formatted_address}
+            </h2>
             <h2 className="text-xs">
               {(() => {
                 switch (place.price_level) {

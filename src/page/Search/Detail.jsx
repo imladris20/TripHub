@@ -59,7 +59,7 @@ const Detail = () => {
       priceLevel: price_level || "店家未提供",
       city,
       categories: categoryTags.filter((value) => value !== "請選擇"),
-      photoLink: photos[0].getUrl() || "店家未提供",
+      photoLink: (photos && photos[0]?.getUrl()) || "店家未提供",
       openingHours: opening_hours?.weekday_text || "店家未提供",
     };
 
@@ -69,6 +69,8 @@ const Detail = () => {
       place_id,
       docData,
     });
+
+    setSearchItemDetailInfo(null);
   };
 
   const handleSelectChange = (e, index) => {

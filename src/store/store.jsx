@@ -111,7 +111,7 @@ const useStore = create((set, get) => ({
     "連江縣",
   ],
   currentCenter: TAIWAN,
-  currentZoom: 7.7895,
+  currentZoom: 7.65,
   setCurrentCenter: (geolocation) => {
     set(
       produce((state) => {
