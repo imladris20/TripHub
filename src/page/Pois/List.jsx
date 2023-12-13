@@ -143,7 +143,7 @@ const List = () => {
                   })}
                 </div>
 
-                <h1 className="text mb-0 truncate text-left text-lg font-bold">
+                <h1 className="text mb-0 max-w-[290px] truncate text-left text-lg font-bold">
                   {name}
                 </h1>
 
