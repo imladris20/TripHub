@@ -52,7 +52,7 @@ const List = () => {
 
       const result = await Promise.all(
         currentLoadingTripData.attractions.map(async (attraction) => {
-          const { daySequence, note, expense } = attraction;
+          const { daySequence, note, expense, poisId } = attraction;
           const ref = doc(
             database,
             "users",
@@ -62,7 +62,7 @@ const List = () => {
           );
           const docSnap = await getDoc(ref);
           if (docSnap.exists()) {
-            return { ...docSnap.data(), daySequence, note, expense };
+            return { ...docSnap.data(), daySequence, note, expense, poisId };
           }
         }),
       );

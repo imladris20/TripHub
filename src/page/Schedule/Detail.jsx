@@ -1,9 +1,12 @@
+import axios from "axios";
+import { useEffect, useState } from "react";
 import PlaceHolderPhoto from "../../assets/pois_photo_placeholder.png";
-import { scheduleStore } from "../../store/store";
+import useStore, { scheduleStore } from "../../store/store";
 import { CloseIcon } from "../../utils/icons";
 
 const Detail = () => {
   const { attractionItemDetail, setAttractionItemDetail } = scheduleStore();
+  const { apiKey } = useStore();
 
   const {
     address,
@@ -13,16 +16,33 @@ const Detail = () => {
     name,
     openingHours,
     phoneNumber,
-    photoLink,
     priceLevel,
     rating,
     ratingTotal,
     note,
     expense,
     gmapUrl,
+    poisId,
   } = attractionItemDetail;
 
-  console.log(attractionItemDetail);
+  const [photoLink, setPhotoLink] = useState();
+  useEffect(() => {
+    const getValidPhoto = async (id) => {
+      const detailApi = `https://places.googleapis.com/v1/places/${id}?fields=id,photos&key=${apiKey}`;
+
+      const response = await axios.get(detailApi);
+
+      if (response.data.photos) {
+        const photoName = response.data?.photos[0].name;
+        const photoApi = `https://places.googleapis.com/v1/${photoName}/media?skipHttpRedirect=true&maxHeightPx=1000&maxWidthPx=1000&key=${apiKey}`;
+        const result = await axios.get(photoApi);
+        setPhotoLink(result.data.photoUri);
+      }
+    };
+    if (poisId) {
+      getValidPhoto(poisId);
+    }
+  }, [poisId]);
 
   return (
     <div className="absolute left-[30%] z-[997] flex h-full max-h-[calc(100vh-64px)] w-1/4 flex-col items-start gap-3 overflow-y-auto rounded-lg border-b-2 border-solid border-gray-200 bg-gray-100 p-3 shadow-2xl 2xl:w-1/5">
