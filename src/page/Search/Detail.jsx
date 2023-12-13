@@ -41,9 +41,12 @@ const Detail = () => {
     url,
   } = searchItemDetailInfo.data;
 
-  const city = address_components.find((element) =>
-    element.types.includes("administrative_area_level_1"),
-  ).long_name;
+  const city =
+    address_components.find((element) =>
+      element.types.includes("administrative_area_level_1"),
+    )?.long_name ||
+    address_components.find((element) => element.types.includes("country"))
+      ?.long_name;
 
   const handleAddToPoisBtnClicked = async () => {
     const docData = {
