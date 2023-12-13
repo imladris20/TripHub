@@ -112,6 +112,8 @@ const TimeCard = ({
     init();
   }, []);
 
+  console.log(placeNewestDetail);
+
   return (
     <>
       {/* attraction */}
@@ -169,7 +171,7 @@ const TimeCard = ({
                     {placeNewestDetail?.displayName?.text}
                   </h2>
                 </a>
-                {placeNewestDetail?.regularOpeningHours.openNow ? (
+                {placeNewestDetail?.regularOpeningHours?.openNow ? (
                   <div className="badge badge-secondary">營業中</div>
                 ) : (
                   <div className="badge badge-warning">休息中</div>
