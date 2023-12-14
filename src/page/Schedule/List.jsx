@@ -52,7 +52,7 @@ const List = () => {
 
       const result = await Promise.all(
         currentLoadingTripData.attractions.map(async (attraction) => {
-          const { daySequence, note, expense } = attraction;
+          const { daySequence, note, expense, poisId } = attraction;
           const ref = doc(
             database,
             "users",
@@ -62,7 +62,7 @@ const List = () => {
           );
           const docSnap = await getDoc(ref);
           if (docSnap.exists()) {
-            return { ...docSnap.data(), daySequence, note, expense };
+            return { ...docSnap.data(), daySequence, note, expense, poisId };
           }
         }),
       );
@@ -117,11 +117,26 @@ const List = () => {
   }, [currentLoadingTripData]);
 
   return currentLoadingTripData?.attractions ? (
-    [...Array(currentTripDuration + 1)].map((_, daySequenceIndex) => {
-      return (
-        <DayBlock key={daySequenceIndex} daySequenceIndex={daySequenceIndex} />
-      );
-    })
+    <>
+      {[...Array((currentTripDuration || 0) + 1)].map((_, daySequenceIndex) => {
+        return (
+          <DayBlock
+            key={daySequenceIndex}
+            daySequenceIndex={daySequenceIndex}
+          />
+        );
+      })}
+      {!currentLoadingTripData?.dayCount && (
+        <div className="flex h-full flex-row items-center justify-center">
+          <div className="chat chat-start">
+            <div className="chat-bubble h-20 w-80 text-sm leading-[30px]">
+              想開始分配景點嗎？ <br />
+              先去上方設定好起始日期跟結束日期吧！
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   ) : (
     <div className="flex h-full w-full flex-col items-center justify-center">
       <h1>你的行程空空如也~</h1>

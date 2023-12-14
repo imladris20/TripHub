@@ -62,12 +62,11 @@ const TravelModeAlert = ({ mode, duration }) => {
     <div className="timeline-middle">
       <div
         role="alert"
-        className="alert flex w-60 flex-row items-center justify-center bg-sand text-slate-700"
+        className="alert flex w-60 flex-row items-center justify-center border-none bg-[#FEE19F] text-slate-700"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6 shrink-0 stroke-current"
-          fill="none"
+          className="h-6 w-6 shrink-0 fill-slate-800 stroke-slate-800"
           viewBox="0 0 512 512"
         >
           {switchTravelModeIcon(mode)}

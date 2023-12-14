@@ -13,7 +13,9 @@ const DayBlock = ({ daySequenceIndex }) => {
   const dayBlockRef = useRef();
 
   const [startTime, setStartTime] = useState(
-    currentLoadingTripData.startTime[daySequenceIndex - 1]?.value || "09:00",
+    currentLoadingTripData.startTime
+      ? currentLoadingTripData?.startTime[daySequenceIndex - 1]?.value
+      : "09:00",
   );
 
   const handleStartTimeInput = (e) => {
@@ -57,7 +59,11 @@ const DayBlock = ({ daySequenceIndex }) => {
   };
 
   useEffect(() => {
-    setStartTime(currentLoadingTripData.startTime[daySequenceIndex - 1]?.value);
+    if (currentLoadingTripData.startTime) {
+      setStartTime(
+        currentLoadingTripData?.startTime[daySequenceIndex - 1]?.value,
+      );
+    }
   }, [currentLoadingTripData]);
 
   return (

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { doc, getDoc } from "firebase/firestore";
+import { find } from "lodash";
 import { useEffect, useState } from "react";
 import useStore from "../../store/store";
 import TravelModeAlert from "./TravelModeAlert";
@@ -30,7 +31,7 @@ const TimeCard = ({
   dayStartTime,
   wholeDay,
 }) => {
-  const { apiKey, database } = useStore();
+  const { apiKey, database, typeOptions } = useStore();
   const uid = localStorage.getItem("uid");
 
   const initAttractionStartTime = () => {
@@ -68,6 +69,17 @@ const TimeCard = ({
 
   const [categories, setCategories] = useState([]);
 
+  const calculateDurationText = (duration) => {
+    const hours = Math.floor(duration / 60);
+    const minutes = duration % 60;
+
+    return (
+      <h1 className="text-left text-sm">
+        {hours}小時{minutes}分鐘
+      </h1>
+    );
+  };
+
   useEffect(() => {
     const getPlaceDetails = async (placeId) => {
       const apiUrl = `https://places.googleapis.com/v1/places/${placeId}?fields=id,displayName,photos,googleMapsUri,formattedAddress,formattedAddress,nationalPhoneNumber,priceLevel,rating,userRatingCount,websiteUri,regularOpeningHours,regularSecondaryOpeningHours&key=${apiKey}`;
@@ -100,6 +112,8 @@ const TimeCard = ({
     init();
   }, []);
 
+  console.log(placeNewestDetail);
+
   return (
     <>
       {/* attraction */}
@@ -127,14 +141,25 @@ const TimeCard = ({
           <time className="font-mono text-xl italic">
             {attractionStartTime}
           </time>
-          <div className="card w-96 bg-base-100 shadow-xl">
-            <figure>
+          <div className="card h-60 w-96 bg-base-100 shadow-xl">
+            <figure className="rounded-xl">
               <img
                 src={placePhoto}
                 alt="attraction"
-                className="aspect-video w-full object-cover"
+                className="h-60 w-96 object-cover"
               />
             </figure>
+          </div>
+        </div>
+        <div
+          className={
+            cardOrder % 2 === 1 ? "timeline-end" : "timeline-start md:text-end"
+          }
+        >
+          <time className="font-mono text-xl italic text-secondary">
+            {attractionStartTime}
+          </time>
+          <div className="card h-60 w-96 bg-base-100 shadow-xl">
             <div className="card-body pb-6 pt-4">
               <div className="flex flex-row items-center gap-4">
                 <a
@@ -142,11 +167,11 @@ const TimeCard = ({
                   target="_blank"
                   className="link text-deyork"
                 >
-                  <h2 className="card-title">
+                  <h2 className="w-220px card-title max-w-[220px] truncate">
                     {placeNewestDetail?.displayName?.text}
                   </h2>
                 </a>
-                {placeNewestDetail?.regularOpeningHours.openNow ? (
+                {placeNewestDetail?.regularOpeningHours?.openNow ? (
                   <div className="badge badge-secondary">營業中</div>
                 ) : (
                   <div className="badge badge-warning">休息中</div>
@@ -162,13 +187,14 @@ const TimeCard = ({
                     ｜　☎️ {placeNewestDetail?.nationalPhoneNumber}
                   </h2>
                 )}
+                <h2 className="ml-3 text-xs">|　</h2>
                 {placeNewestDetail?.websiteUri && (
                   <a
-                    className="ml-3 text-xs"
+                    className="text-xs text-sky-500 underline"
                     href={placeNewestDetail.websiteUri}
                   >
                     {" "}
-                    |　官網
+                    官網
                   </a>
                 )}
               </div>
@@ -185,13 +211,27 @@ const TimeCard = ({
                 <h1 className="whitespace-nowrap text-left text-sm font-bold">
                   預計花費：
                 </h1>
-                <h1 className="text-left text-sm">{attraction.expense}元</h1>
+                <h1 className="text-left text-sm">
+                  {attraction.expense || 0}元
+                </h1>
               </div>
-              <div className="card-actions justify-end">
+              <div className="flex flex-row items-center justify-start">
+                <h1 className="whitespace-nowrap text-left text-sm font-bold">
+                  預計停留時間：
+                </h1>
+                {calculateDurationText(attraction.duration)}
+              </div>
+              <div className="card-actions absolute bottom-4 right-4">
                 {categories.map((item, index) => {
+                  let bgColor;
+                  let textColor;
+                  bgColor = find(typeOptions, { name: item })?.bg;
+                  textColor = find(typeOptions, { name: item })?.shouldTextDark
+                    ? "text-slate-800"
+                    : "text-slate-50";
                   return (
                     <div
-                      className="badge badge-primary badge-outline"
+                      className={`badge badge-outline ${bgColor} badge-lg ${textColor}`}
                       key={index}
                     >
                       {item}

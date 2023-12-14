@@ -58,33 +58,33 @@ const CategoryFilter = () => {
   };
 
   return (
-    <div className="relative flex h-10 w-full flex-row items-center justify-between border-b-2 border-dashed border-rose-200 bg-white px-2 outline-none">
+    <div className="relative flex h-10 w-full cursor-pointer flex-row items-center justify-between border-b-2 border-dashed border-rose-200 bg-white px-2 outline-none">
       <h1
-        className="cursor-pointer text-sm text-rose-500"
+        className="w-full cursor-pointer text-sm text-rose-500"
         onClick={() => setIsFilterWindowOpen()}
       >
         篩選類別
       </h1>
       <svg
+        onClick={() => setIsFilterWindowOpen()}
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 512 512"
         className="h-3 w-3 cursor-pointer stroke-rose-400 stroke-2"
-        onClick={() => setIsFilterWindowOpen()}
       >
         <FilterIcon />
       </svg>
 
       <div
-        className={`absolute right-0 top-10 z-[99] h-[450px] w-[256px] rounded-bl-lg border-b border-l border-solid border-slate-300 bg-white px-5 pt-4 opacity-90 shadow-xl ${
+        className={`absolute right-0 top-10 z-[99] h-auto max-h-[calc(100vh-104px)] w-[256px] rounded-bl-lg border-b border-l border-solid border-slate-300 bg-white px-5 py-4 opacity-90 shadow-xl ${
           isFilterWindowOpen ? "block" : "hidden"
         }`}
       >
         <div className="grid grid-cols-2 gap-x-12 gap-y-2">
           {typeOptions.map((type, index) => {
             return (
-              <div
+              <label
                 key={index}
-                className="flex h-5 flex-row items-center justify-start gap-1"
+                className="flex h-5 cursor-pointer flex-row items-center justify-start gap-1"
               >
                 <input
                   type="checkbox"
@@ -93,7 +93,7 @@ const CategoryFilter = () => {
                   onChange={(e) => handleCheckboxChanged(e)}
                 />
                 <span className="text-[14px]">{type.name}</span>
-              </div>
+              </label>
             );
           })}
         </div>

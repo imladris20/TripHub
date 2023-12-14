@@ -1,13 +1,7 @@
-import {
-  arrayUnion,
-  doc,
-  onSnapshot,
-  setDoc,
-  updateDoc,
-} from "firebase/firestore";
+import { arrayUnion, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { produce } from "immer";
 import { find, includes, indexOf } from "lodash";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useMutation } from "react-query";
 import PlaceHolderPhoto from "../../assets/pois_photo_placeholder.png";
 import useStore from "../../store/store";
@@ -47,9 +41,12 @@ const Detail = () => {
     url,
   } = searchItemDetailInfo.data;
 
-  const city = address_components.find((element) =>
-    element.types.includes("administrative_area_level_1"),
-  ).long_name;
+  const city =
+    address_components.find((element) =>
+      element.types.includes("administrative_area_level_1"),
+    )?.long_name ||
+    address_components.find((element) => element.types.includes("country"))
+      ?.long_name;
 
   const handleAddToPoisBtnClicked = async () => {
     const docData = {
@@ -65,8 +62,9 @@ const Detail = () => {
       priceLevel: price_level || "店家未提供",
       city,
       categories: categoryTags.filter((value) => value !== "請選擇"),
-      photoLink: photos[0].getUrl() || "店家未提供",
+      photoLink: (photos && photos[0]?.getUrl()) || "店家未提供",
       openingHours: opening_hours?.weekday_text || "店家未提供",
+      gmapUrl: url,
     };
 
     await setDocMutation.mutateAsync({
@@ -75,6 +73,8 @@ const Detail = () => {
       place_id,
       docData,
     });
+
+    setSearchItemDetailInfo(null);
   };
 
   const handleSelectChange = (e, index) => {
@@ -103,6 +103,14 @@ const Detail = () => {
       return;
     }
 
+    const docSnap = await getDoc(doc(database, "users", uid));
+    const newOption = {
+      name: newCategoryToAdd,
+      bg: `bg-${prepareColor[docSnap.data()?.categories?.length || 0]}`,
+    };
+
+    setTypeOptions(newOption);
+
     await updateDoc(doc(database, "users", uid), {
       categories: arrayUnion(newCategoryToAdd),
     });
@@ -117,24 +125,9 @@ const Detail = () => {
     setNewCategoryToAdd("");
   };
 
-  useEffect(() => {
-    const unsubscribe = onSnapshot(doc(database, "users", uid), (docSnap) => {
-      docSnap.data().categories.map((item, index) => {
-        const userDefinitedOption = {
-          name: item,
-          bg: `bg-${prepareColor[index]}`,
-        };
-        if (!find(typeOptions, { name: item })) {
-          setTypeOptions(userDefinitedOption);
-        }
-      });
-    });
-    return () => unsubscribe();
-  }, []);
-
   return (
     <div
-      onClick={() => console.log(categoryTags)}
+      // onClick={() => console.log(categoryTags)}
       className="absolute left-[21%] top-8 z-[999] flex h-[calc(100%-32px)] w-1/4 flex-col items-start gap-3 rounded-lg border-b-2 border-solid border-gray-200 bg-white p-3 shadow-2xl 2xl:w-1/5"
     >
       <div className="flex w-[88%] flex-row items-center justify-start gap-2">
@@ -214,7 +207,10 @@ const Detail = () => {
       </div>
       {!searchItemDetailInfo.isInPois && (
         <div className="mt-4 flex w-full flex-col gap-2">
-          <h1 className="text-left text-base font-bold">
+          <h1
+            className="text-left text-base font-bold"
+            onClick={() => console.log(typeOptions)}
+          >
             為景點加上標籤再放入口袋清單吧~
           </h1>
           <div className="flex w-full flex-row items-center justify-start gap-4 px-[2px]">
@@ -250,7 +246,7 @@ const Detail = () => {
             ))}
           </div>
           <div className="mt-1 flex flex-row items-center justify-start">
-            <h1 className="whitespace-nowrap text-xs">或新增自訂標籤：</h1>
+            <h1 className="mr-1 whitespace-nowrap text-xs">或新增自訂標籤：</h1>
             <input
               type="text"
               placeholder=""
@@ -261,6 +257,7 @@ const Detail = () => {
             <button
               className="btn btn-circle btn-xs h-4 min-h-0 w-4 border-green-500 bg-white p-0"
               onClick={handleAddNewCategoryTag}
+              disabled={!newCategoryToAdd}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

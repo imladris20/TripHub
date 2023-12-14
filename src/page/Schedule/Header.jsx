@@ -2,6 +2,7 @@ import { doc, setDoc } from "firebase/firestore";
 import { cloneDeep } from "lodash";
 import { useEffect, useState } from "react";
 import useStore, { scheduleStore } from "../../store/store";
+import { PlayButtonIcon } from "../../utils/icons";
 
 const Header = () => {
   const {
@@ -58,16 +59,18 @@ const Header = () => {
       startTime = startTime.slice(0, newDayCount);
     }
 
-    await setDoc(
-      docRef,
-      {
-        dayCount: newDayCount,
-        startDate: newStartDate,
-        endDate,
-        startTime,
-      },
-      { merge: true },
-    );
+    if (endDate) {
+      await setDoc(
+        docRef,
+        {
+          dayCount: newDayCount,
+          startDate: newStartDate,
+          endDate,
+          startTime,
+        },
+        { merge: true },
+      );
+    }
   };
 
   const handleEndDateInput = async (e) => {
@@ -104,16 +107,18 @@ const Header = () => {
       startTime = startTime.slice(0, newDayCount);
     }
 
-    await setDoc(
-      docRef,
-      {
-        dayCount: newDayCount,
-        startDate,
-        endDate: newEndDate,
-        startTime,
-      },
-      { merge: true },
-    );
+    if (startDate) {
+      await setDoc(
+        docRef,
+        {
+          dayCount: newDayCount,
+          startDate,
+          endDate: newEndDate,
+          startTime,
+        },
+        { merge: true },
+      );
+    }
   };
 
   useEffect(() => {
@@ -140,7 +145,7 @@ const Header = () => {
             onChange={(e) => handleStartDateInput(e)}
           />
         </div>
-        <div className="flex h-full flex-row items-center border-b-2 border-r-2 border-t-2 border-solid border-sand px-3">
+        <div className="flex h-full flex-row items-center rounded-r-lg border-b-2 border-r-2 border-t-2 border-solid border-sand px-3">
           <h1 className="whitespace-nowrap text-base font-bold text-slate-800">
             結束日期：
           </h1>
@@ -151,24 +156,31 @@ const Header = () => {
             onChange={(e) => handleEndDateInput(e)}
           />
         </div>
-        <div className="flex h-full flex-row items-center rounded-r-lg border-y-2 border-r-2 border-solid border-sand">
-          <button
-            className="h-full w-full whitespace-nowrap bg-sand px-4 font-bold"
-            onClick={() => {
-              console.log(currentLoadingTripData);
-            }}
-          >
-            <a href={`/overview/${currentLoadingTripId}`} target="_blank">
-              行程總覽
-            </a>
-          </button>
-        </div>
+
         <button
           className="ml-2 mt-5 cursor-pointer text-[10px] text-gray-500 underline decoration-gray-500 decoration-solid"
           onClick={() => tripSelectModal.current.showModal()}
         >
           重新選擇行程
         </button>
+
+        <a
+          className="btn ml-6 flex h-10 min-h-0 flex-row items-center bg-sand"
+          href={`/overview/${currentLoadingTripId}`}
+          target="_blank"
+          onClick={() => {
+            console.log(currentLoadingTripData);
+          }}
+        >
+          <h1 className="text-base leading-5 text-slate-800">預覽行程</h1>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5 fill-slate-800 stroke-slate-800 stroke-1"
+            viewBox="0 0 512 512"
+          >
+            <PlayButtonIcon />
+          </svg>
+        </a>
       </div>
     </>
   ) : (

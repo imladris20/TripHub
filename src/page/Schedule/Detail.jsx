@@ -1,9 +1,12 @@
+import axios from "axios";
+import { useEffect, useState } from "react";
 import PlaceHolderPhoto from "../../assets/pois_photo_placeholder.png";
-import { scheduleStore } from "../../store/store";
+import useStore, { scheduleStore } from "../../store/store";
 import { CloseIcon } from "../../utils/icons";
 
 const Detail = () => {
   const { attractionItemDetail, setAttractionItemDetail } = scheduleStore();
+  const { apiKey } = useStore();
 
   const {
     address,
@@ -13,18 +16,48 @@ const Detail = () => {
     name,
     openingHours,
     phoneNumber,
-    photoLink,
     priceLevel,
     rating,
     ratingTotal,
     note,
     expense,
+    gmapUrl,
+    poisId,
   } = attractionItemDetail;
 
+  const [photoLink, setPhotoLink] = useState();
+  useEffect(() => {
+    const getValidPhoto = async (id) => {
+      const detailApi = `https://places.googleapis.com/v1/places/${id}?fields=id,photos&key=${apiKey}`;
+
+      const response = await axios.get(detailApi);
+
+      if (response.data.photos) {
+        const photoName = response.data?.photos[0].name;
+        const photoApi = `https://places.googleapis.com/v1/${photoName}/media?skipHttpRedirect=true&maxHeightPx=1000&maxWidthPx=1000&key=${apiKey}`;
+        const result = await axios.get(photoApi);
+        setPhotoLink(result.data.photoUri);
+      }
+    };
+    if (poisId) {
+      getValidPhoto(poisId);
+    }
+  }, [poisId]);
+
   return (
-    <div className="absolute left-[30%] z-[997] flex h-full w-1/4 flex-col items-start gap-3 rounded-lg border-b-2 border-solid border-gray-200 bg-gray-100 p-3 shadow-2xl 2xl:w-1/5">
+    <div className="absolute left-[30%] z-[997] flex h-full max-h-[calc(100vh-64px)] w-1/4 flex-col items-start gap-3 overflow-y-auto rounded-lg border-b-2 border-solid border-gray-200 bg-gray-100 p-3 shadow-2xl 2xl:w-1/5">
       <div className="flex w-[88%] flex-row items-center justify-start gap-2">
-        <h1 className="text-left text-base font-bold">{name}</h1>
+        {gmapUrl ? (
+          <a
+            href={gmapUrl}
+            target="_blank"
+            className="link text-left text-base font-bold"
+          >
+            {name}
+          </a>
+        ) : (
+          <h1 className="text-left text-base font-bold">{name}</h1>
+        )}
       </div>
       {photoLink ? (
         <a href={photoLink} target="_blank">
@@ -36,7 +69,7 @@ const Detail = () => {
           className="aspect-video w-full object-cover"
         />
       )}
-      <div className="flex w-full flex-col items-start justify-start gap-3 overflow-y-auto">
+      <div className="flex h-[240px] w-full shrink-0 flex-col items-start justify-start gap-3 overflow-y-auto">
         <div className="flex flex-row items-center justify-start">
           <h2 className="text-xs">
             {rating} ⭐ ({ratingTotal} 則)　｜
@@ -86,7 +119,7 @@ const Detail = () => {
       </div>
       <div>
         <h1 className="text-sm font-bold">備註：</h1>
-        <h2 className="text-xs">{note}</h2>
+        <h2 className="text-sm">{note}</h2>
       </div>
       <button
         className="absolute right-3 top-3 h-7 w-7"
