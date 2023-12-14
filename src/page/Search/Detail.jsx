@@ -106,7 +106,9 @@ const Detail = () => {
     const docSnap = await getDoc(doc(database, "users", uid));
     const newOption = {
       name: newCategoryToAdd,
-      bg: `bg-${prepareColor[docSnap.data()?.categories?.length || 0]}`,
+      bg: prepareColor[docSnap.data()?.categories?.length || 0].bg,
+      shouldTextDark:
+        prepareColor[docSnap.data()?.categories?.length || 0].shouldTextDark,
     };
 
     setTypeOptions(newOption);
