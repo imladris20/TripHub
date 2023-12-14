@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "site": "triphub-polien-sprint4",
+    "site": "triphub",
     "public": "dist",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
