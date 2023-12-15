@@ -30,6 +30,9 @@ const SignIn = ({ inputRef }) => {
         <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white md:text-2xl">
           歡迎回來！
         </h1>
+        {mutation.isError && (
+          <h4 className="text-xs text-rose-900">帳號密碼似乎有錯喔</h4>
+        )}
         <div className="form-control mt-10">
           <label className="label">
             <span className="label-text">信箱</span>
@@ -39,7 +42,10 @@ const SignIn = ({ inputRef }) => {
             placeholder="email"
             value={insertEmail}
             className="input input-bordered"
-            onChange={(e) => setInsertEmail(e.target.value)}
+            onChange={(e) => {
+              setInsertEmail(e.target.value);
+              mutation.reset();
+            }}
             required
           />
         </div>
@@ -52,7 +58,10 @@ const SignIn = ({ inputRef }) => {
             placeholder="password"
             className="input input-bordered"
             value={insertPassword}
-            onChange={(e) => setInsertPassword(e.target.value)}
+            onChange={(e) => {
+              setInsertPassword(e.target.value);
+              mutation.reset();
+            }}
             required
           />
         </div>

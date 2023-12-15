@@ -17,7 +17,10 @@ const SignUp = ({ inputRef }) => {
   });
 
   const validation = yup.object({
-    fullName: yup.string().max(5, "長度不得超過5").required("欄位不得為空"),
+    fullName: yup
+      .string()
+      .max(5, "姓名最多僅可輸入5個字")
+      .required("欄位不得為空"),
     email: yup.string().email("email 格式有誤").required("欄位不得為空"),
     password: yup.string().min(8, "密碼不得少於8個字").required("欄位不得為空"),
   });
