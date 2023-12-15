@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Logo from "../../assets/logo.png";
 import ScheduleHeader from "../../page/Schedule/Header";
 import useStore, { scheduleStore } from "../../store/store";
 import Profile from "./Profile";
+import TripSelectModal from "./TripSelectModal";
 
 const Header = () => {
+  const tripModalRef = useRef();
   const { isLogin } = useStore();
   const { currentLoadingTripData } = scheduleStore();
   const currentPath = useLocation().pathname;
@@ -65,8 +67,11 @@ const Header = () => {
               行程規劃
             </button>
           </Link>
+          {location.pathname === "/schedule" && (
+            <TripSelectModal tripModalRef={tripModalRef} />
+          )}
           {location.pathname === "/schedule" && currentLoadingTripData && (
-            <ScheduleHeader />
+            <ScheduleHeader tripModalRef={tripModalRef} />
           )}
         </>
       )}

@@ -4,10 +4,9 @@ import { useEffect, useState } from "react";
 import useStore, { scheduleStore } from "../../store/store";
 import { PlayButtonIcon } from "../../utils/icons";
 
-const Header = () => {
+const Header = ({ tripModalRef }) => {
   const {
     currentLoadingTripId,
-    tripSelectModal,
     setCurrentTripDuration,
     currentLoadingTripData,
   } = scheduleStore();
@@ -159,7 +158,7 @@ const Header = () => {
 
         <button
           className="ml-2 mt-5 cursor-pointer text-[10px] text-gray-500 underline decoration-gray-500 decoration-solid"
-          onClick={() => tripSelectModal.current.showModal()}
+          onClick={() => tripModalRef.current.showModal()}
         >
           重新選擇行程
         </button>
