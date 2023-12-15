@@ -58,7 +58,7 @@ const CategoryFilter = () => {
   };
 
   return (
-    <div className="relative flex h-10 w-full cursor-pointer flex-row items-center justify-between border-b-2 border-dashed border-rose-200 bg-white px-2 outline-none">
+    <div className="relative flex h-10 w-full flex-row items-center justify-between border-b-2 border-dashed border-rose-200 bg-white px-2 outline-none">
       <h1
         className="w-full cursor-pointer text-sm text-rose-500"
         onClick={() => setIsFilterWindowOpen()}

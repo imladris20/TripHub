@@ -1,9 +1,11 @@
+import { useNavigate } from "react-router-dom";
 import useStore from "../../store/store";
 import { nativeSignOut } from "../../utils/firebaseSDK";
 import { ProfileIcon, SignOutIcon } from "../../utils/icons";
 
 const Profile = () => {
   const { username, setUsername } = useStore();
+  const navigate = useNavigate();
 
   return (
     <div className="ml-auto flex h-6 w-auto flex-row items-center gap-4">
@@ -31,6 +33,7 @@ const Profile = () => {
           localStorage.removeItem("uid");
           localStorage.removeItem("username");
           setUsername(null);
+          navigate("/");
         }}
       >
         <svg
