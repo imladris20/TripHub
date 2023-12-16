@@ -108,7 +108,7 @@ const AddToSchedule = () => {
     };
     await updateDoc(docRef, newData);
     reset({
-      expense: "",
+      expense: 0,
       note: "",
       selectedTrip: "disabled",
     });
@@ -156,7 +156,7 @@ const AddToSchedule = () => {
   return (
     <div className="mt-auto flex w-full flex-row items-center justify-center shadow-2xl">
       <button
-        className="btn btn-primary h-10 w-full rounded-xl p-2 font-bold text-gray-800 outline-none"
+        className="btn btn-secondary h-10 w-full rounded-xl p-2 font-bold text-gray-800 outline-none"
         onClick={() => modalRef.current.showModal()}
       >
         加入行程！
@@ -176,6 +176,7 @@ const AddToSchedule = () => {
               </h4>
               <input
                 type="number"
+                defaultValue={0}
                 min={0}
                 placeholder="請填入金額"
                 {...register("expense")}
@@ -293,7 +294,7 @@ const AddToSchedule = () => {
               className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
               onClick={() => {
                 reset({
-                  expense: "",
+                  expense: 0,
                   note: "",
                   selectedTrip: "disabled",
                 });

@@ -113,7 +113,7 @@ const TripSelectModal = ({ tripModalRef }) => {
         <div className="relative flex w-full flex-row items-center justify-start gap-2">
           <form method="dialog">
             <button
-              className="btn btn-primary w-36 whitespace-nowrap"
+              className="btn btn-secondary w-36 whitespace-nowrap text-gray-800"
               onClick={() => {
                 setCurrentLoadingTripId(tripIdToLoad);
               }}

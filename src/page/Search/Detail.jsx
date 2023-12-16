@@ -279,7 +279,7 @@ const Detail = () => {
           </button>
         ) : (
           <button
-            className="h-10 w-full rounded-xl bg-rose-200 p-2 font-bold text-gray-800"
+            className="btn btn-primary h-10 w-full rounded-xl p-2 font-bold text-gray-800"
             onClick={() => handleAddToPoisBtnClicked()}
           >
             加入口袋清單！
