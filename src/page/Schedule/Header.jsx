@@ -128,28 +128,28 @@ const Header = ({ tripModalRef }) => {
   return currentLoadingTripData ? (
     <>
       <div className="flex h-10 flex-row items-center justify-start ">
-        <div className="flex h-full flex-row items-center rounded-l-lg border-2 border-solid border-sand px-3">
-          <h1 className="whitespace-nowrap text-base font-bold text-slate-800">
+        <div className="flex h-full max-w-[238px] flex-row items-center rounded-l-lg border-2 border-solid border-sand px-3">
+          <h1 className="max-w-[210px] truncate whitespace-nowrap text-sm font-bold text-slate-800">
             {currentLoadingTripData.name}
           </h1>
         </div>
         <div className="flex h-full flex-row items-center border-b-2 border-r-2 border-t-2 border-solid border-sand px-3">
-          <h1 className="whitespace-nowrap text-base font-bold text-slate-800">
-            起始日期：
+          <h1 className="whitespace-nowrap text-sm font-bold text-slate-800">
+            起始日：
           </h1>
           <input
-            className="outline-none"
+            className="text-sm outline-none"
             type="date"
             value={startDate}
             onChange={(e) => handleStartDateInput(e)}
           />
         </div>
         <div className="flex h-full flex-row items-center rounded-r-lg border-b-2 border-r-2 border-t-2 border-solid border-sand px-3">
-          <h1 className="whitespace-nowrap text-base font-bold text-slate-800">
-            結束日期：
+          <h1 className="whitespace-nowrap text-sm font-bold text-slate-800">
+            結束日：
           </h1>
           <input
-            className="outline-none"
+            className="text-sm outline-none"
             type="date"
             value={endDate}
             onChange={(e) => handleEndDateInput(e)}
@@ -171,7 +171,7 @@ const Header = ({ tripModalRef }) => {
             console.log(currentLoadingTripData);
           }}
         >
-          <h1 className="text-base leading-5 text-slate-800">預覽行程</h1>
+          <h1 className="text-sm leading-5 text-slate-800">預覽行程</h1>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5 fill-slate-800 stroke-slate-800 stroke-1"

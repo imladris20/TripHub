@@ -49,6 +49,10 @@ const AddToSchedule = () => {
   };
 
   const handleAddNewBlankTrip = async () => {
+    if (!newTripToAdd) {
+      window.alert("請確實填寫行程名稱");
+      return;
+    }
     await addDoc(colRef, {
       name: newTripToAdd,
     });
