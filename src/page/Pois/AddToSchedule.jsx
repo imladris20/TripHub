@@ -1,3 +1,4 @@
+import { yupResolver } from "@hookform/resolvers/yup";
 import {
   addDoc,
   arrayUnion,
@@ -8,6 +9,8 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import * as yup from "yup";
 import useStore, { poisStore } from "../../store/store";
 import { PlusIcon } from "../../utils/icons";
 
@@ -19,39 +22,64 @@ const AddToSchedule = () => {
   const colRef = collection(database, "users", uid, "trips");
 
   const [tripsOption, setTripsOption] = useState([]);
-  const [expense, setExpense] = useState("");
-  const [note, setNote] = useState("");
-  const [selectedTrip, setSelectedTrip] = useState("disabled");
-  const [newTripToAdd, setNewTripToAdd] = useState("");
   const [isPoisInSelectedTrip, setIsPoisInSelectedTrip] = useState(false);
 
-  const handlePriceChange = (e) => {
-    setExpense(e.target.value);
+  const [newTripToAdd, setNewTripToAdd] = useState("");
+  const [newTripError, setNewTripError] = useState("");
+
+  const getDisplayLength = (str) => {
+    let length = 0;
+    for (let i = 0; i < str.length; i++) {
+      const charUnicode = str.charCodeAt(i);
+
+      if (charUnicode >= 0x4e00 && charUnicode <= 0x9fff) {
+        length += 2;
+      } else {
+        length += 1;
+      }
+    }
+    return length;
   };
 
-  const handleNoteChange = (e) => {
-    setNote(e.target.value);
-  };
+  const validation = yup.object({
+    expense: yup
+      .number()
+      .integer("僅能輸入整數")
+      .typeError("請輸入有效數字")
+      .min(0, "金額不可小於零")
+      .max(9999, "金額不可超過9999元"),
+    note: yup.string().max(150, "備註最多150字唷"),
+    selectedTrip: yup.string().notOneOf(["disabled", "請選擇行程"]),
+  });
 
-  const handleTripSelected = (e) => {
-    setSelectedTrip(e.target.value);
-  };
+  const {
+    register,
+    control,
+    handleSubmit,
+    watch,
+    formState: { errors },
+    reset,
+  } = useForm({ resolver: yupResolver(validation) });
 
   const handleNewTripInput = (e) => {
-    setNewTripToAdd(e.target.value);
-  };
-
-  const resetAllInput = () => {
-    setExpense("");
-    setNote("");
-    setSelectedTrip("disabled");
-    setNewTripToAdd("");
+    const value = e.target.value;
+    setNewTripToAdd(value);
+    if (getDisplayLength(value) > 30) {
+      setNewTripError("行程名稱最多15個字唷");
+    } else {
+      setNewTripError("");
+    }
   };
 
   const handleAddNewBlankTrip = async () => {
-    if (!newTripToAdd) {
-      window.alert("請確實填寫行程名稱");
+    if (newTripToAdd.trim() === "") {
+      setNewTripError("請填寫行程名稱");
       return;
+    } else if (getDisplayLength(newTripToAdd) > 30) {
+      setNewTripError("行程名稱最多15個字唷");
+      return;
+    } else {
+      setNewTripError("");
     }
     await addDoc(colRef, {
       name: newTripToAdd,
@@ -64,7 +92,8 @@ const AddToSchedule = () => {
     return foundElement ? foundElement.id : null;
   };
 
-  const handleAddPoisToTrip = async () => {
+  const handleAddPoisToTrip = async (values) => {
+    const { selectedTrip, note, expense } = values;
     const docId = findIdByName(selectedTrip, tripsOption);
     const docRef = doc(database, "users", uid, "trips", docId);
     const newData = {
@@ -78,7 +107,12 @@ const AddToSchedule = () => {
       }),
     };
     await updateDoc(docRef, newData);
-    resetAllInput();
+    reset({
+      expense: "",
+      note: "",
+      selectedTrip: "disabled",
+    });
+    modalRef.current.close();
   };
 
   useEffect(() => {
@@ -98,6 +132,7 @@ const AddToSchedule = () => {
   }, [database]);
 
   useEffect(() => {
+    const selectedTrip = watch("selectedTrip");
     const compare = async () => {
       const docId = findIdByName(selectedTrip, tripsOption);
       const docRef = doc(database, "users", uid, "trips", docId);
@@ -116,7 +151,7 @@ const AddToSchedule = () => {
     ) {
       compare();
     }
-  }, [selectedTrip]);
+  }, [watch("selectedTrip")]);
 
   return (
     <div className="mt-auto flex w-full flex-row items-center justify-center shadow-2xl">
@@ -128,51 +163,82 @@ const AddToSchedule = () => {
       </button>
       <dialog ref={modalRef} className="modal">
         <div className="modal-box">
-          <div className="flex flex-col items-start justify-start gap-4">
+          <form
+            className="flex flex-col items-start justify-start gap-4"
+            onSubmit={handleSubmit(handleAddPoisToTrip)}
+          >
             <h3 className="text-xl font-bold">
               為景點寫上備註與消費並加入行程！
             </h3>
-            <div className="flex flex-row items-center justify-start gap-2">
+            <div className="relative flex flex-row items-center justify-start gap-2">
               <h4 className="whitespace-nowrap text-sm font-bold">
                 預估消費：
               </h4>
               <input
                 type="number"
-                placeholder="請填入數字"
-                value={expense}
-                onInput={(e) => handlePriceChange(e)}
-                className="input input-bordered input-sm w-full max-w-xs"
+                min={0}
+                placeholder="請填入金額"
+                {...register("expense")}
+                className="input input-bordered input-sm w-44 max-w-xs"
               />
               <h4 className="whitespace-nowrap text-sm">元</h4>
+              {errors?.expense && (
+                <h4 className="absolute bottom-[-24px] right-0 mt-2 text-right text-xs text-rose-900">
+                  {errors.expense.message}
+                </h4>
+              )}
             </div>
             <h4 className="whitespace-nowrap text-sm font-bold">景點備註：</h4>
-            <textarea
-              placeholder="「博濂推薦的，必吃！」、「老闆常放鳥沒開店，要先打電話」...等"
-              className="textarea textarea-bordered textarea-md -mt-2 w-full"
-              value={note}
-              onInput={(e) => handleNoteChange(e)}
-            ></textarea>
+            <Controller
+              name="note"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <div className="relative w-full">
+                  <textarea
+                    placeholder="「博濂推薦的，必吃！」、「老闆常放鳥沒開店，要先打電話」...等"
+                    className="textarea textarea-bordered textarea-md -mt-2 w-full"
+                    {...field}
+                  />
+                  {errors?.note && (
+                    <h4 className="absolute bottom-[-24px] right-0 mt-2 text-right text-xs text-rose-900">
+                      {errors.note.message}
+                    </h4>
+                  )}
+                </div>
+              )}
+            />
             <h4 className="mt-8 whitespace-nowrap text-base font-bold">
               想把此景點加入哪個行程呢？
             </h4>
-            <div className="-mt-2 flex w-full flex-row items-center justify-start gap-2">
-              <select
-                className="select select-bordered select-primary select-sm w-1/3 shrink-0"
-                value={selectedTrip}
-                onChange={(e) => handleTripSelected(e)}
-              >
-                <option disabled value="disabled">
-                  選擇行程
-                </option>
-                {tripsOption.map((trip, index) => {
-                  return (
-                    <option key={index} value={trip.data.name}>
-                      {trip.data.name}
+            <div className="relative -mt-2 flex w-full flex-row items-center justify-start gap-2">
+              <Controller
+                name="selectedTrip"
+                control={control}
+                defaultValue="disabled"
+                render={({ field }) => (
+                  <select
+                    {...field}
+                    className="select select-bordered select-primary select-sm w-1/3 shrink-0"
+                  >
+                    <option disabled value="disabled">
+                      選擇行程
                     </option>
-                  );
-                })}
-              </select>
-
+                    {tripsOption.map((trip, index) => {
+                      return (
+                        <option key={index} value={trip.data.name}>
+                          {trip.data.name}
+                        </option>
+                      );
+                    })}
+                  </select>
+                )}
+              />
+              {errors?.selectedTrip && (
+                <h4 className="mt-2 text-right text-xs text-rose-900">
+                  {errors.selectedTrip.message}
+                </h4>
+              )}
               <h1 className="whitespace-nowrap text-base">或新增行程：</h1>
               <input
                 type="text"
@@ -181,7 +247,7 @@ const AddToSchedule = () => {
                 value={newTripToAdd}
                 onInput={(e) => handleNewTripInput(e)}
               />
-              <button
+              <div
                 className="btn btn-circle btn-xs border-green-500 bg-white"
                 onClick={handleAddNewBlankTrip}
               >
@@ -192,39 +258,50 @@ const AddToSchedule = () => {
                 >
                   <PlusIcon />
                 </svg>
-              </button>
-            </div>
-            <form method="dialog" className="w-full">
-              <button
-                className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
-                onClick={resetAllInput}
-              >
-                ✕
-              </button>
-              {selectedTrip === "disabled" ? (
-                <button
-                  className="btn w-full cursor-not-allowed disabled:cursor-not-allowed"
-                  disabled
-                >
-                  尚未選擇行程
-                </button>
-              ) : !isPoisInSelectedTrip ? (
-                <button
-                  className="btn btn-secondary btn-block text-lg text-gray-800"
-                  onClick={handleAddPoisToTrip}
-                >
-                  放入行程！
-                </button>
-              ) : (
-                <button
-                  className="btn w-full cursor-not-allowed disabled:cursor-not-allowed"
-                  disabled
-                >
-                  此景點已經加入所選行程
-                </button>
+              </div>
+              {newTripError && (
+                <h4 className="absolute bottom-[-24px] right-0 mt-2 text-right text-xs text-rose-900">
+                  {newTripError}
+                </h4>
               )}
-            </form>
-          </div>
+            </div>
+            {watch("selectedTrip") === "disabled" ? (
+              <button
+                className="btn mt-4 w-full cursor-not-allowed disabled:cursor-not-allowed"
+                disabled
+              >
+                尚未選擇行程
+              </button>
+            ) : !isPoisInSelectedTrip ? (
+              <button
+                className="btn btn-secondary btn-block mt-4 text-lg text-gray-800"
+                type="submit"
+              >
+                放入行程！
+              </button>
+            ) : (
+              <button
+                className="btn mt-4 w-full cursor-not-allowed disabled:cursor-not-allowed"
+                disabled
+              >
+                此景點已經加入所選行程
+              </button>
+            )}
+          </form>
+          <form method="dialog" className="w-full">
+            <button
+              className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
+              onClick={() => {
+                reset({
+                  expense: "",
+                  note: "",
+                  selectedTrip: "disabled",
+                });
+              }}
+            >
+              ✕
+            </button>
+          </form>
         </div>
       </dialog>
     </div>
