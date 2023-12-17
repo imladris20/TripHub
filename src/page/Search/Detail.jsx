@@ -135,6 +135,16 @@ const Detail = () => {
       return;
     }
 
+    if (typeOptions.length >= 40) {
+      toast.error("標籤數已達上限", {
+        duration: 2000,
+        position: "bottom-center",
+        className: "bg-slate-100",
+        icon: "😔",
+      });
+      return;
+    }
+
     if (find(typeOptions, { name: newCategoryToAdd })) {
       toast.error("此標籤已存在", {
         duration: 2000,
