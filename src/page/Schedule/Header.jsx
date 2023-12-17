@@ -1,6 +1,7 @@
 import { doc, setDoc } from "firebase/firestore";
 import { cloneDeep } from "lodash";
 import { useEffect, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
 import useStore, { scheduleStore } from "../../store/store";
 import { PlayButtonIcon } from "../../utils/icons";
 
@@ -29,8 +30,13 @@ const Header = ({ tripModalRef }) => {
 
   const handleStartDateInput = async (e) => {
     if (endDate && endDate < e.target.value) {
+      toast.error("起始日期不可晚於結束日期", {
+        duration: 1500,
+        position: "top-right",
+        className: "bg-gray-200",
+      });
+      setStartDate(e.target.value);
       setEndDate("");
-      window.alert("起始日期不可晚於結束日期");
       return;
     }
     const newStartDate = e.target.value;
@@ -74,11 +80,21 @@ const Header = ({ tripModalRef }) => {
 
   const handleEndDateInput = async (e) => {
     if (!startDate) {
-      window.alert("請先設定起始日期");
+      toast.error("請先設定起始日期", {
+        duration: 1500,
+        position: "top-right",
+        className: "bg-gray-200",
+      });
+      setEndDate("");
       return;
     }
     if (startDate && e.target.value < startDate) {
-      window.alert("結束日期不可早於開始日期");
+      toast.error("結束日期不可早於開始日期", {
+        duration: 1500,
+        position: "top-right",
+        className: "bg-gray-200",
+      });
+      setEndDate("");
       return;
     }
     const newEndDate = e.target.value;
@@ -181,6 +197,7 @@ const Header = ({ tripModalRef }) => {
           </svg>
         </a>
       </div>
+      <Toaster />
     </>
   ) : (
     <span className="loading loading-bars loading-md"></span>
