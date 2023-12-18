@@ -2,7 +2,7 @@ import axios from "axios";
 import { doc, getDoc } from "firebase/firestore";
 import { find } from "lodash";
 import { useEffect, useState } from "react";
-import useStore from "../../store/store";
+import useStore, { overViewStore } from "../../store/store";
 import TravelModeAlert from "./TravelModeAlert";
 
 function addDurationToTime(startTime, duration) {
@@ -32,7 +32,7 @@ const TimeCard = ({
   wholeDay,
 }) => {
   const { apiKey, database, typeOptions } = useStore();
-  const uid = localStorage.getItem("uid");
+  const { uid } = overViewStore();
 
   const initAttractionStartTime = () => {
     if (cardOrder === 1) {

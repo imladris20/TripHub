@@ -293,3 +293,14 @@ export const scheduleStore = create((set, get) => ({
     );
   },
 }));
+
+export const overViewStore = create((set, get) => ({
+  uid: null,
+  setUid: (uid) => {
+    set(
+      produce((state) => {
+        state.uid = uid;
+      }),
+    );
+  },
+}));

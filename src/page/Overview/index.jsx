@@ -1,23 +1,27 @@
-import { doc, getDoc } from "firebase/firestore";
+import { collectionGroup, getDocs, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Logo from "../../assets/logo.png";
-import useStore from "../../store/store";
+import useStore, { overViewStore } from "../../store/store";
 import Day from "./Day";
 import Maininfo from "./Maininfo";
 
 const Overview = () => {
   const { tripId } = useParams();
   const { database } = useStore();
-  const uid = localStorage.getItem("uid");
   const [trip, setTrip] = useState();
+  const { uid, setUid } = overViewStore();
 
   useEffect(() => {
     const getTripData = async () => {
-      const docSnap = await getDoc(
-        doc(database, "users", uid, "trips", tripId),
-      );
-      setTrip(docSnap.data());
+      const allTrips = query(collectionGroup(database, "trips"));
+      const querySnapshot = await getDocs(allTrips);
+      querySnapshot.forEach((doc) => {
+        if (doc.id === tripId) {
+          setUid(doc.ref?._key?.path?.segments[6]);
+          setTrip(doc.data());
+        }
+      });
     };
     if (database) {
       getTripData();
@@ -33,7 +37,7 @@ const Overview = () => {
       <div className="divider divider-primary mt-3 text-2xl font-bold text-primary">
         <h1>行程總覽</h1>
       </div>
-      {trip ? (
+      {trip && uid ? (
         <div className="flex w-full flex-col items-center justify-start gap-2 px-16 py-6">
           <Maininfo trip={trip} tripId={tripId} />
           {[...Array(trip.dayCount)].map((_, index) => {
