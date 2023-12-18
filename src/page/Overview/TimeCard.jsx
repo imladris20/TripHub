@@ -112,8 +112,6 @@ const TimeCard = ({
     init();
   }, []);
 
-  console.log(placeNewestDetail);
-
   return (
     <>
       {/* attraction */}
