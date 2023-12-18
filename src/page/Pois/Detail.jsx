@@ -1,4 +1,6 @@
 import axios from "axios";
+import { collection, getDocs } from "firebase/firestore";
+import { find } from "lodash";
 import { useEffect, useState } from "react";
 import PlaceHolderPhoto from "../../assets/pois_photo_placeholder.png";
 import useStore, { poisStore } from "../../store/store";
@@ -7,7 +9,8 @@ import AddToSchedule from "./AddToSchedule";
 
 const Detail = () => {
   const { poisItemDetailInfo, setPoisItemDetailInfo } = poisStore();
-  const { apiKey } = useStore();
+  const { database, apiKey } = useStore();
+  const uid = localStorage.getItem("uid");
 
   const {
     id,
@@ -25,6 +28,7 @@ const Detail = () => {
   } = poisItemDetailInfo;
 
   const [photoLink, setPhotoLink] = useState();
+  const [alreadyIn, setAlreadyIn] = useState([]);
 
   useEffect(() => {
     const getValidPhoto = async (id) => {
@@ -40,7 +44,22 @@ const Detail = () => {
         setPhotoLink(result.data.photoUri);
       }
     };
+
+    const checkTrip = async (id) => {
+      const tirpsColRef = collection(database, "users", uid, "trips");
+      const querySnapShot = await getDocs(tirpsColRef);
+      const containArr = [];
+      querySnapShot.forEach((doc) => {
+        if (find(doc.data().attractions, { poisId: id })) {
+          containArr.push(doc.data().name);
+        }
+      });
+
+      setAlreadyIn(containArr);
+    };
+
     getValidPhoto(id);
+    checkTrip(id);
   }, [id]);
 
   return (
@@ -115,7 +134,25 @@ const Detail = () => {
             <h3 className="text-xs">😅 店家未提供詳細營業資訊</h3>
           </div>
         )}
+        {alreadyIn.length > 0 && (
+          <div className="flex flex-col gap-2">
+            <h3 className="mt-2 text-sm font-bold">已加入行程：</h3>
+            <div className="ml-1 flex flex-col gap-[2px]">
+              {alreadyIn.map((item, index) => {
+                return (
+                  <li
+                    className="list-disc text-[11px]"
+                    key={`tripname_${id}_${index}`}
+                  >
+                    {item}
+                  </li>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
+
       <AddToSchedule />
       <button
         className="absolute right-3 top-3 h-7 w-7"
