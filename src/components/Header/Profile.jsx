@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import useStore from "../../store/store";
 import { nativeSignOut } from "../../utils/firebaseSDK";
-import { ProfileIcon, SignOutIcon } from "../../utils/icons";
+import { SignOutIcon } from "../../utils/icons";
 
 const Profile = () => {
   const { username, setUsername } = useStore();
@@ -18,7 +18,7 @@ const Profile = () => {
           <span>想去哪裡玩呢</span>
         </h1>
       )}
-      <button>
+      {/*       <button>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 512 512"
@@ -26,7 +26,7 @@ const Profile = () => {
         >
           <ProfileIcon />
         </svg>
-      </button>
+      </button> */}
       <button
         onClick={() => {
           nativeSignOut();

@@ -1,6 +1,7 @@
 import { doc, updateDoc } from "firebase/firestore";
 import { cloneDeep, filter, orderBy } from "lodash";
 import { useEffect, useRef, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
 import useStore, { scheduleStore } from "../../store/store";
 import { TimeIcon } from "../../utils/icons";
 
@@ -136,7 +137,7 @@ const TimeSettingModal = ({
       newAttractions[currentAttractionIndex].duration = duration;
       await updateDoc(tripRef, { attractions: newAttractions });
     } else {
-      window.alert("請設定完整再點選確認");
+      toast.error("請設定完整再點選確認");
     }
   };
 
@@ -145,7 +146,7 @@ const TimeSettingModal = ({
       currentLoadingTripData.attractions[currentAttractionIndex].inDayOrder ===
       0
     ) {
-      window.alert("請先設定景點順序");
+      toast.error("請先設定景點順序");
       return;
     }
 
@@ -172,6 +173,7 @@ const TimeSettingModal = ({
 
   return (
     <span className="h-full w-[90px] shrink-0 whitespace-nowrap border-r border-solid border-gray-500 text-center text-xs">
+      <Toaster />
       <button
         className="btn btn-ghost h-full min-h-0 w-full rounded-none font-normal"
         onClick={() => handleButtonClicked()}

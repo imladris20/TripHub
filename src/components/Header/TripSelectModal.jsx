@@ -1,13 +1,29 @@
 import { addDoc, collection, onSnapshot } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import useStore, { scheduleStore } from "../../store/store";
+import { PlusIcon } from "../../utils/icons";
 
 const TripSelectModal = ({ tripModalRef }) => {
   const [selectedTrip, setSelectedTrip] = useState("disabled");
   const [tripsOption, setTripsOption] = useState([]);
   const [tripIdToLoad, setTripIdToLoad] = useState("");
   const [newTripToAdd, setNewTripToAdd] = useState("");
+  const [newTripError, setNewTripError] = useState("");
   const { setCurrentLoadingTripId } = scheduleStore();
+
+  const getDisplayLength = (str) => {
+    let length = 0;
+    for (let i = 0; i < str.length; i++) {
+      const charUnicode = str.charCodeAt(i);
+
+      if (charUnicode >= 0x4e00 && charUnicode <= 0x9fff) {
+        length += 2;
+      } else {
+        length += 1;
+      }
+    }
+    return length;
+  };
 
   const handleTripSelected = (e) => {
     setSelectedTrip(e.target.value);
@@ -20,13 +36,28 @@ const TripSelectModal = ({ tripModalRef }) => {
   };
 
   const handleNewTripInput = (e) => {
-    setNewTripToAdd(e.target.value);
+    const value = e.target.value;
+    setNewTripToAdd(value);
+    if (getDisplayLength(value) > 30) {
+      setNewTripError("行程名稱最多15個字唷");
+    } else {
+      setNewTripError("");
+    }
   };
 
   const { database } = useStore();
   const uid = localStorage.getItem("uid");
 
   const handleAddNewBlankTrip = async () => {
+    if (newTripToAdd.trim() === "") {
+      setNewTripError("請填寫行程名稱");
+      return;
+    } else if (getDisplayLength(newTripToAdd) > 30) {
+      setNewTripError("行程名稱最多15個字唷");
+      return;
+    } else {
+      setNewTripError("");
+    }
     const colRef = collection(database, "users", uid, "trips");
     await addDoc(colRef, {
       name: newTripToAdd,
@@ -79,10 +110,10 @@ const TripSelectModal = ({ tripModalRef }) => {
             );
           })}
         </select>
-        <div className="flex w-full flex-row items-center justify-start gap-2">
+        <div className="relative flex w-full flex-row items-center justify-start gap-2">
           <form method="dialog">
             <button
-              className="btn btn-primary w-36 whitespace-nowrap"
+              className="btn btn-secondary w-36 whitespace-nowrap text-gray-800"
               onClick={() => {
                 setCurrentLoadingTripId(tripIdToLoad);
               }}
@@ -107,15 +138,14 @@ const TripSelectModal = ({ tripModalRef }) => {
               viewBox="0 0 512 512"
               className="stroke-green-500"
             >
-              <path
-                fill="none"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="32"
-                d="M256 112v288M400 256H112"
-              />
+              <PlusIcon />
             </svg>
           </button>
+          {newTripError && (
+            <h4 className="absolute bottom-[-12px] right-0 mt-2 text-right text-xs text-rose-900">
+              {newTripError}
+            </h4>
+          )}
         </div>
       </div>
     </dialog>

@@ -2,6 +2,7 @@ import { arrayUnion, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { produce } from "immer";
 import { find, includes, indexOf } from "lodash";
 import { useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
 import { useMutation } from "react-query";
 import PlaceHolderPhoto from "../../assets/pois_photo_placeholder.png";
 import useStore from "../../store/store";
@@ -74,7 +75,16 @@ const Detail = () => {
       docData,
     });
 
-    setSearchItemDetailInfo(null);
+    toast.success(`點選左方口袋清單頁面，即可看到剛加入的「${name}」唷！`, {
+      duration: 2000,
+      position: "top-center",
+      className: "bg-slate-100",
+      icon: "👈",
+    });
+
+    setTimeout(() => {
+      setSearchItemDetailInfo(null);
+    }, 2250);
   };
 
   const handleSelectChange = (e, index) => {
@@ -89,9 +99,59 @@ const Detail = () => {
     setNewCategoryToAdd(e.target.value);
   };
 
+  const getDisplayLength = (str) => {
+    let length = 0;
+    for (let i = 0; i < str.length; i++) {
+      const charUnicode = str.charCodeAt(i);
+
+      if (charUnicode >= 0x4e00 && charUnicode <= 0x9fff) {
+        length += 2;
+      } else {
+        length += 1;
+      }
+    }
+    return length;
+  };
+
   const handleAddNewCategoryTag = async () => {
+    if (newCategoryToAdd.trim().length === 0) {
+      toast.error("無法加入空白標籤", {
+        duration: 1500,
+        position: "bottom-center",
+        className: "bg-slate-100",
+        icon: "😅",
+      });
+      setNewCategoryToAdd("");
+      return;
+    }
+
+    if (getDisplayLength(newCategoryToAdd) > 10) {
+      toast.error("標籤最多5個字唷", {
+        duration: 1500,
+        position: "bottom-center",
+        className: "bg-slate-100",
+        icon: "😅",
+      });
+      return;
+    }
+
+    if (typeOptions.length >= 40) {
+      toast.error("標籤數已達上限", {
+        duration: 2000,
+        position: "bottom-center",
+        className: "bg-slate-100",
+        icon: "😔",
+      });
+      return;
+    }
+
     if (find(typeOptions, { name: newCategoryToAdd })) {
-      window.alert("此標籤已存在");
+      toast.error("此標籤已存在", {
+        duration: 2000,
+        position: "bottom-center",
+        className: "bg-slate-100",
+        icon: "👀",
+      });
       if (categoryTags.length < 3) {
         setCategoryTags(
           produce((state) => {
@@ -132,6 +192,7 @@ const Detail = () => {
       // onClick={() => console.log(categoryTags)}
       className="absolute left-[21%] top-8 z-[999] flex h-[calc(100%-32px)] w-1/4 flex-col items-start gap-3 rounded-lg border-b-2 border-solid border-gray-200 bg-white p-3 shadow-2xl 2xl:w-1/5"
     >
+      <Toaster />
       <div className="flex w-[88%] flex-row items-center justify-start gap-2">
         <div className="flex h-4 w-4 flex-shrink-0 flex-row items-center justify-center rounded-full border border-dotted border-red-500 p-0 ">
           <h1 className="text-xs text-red-500">{searchItemDetailInfo.label}</h1>
@@ -209,10 +270,7 @@ const Detail = () => {
       </div>
       {!searchItemDetailInfo.isInPois && (
         <div className="mt-4 flex w-full flex-col gap-2">
-          <h1
-            className="text-left text-base font-bold"
-            onClick={() => console.log(typeOptions)}
-          >
+          <h1 className="text-left text-base font-bold">
             為景點加上標籤再放入口袋清單吧~
           </h1>
           <div className="flex w-full flex-row items-center justify-start gap-4 px-[2px]">
@@ -251,7 +309,7 @@ const Detail = () => {
             <h1 className="mr-1 whitespace-nowrap text-xs">或新增自訂標籤：</h1>
             <input
               type="text"
-              placeholder=""
+              placeholder="標籤以5個字為限"
               className="input input-bordered mr-2 h-5 w-full max-w-[176px] pl-2 text-xs"
               value={newCategoryToAdd}
               onInput={(e) => handleNewCategoryInput(e)}
@@ -279,7 +337,7 @@ const Detail = () => {
           </button>
         ) : (
           <button
-            className="h-10 w-full rounded-xl bg-rose-200 p-2 font-bold text-gray-800"
+            className="btn btn-primary h-10 w-full rounded-xl p-2 font-bold text-gray-800"
             onClick={() => handleAddToPoisBtnClicked()}
           >
             加入口袋清單！

@@ -61,7 +61,10 @@ const CategoryFilter = () => {
     <div className="relative flex h-10 w-full flex-row items-center justify-between border-b-2 border-dashed border-rose-200 bg-white px-2 outline-none">
       <h1
         className="w-full cursor-pointer text-sm text-rose-500"
-        onClick={() => setIsFilterWindowOpen()}
+        onClick={() => {
+          setIsFilterWindowOpen();
+          console.log(typeOptions);
+        }}
       >
         篩選類別
       </h1>

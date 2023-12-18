@@ -53,7 +53,7 @@ function App() {
   useEffect(() => {
     const syncCategory = async () => {
       const docSnap = await getDoc(doc(database, "users", uid));
-      if (docSnap.data().categories) {
+      if (docSnap.data()?.categories) {
         docSnap.data().categories.map((item, index) => {
           const userDefinitedOption = {
             name: item,

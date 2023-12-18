@@ -1,6 +1,7 @@
 import { doc, setDoc } from "firebase/firestore";
 import { cloneDeep } from "lodash";
 import { useEffect, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
 import useStore, { scheduleStore } from "../../store/store";
 import { PlayButtonIcon } from "../../utils/icons";
 
@@ -29,8 +30,13 @@ const Header = ({ tripModalRef }) => {
 
   const handleStartDateInput = async (e) => {
     if (endDate && endDate < e.target.value) {
+      toast.error("起始日期不可晚於結束日期", {
+        duration: 1500,
+        position: "top-right",
+        className: "bg-gray-200",
+      });
+      setStartDate(e.target.value);
       setEndDate("");
-      window.alert("起始日期不可晚於結束日期");
       return;
     }
     const newStartDate = e.target.value;
@@ -74,11 +80,21 @@ const Header = ({ tripModalRef }) => {
 
   const handleEndDateInput = async (e) => {
     if (!startDate) {
-      window.alert("請先設定起始日期");
+      toast.error("請先設定起始日期", {
+        duration: 1500,
+        position: "top-right",
+        className: "bg-gray-200",
+      });
+      setEndDate("");
       return;
     }
     if (startDate && e.target.value < startDate) {
-      window.alert("結束日期不可早於開始日期");
+      toast.error("結束日期不可早於開始日期", {
+        duration: 1500,
+        position: "top-right",
+        className: "bg-gray-200",
+      });
+      setEndDate("");
       return;
     }
     const newEndDate = e.target.value;
@@ -128,28 +144,28 @@ const Header = ({ tripModalRef }) => {
   return currentLoadingTripData ? (
     <>
       <div className="flex h-10 flex-row items-center justify-start ">
-        <div className="flex h-full flex-row items-center rounded-l-lg border-2 border-solid border-sand px-3">
-          <h1 className="whitespace-nowrap text-base font-bold text-slate-800">
+        <div className="flex h-full max-w-[238px] flex-row items-center rounded-l-lg border-2 border-solid border-sand px-3">
+          <h1 className="max-w-[210px] truncate whitespace-nowrap text-sm font-bold text-slate-800">
             {currentLoadingTripData.name}
           </h1>
         </div>
         <div className="flex h-full flex-row items-center border-b-2 border-r-2 border-t-2 border-solid border-sand px-3">
-          <h1 className="whitespace-nowrap text-base font-bold text-slate-800">
-            起始日期：
+          <h1 className="whitespace-nowrap text-sm font-bold text-slate-800">
+            起始日：
           </h1>
           <input
-            className="outline-none"
+            className="text-sm outline-none"
             type="date"
             value={startDate}
             onChange={(e) => handleStartDateInput(e)}
           />
         </div>
         <div className="flex h-full flex-row items-center rounded-r-lg border-b-2 border-r-2 border-t-2 border-solid border-sand px-3">
-          <h1 className="whitespace-nowrap text-base font-bold text-slate-800">
-            結束日期：
+          <h1 className="whitespace-nowrap text-sm font-bold text-slate-800">
+            結束日：
           </h1>
           <input
-            className="outline-none"
+            className="text-sm outline-none"
             type="date"
             value={endDate}
             onChange={(e) => handleEndDateInput(e)}
@@ -171,7 +187,7 @@ const Header = ({ tripModalRef }) => {
             console.log(currentLoadingTripData);
           }}
         >
-          <h1 className="text-base leading-5 text-slate-800">預覽行程</h1>
+          <h1 className="text-sm leading-5 text-slate-800">預覽行程</h1>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5 fill-slate-800 stroke-slate-800 stroke-1"
@@ -181,6 +197,7 @@ const Header = ({ tripModalRef }) => {
           </svg>
         </a>
       </div>
+      <Toaster />
     </>
   ) : (
     <span className="loading loading-bars loading-md"></span>
