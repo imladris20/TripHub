@@ -38,6 +38,10 @@ function App() {
       setDatabase(db);
       setIsFbInited(true);
       onAuthStateChanged(auth, (user) => {
+        if (isOverviewPath) {
+          return;
+        }
+
         if (user !== null) {
           setIsLogin(true);
           setUid(user.uid);
