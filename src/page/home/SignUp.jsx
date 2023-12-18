@@ -63,7 +63,7 @@ const SignUp = ({ inputRef }) => {
         className="card-body w-[300px] px-0"
         onSubmit={handleSubmit(handleSignUpClicked)}
       >
-        <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white md:text-2xl">
+        <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
           註冊
         </h1>
         <div className="form-control">
