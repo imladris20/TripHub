@@ -5,7 +5,6 @@ import useStore from "../../store/store";
 import { BookMarkIcon } from "../../utils/icons";
 
 const BookMark = ({ id }) => {
-  console.log(id);
   const { database } = useStore();
   const uid = localStorage.getItem("uid");
   const [count, setCount] = useState(0);
