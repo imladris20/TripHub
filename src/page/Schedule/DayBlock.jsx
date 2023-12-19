@@ -1,3 +1,4 @@
+import { addDays, format } from "date-fns";
 import { doc, updateDoc } from "firebase/firestore";
 import { cloneDeep } from "lodash";
 import { useEffect, useRef, useState } from "react";
@@ -9,6 +10,9 @@ const DayBlock = ({ daySequenceIndex }) => {
     scheduleStore();
   const { database } = useStore();
   const uid = localStorage.getItem("uid");
+
+  console.log(daySequenceIndex);
+  console.log(currentLoadingTripData);
 
   const dayBlockRef = useRef();
 
@@ -83,7 +87,12 @@ const DayBlock = ({ daySequenceIndex }) => {
             className="cursor-pointer text-base font-bold tracking-widest text-gray-100"
             onClick={() => dayBlockRef.current.showModal()}
           >
-            第{daySequenceIndex}天
+            第{daySequenceIndex}天 (
+            {format(
+              addDays(currentLoadingTripData.startDate, daySequenceIndex - 1),
+              "MM/dd",
+            )}
+            )
           </h1>
         )}
         {}
