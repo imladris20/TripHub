@@ -1,4 +1,4 @@
-import { addDoc, collection, onSnapshot } from "firebase/firestore";
+import { collection, doc, onSnapshot, setDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import useStore, { scheduleStore } from "../../store/store";
 import { PlusIcon } from "../../utils/icons";
@@ -59,9 +59,14 @@ const TripSelectModal = ({ tripModalRef }) => {
       setNewTripError("");
     }
     const colRef = collection(database, "users", uid, "trips");
-    await addDoc(colRef, {
+    const docRef = doc(colRef);
+
+    await setDoc(docRef, {
       name: newTripToAdd,
     });
+
+    setSelectedTrip(newTripToAdd);
+    setTripIdToLoad(docRef.id);
     setNewTripToAdd("");
   };
 
@@ -130,13 +135,16 @@ const TripSelectModal = ({ tripModalRef }) => {
             onInput={(e) => handleNewTripInput(e)}
           />
           <button
-            className="btn btn-circle btn-xs border-green-500 bg-white"
+            className="btn btn-circle btn-xs h-4 min-h-0 w-4 border-green-500 bg-white p-0"
             onClick={handleAddNewBlankTrip}
+            disabled={!newTripToAdd}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 512 512"
-              className="stroke-green-500"
+              className={`${
+                !newTripToAdd ? "stroke-slate-400" : "stroke-green-500"
+              }`}
             >
               <PlusIcon />
             </svg>

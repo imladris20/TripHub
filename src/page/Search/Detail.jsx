@@ -323,7 +323,9 @@ const Detail = () => {
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 512 512"
-                className="stroke-green-500"
+                className={`${
+                  !newCategoryToAdd ? "stroke-slate-400" : "stroke-green-500"
+                }`}
               >
                 <PlusIcon />
               </svg>

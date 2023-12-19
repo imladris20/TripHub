@@ -266,8 +266,9 @@ const AddToSchedule = () => {
               />
               <button
                 type="button"
-                className="btn btn-circle btn-xs border-green-500 bg-white"
+                className="btn btn-circle btn-xs h-4 min-h-0 w-4 border-green-500 bg-white p-0"
                 onClick={handleAddNewBlankTrip}
+                disabled={!newTripToAdd}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
