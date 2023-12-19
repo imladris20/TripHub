@@ -155,7 +155,16 @@ const TripSelectModal = ({ tripModalRef }) => {
             </h4>
           )}
         </div>
+        <button
+          className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
+          onClick={() => tripModalRef.current.close()}
+        >
+          ✕
+        </button>
       </div>
+      <form method="dialog" className="modal-backdrop">
+        <button>close</button>
+      </form>
     </dialog>
   );
 };
