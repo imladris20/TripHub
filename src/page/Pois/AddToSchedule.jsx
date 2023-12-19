@@ -8,8 +8,10 @@ import {
   onSnapshot,
   updateDoc,
 } from "firebase/firestore";
+import { find } from "lodash";
 import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import toast, { Toaster } from "react-hot-toast";
 import * as yup from "yup";
 import useStore, { poisStore } from "../../store/store";
 import { PlusIcon } from "../../utils/icons";
@@ -59,6 +61,7 @@ const AddToSchedule = () => {
     watch,
     formState: { errors },
     reset,
+    setValue,
   } = useForm({ resolver: yupResolver(validation) });
 
   const handleNewTripInput = (e) => {
@@ -72,7 +75,7 @@ const AddToSchedule = () => {
   };
 
   const handleAddNewBlankTrip = async () => {
-    if (newTripToAdd.trim() === "") {
+    if (newTripToAdd.trim().length === 0) {
       setNewTripError("請填寫行程名稱");
       return;
     } else if (getDisplayLength(newTripToAdd) > 30) {
@@ -81,9 +84,22 @@ const AddToSchedule = () => {
     } else {
       setNewTripError("");
     }
+
+    if (find(tripsOption, (trip) => trip.data.name === newTripToAdd.trim())) {
+      toast.error("此行程名稱已存在", {
+        duration: 2000,
+        className: "bg-slate-100 z-[999]",
+        icon: "😅",
+      });
+      return;
+    }
+
     await addDoc(colRef, {
       name: newTripToAdd,
     });
+
+    setValue("selectedTrip", newTripToAdd);
+
     setNewTripToAdd("");
   };
 
@@ -161,7 +177,7 @@ const AddToSchedule = () => {
       >
         加入行程！
       </button>
-      <dialog ref={modalRef} className="modal">
+      <dialog ref={modalRef} className="modal z-[998]">
         <div className="modal-box">
           <form
             className="flex flex-col items-start justify-start gap-4"
@@ -308,6 +324,7 @@ const AddToSchedule = () => {
         <form method="dialog" className="modal-backdrop">
           <button>close</button>
         </form>
+        <Toaster />
       </dialog>
     </div>
   );
