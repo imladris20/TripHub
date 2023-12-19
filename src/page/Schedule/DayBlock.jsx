@@ -85,10 +85,11 @@ const DayBlock = ({ daySequenceIndex }) => {
             onClick={() => dayBlockRef.current.showModal()}
           >
             第{daySequenceIndex}天 (
-            {format(
-              addDays(currentLoadingTripData.startDate, daySequenceIndex - 1),
-              "MM/dd",
-            )}
+            {currentLoadingTripData?.startDate &&
+              format(
+                addDays(currentLoadingTripData.startDate, daySequenceIndex - 1),
+                "MM/dd",
+              )}
             )
           </h1>
         )}
