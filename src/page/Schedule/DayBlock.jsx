@@ -11,9 +11,6 @@ const DayBlock = ({ daySequenceIndex }) => {
   const { database } = useStore();
   const uid = localStorage.getItem("uid");
 
-  console.log(daySequenceIndex);
-  console.log(currentLoadingTripData);
-
   const dayBlockRef = useRef();
 
   const [startTime, setStartTime] = useState(
