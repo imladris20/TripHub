@@ -47,10 +47,10 @@ const ResultList = () => {
 
             const result = await getDoc(docRef);
 
-            if (result.exists()) {
-              return true;
-            } else {
+            if (!result.exists() || result.data()?.archived) {
               return false;
+            } else {
+              return true;
             }
           }),
         );

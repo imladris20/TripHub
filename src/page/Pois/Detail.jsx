@@ -6,6 +6,7 @@ import PlaceHolderPhoto from "../../assets/pois_photo_placeholder.png";
 import useStore, { poisStore } from "../../store/store";
 import { CloseIcon } from "../../utils/icons";
 import AddToSchedule from "./AddToSchedule";
+import RemoveFromPois from "./RemoveFromPois";
 
 const Detail = () => {
   const { poisItemDetailInfo, setPoisItemDetailInfo } = poisStore();
@@ -152,8 +153,10 @@ const Detail = () => {
           </div>
         )}
       </div>
-
-      <AddToSchedule />
+      <div className="mt-auto flex w-full  flex-row items-center justify-between gap-2">
+        <RemoveFromPois />
+        <AddToSchedule />
+      </div>
       <button
         className="absolute right-3 top-3 h-7 w-7"
         onClick={() => setPoisItemDetailInfo(null)}

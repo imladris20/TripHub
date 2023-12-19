@@ -154,7 +154,7 @@ const AddToSchedule = () => {
   }, [watch("selectedTrip")]);
 
   return (
-    <div className="mt-auto flex w-full flex-row items-center justify-center shadow-2xl">
+    <div className="flex w-full flex-row items-center justify-center shadow-2xl">
       <button
         className="btn btn-secondary h-10 w-full rounded-xl p-2 font-bold text-gray-800 outline-none"
         onClick={() => modalRef.current.showModal()}
@@ -304,6 +304,9 @@ const AddToSchedule = () => {
             </button>
           </form>
         </div>
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
       </dialog>
     </div>
   );
