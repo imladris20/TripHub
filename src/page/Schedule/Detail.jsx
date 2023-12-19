@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import PlaceHolderPhoto from "../../assets/pois_photo_placeholder.png";
 import useStore, { scheduleStore } from "../../store/store";
 import { CloseIcon } from "../../utils/icons";
+import RemoveFromScheduleBtn from "./RemoveFromScheduleBtn";
 
 const Detail = () => {
   const { attractionItemDetail, setAttractionItemDetail } = scheduleStore();
@@ -120,6 +121,9 @@ const Detail = () => {
       <div>
         <h1 className="text-sm font-bold">備註：</h1>
         <h2 className="text-sm">{note}</h2>
+      </div>
+      <div className="mt-auto flex w-full flex-row items-center justify-between gap-2">
+        <RemoveFromScheduleBtn />
       </div>
       <button
         className="absolute right-3 top-3 h-7 w-7"

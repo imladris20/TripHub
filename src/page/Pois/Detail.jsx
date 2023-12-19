@@ -153,7 +153,7 @@ const Detail = () => {
           </div>
         )}
       </div>
-      <div className="mt-auto flex w-full  flex-row items-center justify-between gap-2">
+      <div className="mt-auto flex w-full flex-row items-center justify-between gap-2">
         <RemoveFromPois />
         <AddToSchedule />
       </div>

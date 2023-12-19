@@ -10,6 +10,7 @@ const Header = ({ tripModalRef }) => {
     currentLoadingTripId,
     setCurrentTripDuration,
     currentLoadingTripData,
+    setAttractionItemDetail,
   } = scheduleStore();
 
   const [startDate, setStartDate] = useState(
@@ -174,7 +175,10 @@ const Header = ({ tripModalRef }) => {
 
         <button
           className="ml-2 mt-5 cursor-pointer text-[10px] text-gray-500 underline decoration-gray-500 decoration-solid"
-          onClick={() => tripModalRef.current.showModal()}
+          onClick={() => {
+            setAttractionItemDetail(null);
+            tripModalRef.current.showModal();
+          }}
         >
           重新選擇行程
         </button>
