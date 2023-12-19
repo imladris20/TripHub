@@ -1,4 +1,4 @@
-import { deleteDoc, doc } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import { useRef } from "react";
 import useStore, { poisStore } from "../../store/store";
 
@@ -10,9 +10,14 @@ const RemoveFromPois = () => {
   const removeRef = useRef();
 
   const handleDeleteClick = async () => {
-    await deleteDoc(
-      doc(database, "users", uid, "pointOfInterests", poisItemDetailInfo.id),
+    const docRef = doc(
+      database,
+      "users",
+      uid,
+      "pointOfInterests",
+      poisItemDetailInfo.id,
     );
+    await updateDoc(docRef, { archived: true });
     setPoisItemDetailInfo(null);
   };
 

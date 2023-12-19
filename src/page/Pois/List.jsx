@@ -31,7 +31,9 @@ const List = () => {
       const unsubscribe = onSnapshot(q, (querySnapshot) => {
         const newArr = [];
         querySnapshot.forEach((doc) => {
-          newArr.push({ id: doc.id, data: doc.data() });
+          if (!doc.data()?.archived) {
+            newArr.push({ id: doc.id, data: doc.data() });
+          }
         });
         setCurrentPois(newArr);
       });
