@@ -1,6 +1,6 @@
-import { doc, setDoc } from "firebase/firestore";
+import { deleteDoc, doc, setDoc } from "firebase/firestore";
 import { cloneDeep } from "lodash";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import useStore, { scheduleStore } from "../../store/store";
 import { PlayButtonIcon } from "../../utils/icons";
@@ -11,6 +11,7 @@ const Header = ({ tripModalRef }) => {
     setCurrentTripDuration,
     currentLoadingTripData,
     setAttractionItemDetail,
+    setCurrentLoadingTripId,
   } = scheduleStore();
 
   const [startDate, setStartDate] = useState(
@@ -20,6 +21,17 @@ const Header = ({ tripModalRef }) => {
 
   const { database } = useStore();
   const uid = localStorage.getItem("uid");
+
+  const removeRef = useRef();
+
+  const handleRemoveSchedule = async () => {
+    const docRef = doc(database, "users", uid, "trips", currentLoadingTripId);
+
+    await deleteDoc(docRef);
+
+    setCurrentLoadingTripId(null);
+    tripModalRef.current.showModal();
+  };
 
   const calculateDayCount = (startDateStr, endDateStr) => {
     const start = new Date(startDateStr);
@@ -173,15 +185,27 @@ const Header = ({ tripModalRef }) => {
           />
         </div>
 
-        <button
-          className="ml-2 mt-5 cursor-pointer text-[10px] text-gray-500 underline decoration-gray-500 decoration-solid"
-          onClick={() => {
-            setAttractionItemDetail(null);
-            tripModalRef.current.showModal();
-          }}
-        >
-          重新選擇行程
-        </button>
+        <div className="ml-2 flex flex-col items-center justify-center gap-1">
+          <button
+            className="cursor-pointer text-[10px] text-gray-500 underline decoration-gray-500 decoration-solid"
+            onClick={() => {
+              setAttractionItemDetail(null);
+              tripModalRef.current.showModal();
+            }}
+          >
+            編輯其他行程
+          </button>
+
+          <button
+            className="cursor-pointer text-[10px] text-gray-500 underline decoration-gray-500 decoration-solid"
+            onClick={() => {
+              setAttractionItemDetail(null);
+              removeRef.current.showModal();
+            }}
+          >
+            刪除當前行程
+          </button>
+        </div>
 
         <a
           className="btn ml-6 flex h-10 min-h-0 flex-row items-center bg-sand"
@@ -202,6 +226,29 @@ const Header = ({ tripModalRef }) => {
         </a>
       </div>
       <Toaster />
+      <dialog ref={removeRef} className="modal">
+        <div className="modal-box">
+          <h3 className="text-lg font-bold">
+            確定要刪除「{currentLoadingTripData.name}」嗎？
+          </h3>
+          <p className="py-4">請留意刪除行程將同步使行程分享連結失效。</p>
+          <div className="modal-action mt-4">
+            <form method="dialog">
+              {/* if there is a button in form, it will close the modal */}
+              <button className="btn mr-2 h-9 min-h-0">再想想</button>
+              <button
+                className="btn h-9 min-h-0 bg-sand"
+                onClick={() => handleRemoveSchedule()}
+              >
+                確定移出
+              </button>
+            </form>
+          </div>
+        </div>
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
+      </dialog>
     </>
   ) : (
     <span className="loading loading-bars loading-md"></span>

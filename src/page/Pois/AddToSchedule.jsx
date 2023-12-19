@@ -248,7 +248,8 @@ const AddToSchedule = () => {
                 value={newTripToAdd}
                 onInput={(e) => handleNewTripInput(e)}
               />
-              <div
+              <button
+                type="button"
                 className="btn btn-circle btn-xs border-green-500 bg-white"
                 onClick={handleAddNewBlankTrip}
               >
@@ -259,7 +260,7 @@ const AddToSchedule = () => {
                 >
                   <PlusIcon />
                 </svg>
-              </div>
+              </button>
               {newTripError && (
                 <h4 className="absolute bottom-[-24px] right-0 mt-2 text-right text-xs text-rose-900">
                   {newTripError}
