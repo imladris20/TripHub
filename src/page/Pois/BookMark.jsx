@@ -1,4 +1,4 @@
-import { collection, getDocs } from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 import { find } from "lodash";
 import { useEffect, useState } from "react";
 import useStore from "../../store/store";
@@ -11,23 +11,25 @@ const BookMark = ({ id }) => {
   const [alreadyIn, setAlreadyIn] = useState([]);
 
   useEffect(() => {
-    const checkTrip = async () => {
+    if (database) {
       const tripsColRef = collection(database, "users", uid, "trips");
-      const querySnapShot = await getDocs(tripsColRef);
       let count = 0;
       const containArr = [];
-      querySnapShot.forEach((doc) => {
-        if (find(doc.data().attractions, { poisId: id })) {
-          count += 1;
-          containArr.push(doc.data().name);
-        }
+
+      const unsubscribe = onSnapshot(tripsColRef, (snapshot) => {
+        count = 0;
+        snapshot.forEach((doc) => {
+          if (find(doc.data().attractions, { poisId: id })) {
+            count += 1;
+            containArr.push(doc.data().name);
+          }
+        });
+
+        setCount(count);
+        setAlreadyIn(containArr);
       });
 
-      setCount(count);
-      setAlreadyIn(containArr);
-    };
-    if (database) {
-      checkTrip();
+      return () => unsubscribe();
     }
   }, [database]);
 
