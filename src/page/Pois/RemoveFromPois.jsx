@@ -34,9 +34,6 @@ const RemoveFromPois = () => {
           <h3 className="text-lg font-bold">
             確定要把「{poisItemDetailInfo.data.name}」移出口袋清單嗎？
           </h3>
-          <p className="py-4">
-            若確定移出，此地點將會同步從所有已加入的行程中移除。
-          </p>
           <div className="modal-action mt-4">
             <form method="dialog">
               {/* if there is a button in form, it will close the modal */}
