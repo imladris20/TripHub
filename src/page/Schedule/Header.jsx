@@ -1,3 +1,4 @@
+import { addDays, format } from "date-fns";
 import { deleteDoc, doc, setDoc } from "firebase/firestore";
 import { cloneDeep } from "lodash";
 import { useEffect, useRef, useState } from "react";
@@ -42,21 +43,7 @@ const Header = ({ tripModalRef }) => {
   };
 
   const handleStartDateInput = async (e) => {
-    if (endDate && endDate < e.target.value) {
-      toast.error("起始日期不可晚於結束日期", {
-        duration: 1500,
-        position: "top-right",
-        className: "bg-gray-200",
-      });
-      setStartDate(e.target.value);
-      setEndDate("");
-      return;
-    }
     const newStartDate = e.target.value;
-    setStartDate(newStartDate);
-
-    const newDayCount = calculateDayCount(newStartDate, endDate);
-    setCurrentTripDuration(newDayCount);
     const docRef = doc(database, "users", uid, "trips", currentLoadingTripId);
 
     let startTime = [];
@@ -64,6 +51,41 @@ const Header = ({ tripModalRef }) => {
     if (currentLoadingTripData.startTime) {
       startTime = cloneDeep(currentLoadingTripData.startTime);
     }
+
+    if (endDate && endDate < newStartDate) {
+      toast.error("起始日期不可晚於結束日期", {
+        duration: 1500,
+        position: "top-right",
+        className: "bg-gray-200",
+      });
+      setStartDate(newStartDate);
+      const defaultEndDate = format(addDays(newStartDate, 2), "yyyy-MM-dd");
+      setEndDate(defaultEndDate);
+      setCurrentTripDuration(3);
+
+      await setDoc(
+        docRef,
+        {
+          dayCount: 3,
+          startDate: newStartDate,
+          endDate: defaultEndDate,
+          startTime: [
+            ...Array(3).fill({
+              value: "09:00",
+              haveSetted: false,
+            }),
+          ],
+        },
+        { merge: true },
+      );
+      return;
+    }
+
+    setStartDate(newStartDate);
+
+    const newDayCount = calculateDayCount(newStartDate, endDate);
+
+    setCurrentTripDuration(newDayCount);
 
     if (newDayCount > startTime.length) {
       startTime = [
@@ -88,6 +110,20 @@ const Header = ({ tripModalRef }) => {
         },
         { merge: true },
       );
+    } else {
+      const defaultEndDate = format(addDays(newStartDate, 2), "yyyy-MM-dd");
+      setEndDate(defaultEndDate);
+      setCurrentTripDuration(3);
+      await setDoc(
+        docRef,
+        {
+          dayCount: 3,
+          startDate: newStartDate,
+          endDate: defaultEndDate,
+          startTime,
+        },
+        { merge: true },
+      );
     }
   };
 
@@ -107,7 +143,6 @@ const Header = ({ tripModalRef }) => {
         position: "top-right",
         className: "bg-gray-200",
       });
-      setEndDate("");
       return;
     }
     const newEndDate = e.target.value;
@@ -207,23 +242,25 @@ const Header = ({ tripModalRef }) => {
           </button>
         </div>
 
-        <a
-          className="btn ml-6 flex h-10 min-h-0 flex-row items-center bg-sand"
-          href={`/overview/${currentLoadingTripId}`}
-          target="_blank"
-          onClick={() => {
-            console.log(currentLoadingTripData);
-          }}
-        >
-          <h1 className="text-sm leading-5 text-slate-800">預覽行程</h1>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 fill-slate-800 stroke-slate-800 stroke-1"
-            viewBox="0 0 512 512"
+        {startDate && endDate && (
+          <a
+            className="btn ml-6 flex h-10 min-h-0 flex-row items-center bg-sand"
+            href={`/overview/${currentLoadingTripId}`}
+            target="_blank"
+            onClick={() => {
+              console.log(currentLoadingTripData);
+            }}
           >
-            <PlayButtonIcon />
-          </svg>
-        </a>
+            <h1 className="text-sm leading-5 text-slate-800">預覽行程</h1>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 fill-slate-800 stroke-slate-800 stroke-1"
+              viewBox="0 0 512 512"
+            >
+              <PlayButtonIcon />
+            </svg>
+          </a>
+        )}
       </div>
       <Toaster />
       <dialog ref={removeRef} className="modal">
