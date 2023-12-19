@@ -185,8 +185,8 @@ const Header = ({ tripModalRef }) => {
   };
 
   useEffect(() => {
-    setStartDate(currentLoadingTripData?.startDate);
-    setEndDate(currentLoadingTripData?.endDate);
+    setStartDate(currentLoadingTripData?.startDate || "");
+    setEndDate(currentLoadingTripData?.endDate || "");
   }, [currentLoadingTripData]);
 
   return currentLoadingTripData ? (
