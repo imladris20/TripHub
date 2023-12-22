@@ -1,16 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Logo from "../../assets/logo.png";
-import ScheduleHeader from "../../page/Schedule/Header";
-import useStore, { scheduleStore } from "../../store/store";
-import Profile from "./Profile";
-import TripSelectModal from "./TripSelectModal";
+import useStore from "../../store/store";
+import UserHeader from "./UserHeader";
 
 const Header = () => {
-  const tripModalRef = useRef();
   const { isLogin } = useStore();
-  const { currentLoadingTripData } = scheduleStore();
   const currentPath = useLocation().pathname;
+  const [activePageTag, setActivePageTag] = useState(null);
+
   useEffect(() => {
     switch (location.pathname) {
       case "/search":
@@ -26,62 +24,20 @@ const Header = () => {
         setActivePageTag(null);
     }
   }, [currentPath]);
-  const [activePageTag, setActivePageTag] = useState(null);
 
   return (
     <header className="relative z-50 flex h-16 w-full flex-row items-center gap-4 border-b-2 border-solid border-gray-200 bg-white px-4">
       <Link to="/" className="m-0 h-11 w-11 cursor-pointer p-0">
-        <button onClick={() => setActivePageTag(null)}>
+        <div onClick={() => setActivePageTag(null)}>
           <img src={Logo} alt="logo" className="h-11 w-11"></img>
-        </button>
+        </div>
       </Link>
       {isLogin && (
-        <>
-          <Link to="/search">
-            <button
-              className={`w-20 rounded px-2 py-1 text-xs text-[#001a23] ${
-                activePageTag === 1 ? "bg-emerald-400" : "bg-green-100"
-              }`}
-              onClick={() => setActivePageTag(1)}
-            >
-              搜尋景點
-            </button>
-          </Link>
-          <Link to="/pois">
-            <button
-              className={`w-20 rounded px-2 py-1 text-xs text-[#001a23] ${
-                activePageTag === 2 ? "bg-emerald-400" : "bg-green-100"
-              }`}
-              onClick={() => setActivePageTag(2)}
-            >
-              口袋清單
-            </button>
-          </Link>
-          <Link to="/schedule">
-            <button
-              className={`w-20 rounded px-2 py-1 text-xs text-[#001a23] ${
-                activePageTag === 3 ? "bg-emerald-400" : "bg-green-100"
-              }`}
-              onClick={() => setActivePageTag(3)}
-            >
-              行程規劃
-            </button>
-          </Link>
-          {location.pathname === "/schedule" && (
-            <TripSelectModal tripModalRef={tripModalRef} />
-          )}
-          {location.pathname === "/schedule" && currentLoadingTripData && (
-            <ScheduleHeader tripModalRef={tripModalRef} />
-          )}
-        </>
+        <UserHeader
+          activePageTag={activePageTag}
+          setActivePageTag={setActivePageTag}
+        />
       )}
-
-      {/* <Link to="/practicing">
-        <button className="w-20 rounded bg-white px-2 py-1 text-xs text-white">
-          練習頁面
-        </button>
-      </Link> */}
-      {isLogin && <Profile />}
     </header>
   );
 };

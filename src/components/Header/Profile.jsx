@@ -18,15 +18,6 @@ const Profile = () => {
           <span>想去哪裡玩呢</span>
         </h1>
       )}
-      {/*       <button>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 512 512"
-          className="h-8 w-8 fill-slate-500"
-        >
-          <ProfileIcon />
-        </svg>
-      </button> */}
       <button
         onClick={() => {
           nativeSignOut();

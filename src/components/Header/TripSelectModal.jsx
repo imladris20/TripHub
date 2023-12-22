@@ -1,9 +1,9 @@
-import { collection, doc, onSnapshot, setDoc } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { addDoc, collection, onSnapshot } from "firebase/firestore";
+import { forwardRef, useEffect, useState } from "react";
 import useStore, { scheduleStore } from "../../store/store";
 import { PlusIcon } from "../../utils/icons";
 
-const TripSelectModal = ({ tripModalRef }) => {
+const TripSelectModal = forwardRef((props, ref) => {
   const [selectedTrip, setSelectedTrip] = useState("disabled");
   const [tripsOption, setTripsOption] = useState([]);
   const [tripIdToLoad, setTripIdToLoad] = useState("");
@@ -59,21 +59,16 @@ const TripSelectModal = ({ tripModalRef }) => {
       setNewTripError("");
     }
     const colRef = collection(database, "users", uid, "trips");
-    const docRef = doc(colRef);
-
-    await setDoc(docRef, {
+    await addDoc(colRef, {
       name: newTripToAdd,
     });
-
-    setSelectedTrip(newTripToAdd);
-    setTripIdToLoad(docRef.id);
     setNewTripToAdd("");
   };
 
   //  open modal first while page loaded
   useEffect(() => {
-    if (tripModalRef?.current) {
-      tripModalRef?.current?.showModal();
+    if (ref?.current) {
+      ref?.current?.showModal();
     }
   }, []);
 
@@ -96,7 +91,7 @@ const TripSelectModal = ({ tripModalRef }) => {
   }, [database]);
 
   return (
-    <dialog ref={tripModalRef} className="modal">
+    <dialog ref={ref} className="modal">
       <div className="modal-box flex flex-col items-center justify-start gap-4">
         <h3 className="text-xl font-bold">請選擇行程</h3>
         <select
@@ -135,16 +130,13 @@ const TripSelectModal = ({ tripModalRef }) => {
             onInput={(e) => handleNewTripInput(e)}
           />
           <button
-            className="btn btn-circle btn-xs h-4 min-h-0 w-4 border-green-500 bg-white p-0"
+            className="btn btn-circle btn-xs border-green-500 bg-white"
             onClick={handleAddNewBlankTrip}
-            disabled={!newTripToAdd}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 512 512"
-              className={`${
-                !newTripToAdd ? "stroke-slate-400" : "stroke-green-500"
-              }`}
+              className="stroke-green-500"
             >
               <PlusIcon />
             </svg>
@@ -155,18 +147,9 @@ const TripSelectModal = ({ tripModalRef }) => {
             </h4>
           )}
         </div>
-        <button
-          className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
-          onClick={() => tripModalRef.current.close()}
-        >
-          ✕
-        </button>
       </div>
-      <form method="dialog" className="modal-backdrop">
-        <button>close</button>
-      </form>
     </dialog>
   );
-};
+});
 
 export default TripSelectModal;
