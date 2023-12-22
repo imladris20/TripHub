@@ -1,6 +1,7 @@
-import { doc, setDoc } from "firebase/firestore";
+import { addDays, format } from "date-fns";
+import { deleteDoc, doc, setDoc } from "firebase/firestore";
 import { cloneDeep } from "lodash";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import useStore, { scheduleStore } from "../../store/store";
 import { PlayButtonIcon } from "../../utils/icons";
@@ -10,6 +11,8 @@ const Header = ({ tripModalRef }) => {
     currentLoadingTripId,
     setCurrentTripDuration,
     currentLoadingTripData,
+    setAttractionItemDetail,
+    setCurrentLoadingTripId,
   } = scheduleStore();
 
   const [startDate, setStartDate] = useState(
@@ -20,6 +23,17 @@ const Header = ({ tripModalRef }) => {
   const { database } = useStore();
   const uid = localStorage.getItem("uid");
 
+  const removeRef = useRef();
+
+  const handleRemoveSchedule = async () => {
+    const docRef = doc(database, "users", uid, "trips", currentLoadingTripId);
+
+    await deleteDoc(docRef);
+
+    setCurrentLoadingTripId(null);
+    tripModalRef.current.showModal();
+  };
+
   const calculateDayCount = (startDateStr, endDateStr) => {
     const start = new Date(startDateStr);
     const end = new Date(endDateStr);
@@ -29,21 +43,7 @@ const Header = ({ tripModalRef }) => {
   };
 
   const handleStartDateInput = async (e) => {
-    if (endDate && endDate < e.target.value) {
-      toast.error("起始日期不可晚於結束日期", {
-        duration: 1500,
-        position: "top-right",
-        className: "bg-gray-200",
-      });
-      setStartDate(e.target.value);
-      setEndDate("");
-      return;
-    }
     const newStartDate = e.target.value;
-    setStartDate(newStartDate);
-
-    const newDayCount = calculateDayCount(newStartDate, endDate);
-    setCurrentTripDuration(newDayCount);
     const docRef = doc(database, "users", uid, "trips", currentLoadingTripId);
 
     let startTime = [];
@@ -51,6 +51,41 @@ const Header = ({ tripModalRef }) => {
     if (currentLoadingTripData.startTime) {
       startTime = cloneDeep(currentLoadingTripData.startTime);
     }
+
+    if (endDate && endDate < newStartDate) {
+      toast.error("起始日期不可晚於結束日期", {
+        duration: 1500,
+        position: "top-right",
+        className: "bg-gray-200",
+      });
+      setStartDate(newStartDate);
+      const defaultEndDate = format(addDays(newStartDate, 2), "yyyy-MM-dd");
+      setEndDate(defaultEndDate);
+      setCurrentTripDuration(3);
+
+      await setDoc(
+        docRef,
+        {
+          dayCount: 3,
+          startDate: newStartDate,
+          endDate: defaultEndDate,
+          startTime: [
+            ...Array(3).fill({
+              value: "09:00",
+              haveSetted: false,
+            }),
+          ],
+        },
+        { merge: true },
+      );
+      return;
+    }
+
+    setStartDate(newStartDate);
+
+    const newDayCount = calculateDayCount(newStartDate, endDate);
+
+    setCurrentTripDuration(newDayCount);
 
     if (newDayCount > startTime.length) {
       startTime = [
@@ -75,6 +110,20 @@ const Header = ({ tripModalRef }) => {
         },
         { merge: true },
       );
+    } else {
+      const defaultEndDate = format(addDays(newStartDate, 2), "yyyy-MM-dd");
+      setEndDate(defaultEndDate);
+      setCurrentTripDuration(3);
+      await setDoc(
+        docRef,
+        {
+          dayCount: 3,
+          startDate: newStartDate,
+          endDate: defaultEndDate,
+          startTime,
+        },
+        { merge: true },
+      );
     }
   };
 
@@ -94,7 +143,6 @@ const Header = ({ tripModalRef }) => {
         position: "top-right",
         className: "bg-gray-200",
       });
-      setEndDate("");
       return;
     }
     const newEndDate = e.target.value;
@@ -137,8 +185,8 @@ const Header = ({ tripModalRef }) => {
   };
 
   useEffect(() => {
-    setStartDate(currentLoadingTripData?.startDate);
-    setEndDate(currentLoadingTripData?.endDate);
+    setStartDate(currentLoadingTripData?.startDate || "");
+    setEndDate(currentLoadingTripData?.endDate || "");
   }, [currentLoadingTripData]);
 
   return currentLoadingTripData ? (
@@ -172,32 +220,72 @@ const Header = ({ tripModalRef }) => {
           />
         </div>
 
-        <button
-          className="ml-2 mt-5 cursor-pointer text-[10px] text-gray-500 underline decoration-gray-500 decoration-solid"
-          onClick={() => tripModalRef.current.showModal()}
-        >
-          重新選擇行程
-        </button>
-
-        <a
-          className="btn ml-6 flex h-10 min-h-0 flex-row items-center bg-sand"
-          href={`/overview/${currentLoadingTripId}`}
-          target="_blank"
-          onClick={() => {
-            console.log(currentLoadingTripData);
-          }}
-        >
-          <h1 className="text-sm leading-5 text-slate-800">預覽行程</h1>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 fill-slate-800 stroke-slate-800 stroke-1"
-            viewBox="0 0 512 512"
+        <div className="ml-2 flex flex-col items-center justify-center gap-1">
+          <button
+            className="cursor-pointer text-[10px] text-gray-500 underline decoration-gray-500 decoration-solid"
+            onClick={() => {
+              setAttractionItemDetail(null);
+              tripModalRef.current.showModal();
+            }}
           >
-            <PlayButtonIcon />
-          </svg>
-        </a>
+            編輯其他行程
+          </button>
+
+          <button
+            className="cursor-pointer text-[10px] text-gray-500 underline decoration-gray-500 decoration-solid"
+            onClick={() => {
+              setAttractionItemDetail(null);
+              removeRef.current.showModal();
+            }}
+          >
+            刪除當前行程
+          </button>
+        </div>
+
+        {startDate && endDate && (
+          <a
+            className="btn ml-6 flex h-10 min-h-0 flex-row items-center bg-sand"
+            href={`/overview/${currentLoadingTripId}`}
+            target="_blank"
+            onClick={() => {
+              console.log(currentLoadingTripData);
+            }}
+          >
+            <h1 className="text-sm leading-5 text-slate-800">預覽行程</h1>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 fill-slate-800 stroke-slate-800 stroke-1"
+              viewBox="0 0 512 512"
+            >
+              <PlayButtonIcon />
+            </svg>
+          </a>
+        )}
       </div>
       <Toaster />
+      <dialog ref={removeRef} className="modal">
+        <div className="modal-box">
+          <h3 className="text-lg font-bold">
+            確定要刪除「{currentLoadingTripData.name}」嗎？
+          </h3>
+          <p className="py-4">請留意刪除行程將同步使行程分享連結失效。</p>
+          <div className="modal-action mt-4">
+            <form method="dialog">
+              {/* if there is a button in form, it will close the modal */}
+              <button className="btn mr-2 h-9 min-h-0">再想想</button>
+              <button
+                className="btn h-9 min-h-0 bg-sand"
+                onClick={() => handleRemoveSchedule()}
+              >
+                確定移出
+              </button>
+            </form>
+          </div>
+        </div>
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
+      </dialog>
     </>
   ) : (
     <span className="loading loading-bars loading-md"></span>

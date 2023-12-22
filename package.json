@@ -13,6 +13,7 @@
     "@hookform/resolvers": "^3.3.2",
     "@vis.gl/react-google-maps": "^0.3.3",
     "axios": "^1.6.2",
+    "date-fns": "^3.0.0",
     "firebase": "^10.6.0",
     "immer": "^10.0.3",
     "lodash": "^4.17.21",

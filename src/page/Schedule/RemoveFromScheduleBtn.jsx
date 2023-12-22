@@ -1,24 +1,28 @@
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
+import { filter } from "lodash";
 import { useRef } from "react";
-import useStore, { poisStore } from "../../store/store";
+import useStore, { scheduleStore } from "../../store/store";
 
-const RemoveFromPois = () => {
+const RemoveFromScheduleBtn = () => {
   const { database } = useStore();
-  const { poisItemDetailInfo, setPoisItemDetailInfo } = poisStore();
+  const {
+    attractionsData: allAttractions,
+    attractionItemDetail,
+    setAttractionItemDetail,
+    currentLoadingTripId,
+  } = scheduleStore();
   const uid = localStorage.getItem("uid");
 
   const removeRef = useRef();
 
-  const handleDeleteClick = async () => {
-    const docRef = doc(
-      database,
-      "users",
-      uid,
-      "pointOfInterests",
-      poisItemDetailInfo.id,
+  const handleRemoveClick = async () => {
+    const newArractions = filter(
+      allAttractions,
+      (attraction) => attraction.poisId !== attractionItemDetail.poisId,
     );
-    await updateDoc(docRef, { archived: true });
-    setPoisItemDetailInfo(null);
+    const docRef = doc(database, "users", uid, "trips", currentLoadingTripId);
+    await setDoc(docRef, { attractions: newArractions }, { merge: true });
+    setAttractionItemDetail(null);
   };
 
   return (
@@ -27,12 +31,12 @@ const RemoveFromPois = () => {
         className="btn h-10 w-full rounded-xl bg-sand p-2 font-bold text-gray-800 outline-none"
         onClick={() => removeRef.current.showModal()}
       >
-        移出口袋清單
+        移出行程
       </button>
       <dialog ref={removeRef} className="modal">
         <div className="modal-box">
           <h3 className="text-lg font-bold">
-            確定要把「{poisItemDetailInfo.data.name}」移出口袋清單嗎？
+            確定要把「{attractionItemDetail.name}」移出行程嗎？
           </h3>
           <div className="modal-action mt-4">
             <form method="dialog">
@@ -40,7 +44,7 @@ const RemoveFromPois = () => {
               <button className="btn mr-2 h-9 min-h-0">再想想</button>
               <button
                 className="btn h-9 min-h-0 bg-sand"
-                onClick={() => handleDeleteClick()}
+                onClick={() => handleRemoveClick()}
               >
                 確定移出
               </button>
@@ -55,4 +59,4 @@ const RemoveFromPois = () => {
   );
 };
 
-export default RemoveFromPois;
+export default RemoveFromScheduleBtn;
