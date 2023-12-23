@@ -1,8 +1,8 @@
 import { useRef } from "react";
 import { Link } from "react-router-dom";
 import ScheduleHeader from "../../page/Schedule/Header";
-import { scheduleStore } from "../../store/store";
-import Button from "../Button";
+import useStore, { scheduleStore } from "../../store/store";
+import LPButton from "../Button";
 import Profile from "./Profile";
 import TripSelectModal from "./TripSelectModal";
 
@@ -15,18 +15,19 @@ const pageButtons = [
 const UserHeader = ({ activePageTag, setActivePageTag }) => {
   const tripModalRef = useRef();
   const { currentLoadingTripData } = scheduleStore();
+  const { username } = useStore();
 
   const renderButtonLinks = () => {
     return pageButtons.map(({ to, text, pageTag }) => (
       <Link key={to} to={to}>
-        <Button
+        <LPButton
           variant={activePageTag === pageTag ? "active" : "default"}
           size="default"
           type="button"
           onClick={() => setActivePageTag(pageTag)}
         >
           {text}
-        </Button>
+        </LPButton>
       </Link>
     ));
   };
@@ -40,7 +41,7 @@ const UserHeader = ({ activePageTag, setActivePageTag }) => {
           {currentLoadingTripData && <ScheduleHeader ref={tripModalRef} />}
         </>
       )}
-      <Profile />
+      {username && <Profile />}
     </>
   );
 };

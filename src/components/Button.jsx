@@ -19,7 +19,7 @@ const buttonVariants = cva("w-20 rounded font-bold text-black", {
   },
 });
 
-const Button = forwardRef(({ className, size, variant, ...props }, ref) => {
+const MyButton = forwardRef(({ className, size, variant, ...props }, ref) => {
   return (
     <button
       ref={ref}
@@ -31,4 +31,4 @@ const Button = forwardRef(({ className, size, variant, ...props }, ref) => {
   );
 });
 
-export default Button;
+export default MyButton;
