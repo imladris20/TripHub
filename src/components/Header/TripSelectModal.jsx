@@ -3,7 +3,7 @@ import { forwardRef, useEffect, useState } from "react";
 import useStore, { scheduleStore } from "../../store/store";
 import { PlusIcon } from "../../utils/icons";
 
-const TripSelectModal = forwardRef((props, ref) => {
+const TripSelectModal = forwardRef((_, ref) => {
   const [selectedTrip, setSelectedTrip] = useState("disabled");
   const [tripsOption, setTripsOption] = useState([]);
   const [tripIdToLoad, setTripIdToLoad] = useState("");

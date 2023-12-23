@@ -6,7 +6,7 @@ import toast, { Toaster } from "react-hot-toast";
 import useStore, { scheduleStore } from "../../store/store";
 import { PlayButtonIcon } from "../../utils/icons";
 
-const Header = forwardRef((props, ref) => {
+const Header = forwardRef((_, ref) => {
   const {
     currentLoadingTripId,
     setCurrentTripDuration,
