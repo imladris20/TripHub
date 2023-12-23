@@ -4,25 +4,16 @@ import Logo from "../../assets/logo.png";
 import useStore from "../../store/store";
 import UserHeader from "./UserHeader";
 
+const path = [null, "/search", "/pois", "/schedule"];
+
 const Header = () => {
   const { isLogin } = useStore();
   const currentPath = useLocation().pathname;
   const [activePageTag, setActivePageTag] = useState(null);
 
   useEffect(() => {
-    switch (location.pathname) {
-      case "/search":
-        setActivePageTag(1);
-        break;
-      case "/pois":
-        setActivePageTag(2);
-        break;
-      case "/schedule":
-        setActivePageTag(3);
-        break;
-      default:
-        setActivePageTag(null);
-    }
+    const currentPageTag = path.indexOf(currentPath);
+    setActivePageTag(currentPageTag);
   }, [currentPath]);
 
   return (

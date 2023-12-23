@@ -41,7 +41,7 @@ const CurrentPositionBtn = () => {
   return (
     <button
       className="fixed bottom-[115px] right-[10px] ml-auto flex h-10 w-10 cursor-pointer flex-row items-center justify-center rounded-sm bg-white p-1"
-      onClick={() => handleCurrentLocationBtnClicked()}
+      onClick={handleCurrentLocationBtnClicked}
     >
       <CurrentLocationBtnIcon />
     </button>
