@@ -79,20 +79,20 @@ const TripSelectModal = forwardRef((_, ref) => {
 
   //  Load trip options on firestore into selections
   useEffect(() => {
-    if (database) {
-      const colRef = collection(database, "users", uid, "trips");
-      const unsubscribe = onSnapshot(colRef, (querySnapshot) => {
-        const currentTrips = [];
-        querySnapshot.forEach((doc) => {
-          currentTrips.push({ id: doc.id, data: doc.data() });
-        });
-        setTripsOption(currentTrips);
-      });
+    if (!database) return;
 
-      return () => {
-        unsubscribe();
-      };
-    }
+    const colRef = collection(database, "users", uid, "trips");
+    const unsubscribe = onSnapshot(colRef, (querySnapshot) => {
+      const currentTrips = [];
+      querySnapshot.forEach((doc) => {
+        currentTrips.push({ id: doc.id, data: doc.data() });
+      });
+      setTripsOption(currentTrips);
+    });
+
+    return () => {
+      unsubscribe();
+    };
   }, [database]);
 
   return (

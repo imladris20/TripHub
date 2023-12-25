@@ -25,18 +25,18 @@ const List = () => {
 
   //  listener of loading newest data of selected trip
   useEffect(() => {
-    if (database && currentLoadingTripId) {
-      const unsubscribe = onSnapshot(
-        doc(database, "users", uid, "trips", currentLoadingTripId),
-        (doc) => {
-          setCurrentLoadingTripData(doc.data());
-          setCurrentTripDuration(doc.data()?.dayCount || 0);
-        },
-      );
-      return () => {
-        unsubscribe();
-      };
-    }
+    if (!database || !currentLoadingTripId) return;
+
+    const unsubscribe = onSnapshot(
+      doc(database, "users", uid, "trips", currentLoadingTripId),
+      (doc) => {
+        setCurrentLoadingTripData(doc.data());
+        setCurrentTripDuration(doc.data()?.dayCount || 0);
+      },
+    );
+    return () => {
+      unsubscribe();
+    };
   }, [database, currentLoadingTripId]);
 
   //  Add markers of attractions in trip on map

@@ -11,26 +11,25 @@ const BookMark = ({ id }) => {
   const [alreadyIn, setAlreadyIn] = useState([]);
 
   useEffect(() => {
-    if (database) {
-      const tripsColRef = collection(database, "users", uid, "trips");
-      let count = 0;
-      const containArr = [];
+    if (!database) return;
+    const tripsColRef = collection(database, "users", uid, "trips");
+    let count = 0;
+    const containArr = [];
 
-      const unsubscribe = onSnapshot(tripsColRef, (snapshot) => {
-        count = 0;
-        snapshot.forEach((doc) => {
-          if (find(doc.data().attractions, { poisId: id })) {
-            count += 1;
-            containArr.push(doc.data().name);
-          }
-        });
-
-        setCount(count);
-        setAlreadyIn(containArr);
+    const unsubscribe = onSnapshot(tripsColRef, (snapshot) => {
+      count = 0;
+      snapshot.forEach((doc) => {
+        if (find(doc.data().attractions, { poisId: id })) {
+          count += 1;
+          containArr.push(doc.data().name);
+        }
       });
 
-      return () => unsubscribe();
-    }
+      setCount(count);
+      setAlreadyIn(containArr);
+    });
+
+    return () => unsubscribe();
   }, [database]);
 
   return (

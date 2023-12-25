@@ -25,23 +25,22 @@ const List = () => {
   const poisColRef = collection(database, "users", uid, "pointOfInterests");
 
   useEffect(() => {
-    if (database) {
-      const q = query(poisColRef);
+    if (!database) return;
+    const q = query(poisColRef);
 
-      const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        const newArr = [];
-        querySnapshot.forEach((doc) => {
-          if (!doc.data()?.archived) {
-            newArr.push({ id: doc.id, data: doc.data() });
-          }
-        });
-        setCurrentPois(newArr);
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const newArr = [];
+      querySnapshot.forEach((doc) => {
+        if (!doc.data()?.archived) {
+          newArr.push({ id: doc.id, data: doc.data() });
+        }
       });
+      setCurrentPois(newArr);
+    });
 
-      return () => {
-        unsubscribe();
-      };
-    }
+    return () => {
+      unsubscribe();
+    };
   }, [database]);
 
   useEffect(() => {

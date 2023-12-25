@@ -132,19 +132,18 @@ const AddToSchedule = () => {
   };
 
   useEffect(() => {
-    if (database) {
-      const unsubscribe = onSnapshot(colRef, (querySnapshot) => {
-        const currentTrips = [];
-        querySnapshot.forEach((doc) => {
-          currentTrips.push({ id: doc.id, data: doc.data() });
-        });
-        setTripsOption(currentTrips);
+    if (!database) return;
+    const unsubscribe = onSnapshot(colRef, (querySnapshot) => {
+      const currentTrips = [];
+      querySnapshot.forEach((doc) => {
+        currentTrips.push({ id: doc.id, data: doc.data() });
       });
+      setTripsOption(currentTrips);
+    });
 
-      return () => {
-        unsubscribe();
-      };
-    }
+    return () => {
+      unsubscribe();
+    };
   }, [database]);
 
   useEffect(() => {
