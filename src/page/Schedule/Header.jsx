@@ -247,9 +247,6 @@ const Header = forwardRef((_, ref) => {
             className="btn ml-6 flex h-10 min-h-0 flex-row items-center bg-sand"
             href={`/overview/${currentLoadingTripId}`}
             target="_blank"
-            onClick={() => {
-              console.log(currentLoadingTripData);
-            }}
           >
             <h1 className="text-sm leading-5 text-slate-800">預覽行程</h1>
             <svg
@@ -271,7 +268,6 @@ const Header = forwardRef((_, ref) => {
           <p className="py-4">請留意刪除行程將同步使行程分享連結失效。</p>
           <div className="modal-action mt-4">
             <form method="dialog">
-              {/* if there is a button in form, it will close the modal */}
               <button className="btn mr-2 h-9 min-h-0">再想想</button>
               <button
                 className="btn h-9 min-h-0 bg-sand"

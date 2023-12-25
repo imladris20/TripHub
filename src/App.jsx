@@ -88,7 +88,6 @@ function App() {
         <Route path="/search" element={<Search />} />
         <Route path="/pois" element={<Pois />} />
         <Route path="/schedule" element={<Schedule />} />
-        {/* <Route path="/practicing" element={<Practicing />} /> */}
         <Route path="/overview/:tripId" element={<Overview />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

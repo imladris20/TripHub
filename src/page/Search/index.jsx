@@ -55,19 +55,7 @@ const Search = () => {
         {placeResult ? (
           <ResultList />
         ) : (
-          <h1
-            className="m-auto text-slate-500"
-            onClick={() => {
-              console.log(currentCenter);
-              console.log(
-                `currentCenter in store: ${JSON.stringify(
-                  currentCenter,
-                )}, currentZoom in store: ${currentZoom}`,
-              );
-            }}
-          >
-            快來搜尋景點吧~~
-          </h1>
+          <h1 className="m-auto text-slate-500">快來搜尋景點吧~~</h1>
         )}
       </div>
       <Map id={"searchMap"} options={initialMapOptions} />

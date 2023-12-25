@@ -45,11 +45,9 @@ const Maininfo = ({ trip, tripId }) => {
             <a
               className="whitespace-nowrap text-xl font-bold "
               href={`https://triphub.web.app/overview/${tripId}`}
-              // href={`http://localhost:5173/overview/${tripId}`}
               target="_blank"
             >
               <QRCodeSVG
-                // value={`http://localhost:5173/overview/${tripId}`}
                 value={`https://triphub.web.app/overview/${tripId}`}
                 className="h-16 w-16"
               />

@@ -94,8 +94,6 @@ const AttractionRow = ({
             -
           </span>
         )}
-
-        {/* name(button) */}
         <button
           className="h-full w-[180px] shrink-0 grow cursor-pointer truncate p-2 text-center text-xs"
           onClick={() => handleAttractionNameClicked(name, note, expense)}

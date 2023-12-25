@@ -63,7 +63,6 @@ const CategoryFilter = () => {
         className="w-full cursor-pointer text-sm text-rose-500"
         onClick={() => {
           setIsFilterWindowOpen();
-          console.log(typeOptions);
         }}
       >
         篩選類別

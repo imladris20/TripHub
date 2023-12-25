@@ -58,9 +58,6 @@ const BookMark = ({ id }) => {
           tabIndex={0}
           className="dropdown-content z-[1] w-32 cursor-default rounded-box bg-gray-200 shadow"
         >
-          {/*           <li className="cursor-default border-b px-0 py-1 text-center last:border-none">
-            已加入行程
-          </li> */}
           {alreadyIn.map((item, index) => {
             return (
               <li

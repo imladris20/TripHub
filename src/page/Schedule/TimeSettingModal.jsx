@@ -233,7 +233,6 @@ const TimeSettingModal = ({
               >
                 確認
               </button>
-              {/* <button className="btn btn-warning">取消</button> */}
             </form>
           </div>
         </div>

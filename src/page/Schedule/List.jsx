@@ -80,7 +80,6 @@ const List = () => {
             text: `${daySequence !== 0 ? `D${daySequence}` : "-"}`,
             color: "white",
           },
-          // label: `${daySequence !== 0 ? `D${daySequence}` : "-"}`,
         });
         const windowContent = `
           <div class='flex flex-col h-auto w-auto gap-1 justify-start items-start'>

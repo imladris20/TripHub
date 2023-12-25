@@ -40,7 +40,6 @@ const RemoveFromScheduleBtn = () => {
           </h3>
           <div className="modal-action mt-4">
             <form method="dialog">
-              {/* if there is a button in form, it will close the modal */}
               <button className="btn mr-2 h-9 min-h-0">再想想</button>
               <button
                 className="btn h-9 min-h-0 bg-sand"
