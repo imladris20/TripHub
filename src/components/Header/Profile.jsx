@@ -20,7 +20,7 @@ const Profile = () => {
   return (
     <div className="ml-auto flex h-6 w-auto flex-row items-center gap-4">
       {currentPath !== "/schedule" && <Greeting />}
-      <button onClick={signOut}>
+      <div onClick={signOut} className="cursor-pointer">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 512 512"
@@ -28,7 +28,7 @@ const Profile = () => {
         >
           <SignOutIcon />
         </svg>
-      </button>
+      </div>
     </div>
   );
 };
