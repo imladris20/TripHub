@@ -1,10 +1,10 @@
 import { doc, updateDoc } from "firebase/firestore";
 import { cloneDeep } from "lodash";
-import useStore, { scheduleStore } from "../../store/store";
+import globalStore, { scheduleStore } from "../../store/store";
 import { MenuIcon } from "../../utils/icons";
 
 const DaySequenceDropdown = ({ currentAttractionIndex, name }) => {
-  const { database } = useStore();
+  const { database } = globalStore();
   const uid = localStorage.getItem("uid");
   const { currentLoadingTripId, currentTripDuration, currentLoadingTripData } =
     scheduleStore();

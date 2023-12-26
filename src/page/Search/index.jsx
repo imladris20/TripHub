@@ -2,7 +2,7 @@ import { Map, useApiIsLoaded, useMap } from "@vis.gl/react-google-maps";
 import { useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import CurrentPositionBtn from "../../components/CurrentPositionBtn/CurrentPositionBtn";
-import useStore from "../../store/store";
+import globalStore from "../../store/store";
 import Detail from "./Detail";
 import InputBlock from "./InputBlock";
 import ResultList from "./ResultList";
@@ -16,7 +16,7 @@ const Search = () => {
     searchItemDetailInfo,
     setCurrentCenter,
     setCurrentZoom,
-  } = useStore();
+  } = globalStore();
   const apiIsLoaded = useApiIsLoaded();
 
   const map = useMap("searchMap");

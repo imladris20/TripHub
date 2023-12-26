@@ -5,7 +5,7 @@ import { useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { useMutation } from "react-query";
 import PlaceHolderPhoto from "../../assets/pois_photo_placeholder.png";
-import useStore from "../../store/store";
+import globalStore from "../../store/store";
 import { CloseIcon, PlusIcon } from "../../utils/icons";
 
 const Detail = () => {
@@ -16,7 +16,7 @@ const Detail = () => {
     database,
     prepareColor,
     setTypeOptions,
-  } = useStore();
+  } = globalStore();
   const uid = localStorage.getItem("uid");
   const [categoryTags, setCategoryTags] = useState([]);
   const [newCategoryToAdd, setNewCategoryToAdd] = useState("");

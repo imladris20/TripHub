@@ -1,11 +1,11 @@
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import { useState } from "react";
-import useStore from "../../store/store";
+import globalStore from "../../store/store";
 import { CurrentLocationBtnIcon } from "../../utils/icons";
 import homeIcon from "./home-button.png";
 
 const CurrentPositionBtn = () => {
-  const { setCurrentCenter, setCurrentZoom } = useStore();
+  const { setCurrentCenter, setCurrentZoom } = globalStore();
   const [isCurrentPositionShow, setIsCurrentPositionShow] = useState(false);
   const map = useMap("searchMap");
   const markerLib = useMapsLibrary("marker");

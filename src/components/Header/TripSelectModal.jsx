@@ -1,6 +1,6 @@
 import { collection, doc, onSnapshot, setDoc } from "firebase/firestore";
 import { forwardRef, useEffect, useState } from "react";
-import useStore, { scheduleStore } from "../../store/store";
+import globalStore, { scheduleStore } from "../../store/store";
 import { PlusIcon } from "../../utils/icons";
 
 const TripSelectModal = forwardRef((_, ref) => {
@@ -45,7 +45,7 @@ const TripSelectModal = forwardRef((_, ref) => {
     }
   };
 
-  const { database } = useStore();
+  const { database } = globalStore();
   const uid = localStorage.getItem("uid");
 
   const handleAddNewBlankTrip = async () => {

@@ -1,9 +1,9 @@
 import { doc, updateDoc } from "firebase/firestore";
 import { useRef } from "react";
-import useStore, { poisStore } from "../../store/store";
+import globalStore, { poisStore } from "../../store/store";
 
 const RemoveFromPois = () => {
-  const { database } = useStore();
+  const { database } = globalStore();
   const { poisItemDetailInfo, setPoisItemDetailInfo } = poisStore();
   const uid = localStorage.getItem("uid");
 

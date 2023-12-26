@@ -1,7 +1,7 @@
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import React, { useEffect, useRef } from "react";
-import useStore, { scheduleStore } from "../../store/store";
+import globalStore, { scheduleStore } from "../../store/store";
 import DayBlock from "./DayBlock";
 
 const List = () => {
@@ -13,7 +13,7 @@ const List = () => {
     currentLoadingTripData,
     setCurrentLoadingTripData,
   } = scheduleStore();
-  const { database } = useStore();
+  const { database } = globalStore();
 
   const uid = localStorage.getItem("uid");
 

@@ -3,7 +3,7 @@ import { deleteDoc, doc, setDoc } from "firebase/firestore";
 import { cloneDeep } from "lodash";
 import { forwardRef, useEffect, useRef, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import useStore, { scheduleStore } from "../../store/store";
+import globalStore, { scheduleStore } from "../../store/store";
 import { PlayButtonIcon } from "../../utils/icons";
 
 const Header = forwardRef((_, ref) => {
@@ -20,7 +20,7 @@ const Header = forwardRef((_, ref) => {
   );
   const [endDate, setEndDate] = useState(currentLoadingTripData?.endDate || "");
 
-  const { database } = useStore();
+  const { database } = globalStore();
   const uid = localStorage.getItem("uid");
 
   const removeRef = useRef();

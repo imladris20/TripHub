@@ -2,13 +2,13 @@ import { collectionGroup, getDocs, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Logo from "../../assets/logo.png";
-import useStore, { overViewStore } from "../../store/store";
+import globalStore, { overViewStore } from "../../store/store";
 import Day from "./Day";
 import Maininfo from "./Maininfo";
 
 const Overview = () => {
   const { tripId } = useParams();
-  const { database } = useStore();
+  const { database } = globalStore();
   const [trip, setTrip] = useState();
   const { uid, setUid } = overViewStore();
 

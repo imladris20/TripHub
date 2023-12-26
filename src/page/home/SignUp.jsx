@@ -2,11 +2,11 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import * as yup from "yup";
-import useStore from "../../store/store";
-import { nativeSignUp, setDocNewUser } from "../../utils/firebaseSDK";
+import globalStore from "../../store/store";
+import { nativeSignUp, setDocNewUser } from "../../utils/tripHubDb";
 
 const SignUp = ({ inputRef }) => {
-  const { database, setUsername } = useStore();
+  const { database, setUsername } = globalStore();
 
   const signUpMutation = useMutation(({ name, email, password }) =>
     nativeSignUp(name, email, password),

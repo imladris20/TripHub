@@ -2,7 +2,7 @@ import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { cloneDeep, filter, orderBy } from "lodash";
 import { useEffect, useRef, useState } from "react";
-import useStore, { scheduleStore } from "../../store/store";
+import globalStore, { scheduleStore } from "../../store/store";
 import { addDurationToTime } from "../../utils/timeUtil";
 import TravelTypeDropdown from "./TravelTypeDropDown";
 
@@ -14,7 +14,7 @@ const RouteRow = ({
 }) => {
   const map = useMap("tripMap");
   const { DirectionsService, DirectionsRenderer } = useMapsLibrary("routes");
-  const { database } = useStore();
+  const { database } = globalStore();
   const uid = localStorage.getItem("uid");
   const { currentLoadingTripData, currentLoadingTripId } = scheduleStore();
   const [directionsResult, setDirectionsResult] = useState();

@@ -48,7 +48,7 @@ const colors = [
   { bg: "bg-carrot", shouldTextDark: true },
 ];
 
-const useStore = create((set, get) => ({
+const globalStore = create((set, get) => ({
   apiKey,
   mapId,
   prepareColor: colors,
@@ -148,6 +148,14 @@ const useStore = create((set, get) => ({
       }),
     );
   },
+  uid: localStorage.getItem("uid"),
+  setUid: (id) => {
+    set(
+      produce((state) => {
+        state.uid = id;
+      }),
+    );
+  },
   database: null,
   setDatabase: (db) => {
     set(
@@ -174,7 +182,7 @@ const useStore = create((set, get) => ({
   },
 }));
 
-export default useStore;
+export default globalStore;
 
 export const poisStore = create((set, get) => ({
   currentCenter: TAIWAN,

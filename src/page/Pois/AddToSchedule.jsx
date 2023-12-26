@@ -13,12 +13,12 @@ import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
 import * as yup from "yup";
-import useStore, { poisStore } from "../../store/store";
+import globalStore, { poisStore } from "../../store/store";
 import { PlusIcon } from "../../utils/icons";
 
 const AddToSchedule = () => {
   const modalRef = useRef();
-  const { database } = useStore();
+  const { database } = globalStore();
   const { poisItemDetailInfo } = poisStore();
   const uid = localStorage.getItem("uid");
   const colRef = collection(database, "users", uid, "trips");

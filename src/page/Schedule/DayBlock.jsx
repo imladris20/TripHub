@@ -2,13 +2,13 @@ import { addDays, format } from "date-fns";
 import { doc, updateDoc } from "firebase/firestore";
 import { cloneDeep } from "lodash";
 import { useEffect, useRef, useState } from "react";
-import useStore, { scheduleStore } from "../../store/store";
+import globalStore, { scheduleStore } from "../../store/store";
 import AttractionRow from "./AttractionRow";
 
 const DayBlock = ({ daySequenceIndex }) => {
   const { currentTripDuration, currentLoadingTripData, currentLoadingTripId } =
     scheduleStore();
-  const { database } = useStore();
+  const { database } = globalStore();
   const uid = localStorage.getItem("uid");
 
   const dayBlockRef = useRef();

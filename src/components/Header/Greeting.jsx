@@ -1,7 +1,7 @@
-import useStore from "../../store/store";
+import globalStore from "../../store/store";
 
 const Greeting = () => {
-  const { username } = useStore();
+  const { username } = globalStore();
 
   return (
     <h1 className="max-w-[130px] overflow-hidden whitespace-nowrap p-1 text-[13px] leading-4 text-slate-500">

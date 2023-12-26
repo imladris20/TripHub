@@ -3,14 +3,14 @@ import { collection, getDocs } from "firebase/firestore";
 import { find } from "lodash";
 import { useEffect, useState } from "react";
 import PlaceHolderPhoto from "../../assets/pois_photo_placeholder.png";
-import useStore, { poisStore } from "../../store/store";
+import globalStore, { poisStore } from "../../store/store";
 import { CloseIcon } from "../../utils/icons";
 import AddToSchedule from "./AddToSchedule";
 import RemoveFromPois from "./RemoveFromPois";
 
 const Detail = () => {
   const { poisItemDetailInfo, setPoisItemDetailInfo } = poisStore();
-  const { database, apiKey } = useStore();
+  const { database, apiKey } = globalStore();
   const uid = localStorage.getItem("uid");
 
   const {

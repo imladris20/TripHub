@@ -1,6 +1,6 @@
 import { doc, updateDoc } from "firebase/firestore";
 import { cloneDeep } from "lodash";
-import useStore, { scheduleStore } from "../../store/store";
+import globalStore, { scheduleStore } from "../../store/store";
 import { VerticalSwapIcon } from "../../utils/icons";
 
 const InDayOrderDropdown = ({
@@ -9,7 +9,7 @@ const InDayOrderDropdown = ({
   inDayOrder,
   currentAttractionIndex,
 }) => {
-  const { database } = useStore();
+  const { database } = globalStore();
   const uid = localStorage.getItem("uid");
   const {
     currentLoadingTripId,

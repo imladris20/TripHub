@@ -1,6 +1,5 @@
 import { APIProvider } from "@vis.gl/react-google-maps";
 import { onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
 import { find } from "lodash";
 import React, { useEffect, useState } from "react";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
@@ -11,23 +10,22 @@ import Overview from "./page/Overview";
 import Pois from "./page/Pois";
 import Schedule from "./page/Schedule";
 import Search from "./page/Search";
-import useStore from "./store/store";
-import { initFirebase } from "./utils/firebaseSDK";
+import globalStore from "./store/store";
+import { db, initFirebase } from "./utils/tripHubDb";
 
 function App() {
   const {
-    isLogin,
     typeOptions,
     setTypeOptions,
     prepareColor,
-    database,
     apiKey,
     setDatabase,
     setIsLogin,
     setPlaceResult,
-  } = useStore();
+    uid,
+    setUid,
+  } = globalStore();
   const [isFbInited, setIsFbInited] = useState(false);
-  const [uid, setUid] = useState();
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const isOverviewPath = pathname.startsWith("/overview");
@@ -38,10 +36,6 @@ function App() {
       setDatabase(db);
       setIsFbInited(true);
       onAuthStateChanged(auth, (user) => {
-        if (isOverviewPath) {
-          return;
-        }
-
         if (user !== null) {
           setIsLogin(true);
           setUid(user.uid);
@@ -56,9 +50,9 @@ function App() {
 
   useEffect(() => {
     const syncCategory = async () => {
-      const docSnap = await getDoc(doc(database, "users", uid));
-      if (docSnap.data()?.categories) {
-        docSnap.data().categories.map((item, index) => {
+      const userInfo = await db.getDoc("userInfo");
+      if (userInfo?.categories) {
+        userInfo.categories.map((item, index) => {
           const userDefinitedOption = {
             name: item,
             bg: `${prepareColor[index].bg}`,

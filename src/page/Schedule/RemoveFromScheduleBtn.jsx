@@ -1,10 +1,10 @@
 import { doc, setDoc } from "firebase/firestore";
 import { filter } from "lodash";
 import { useRef } from "react";
-import useStore, { scheduleStore } from "../../store/store";
+import globalStore, { scheduleStore } from "../../store/store";
 
 const RemoveFromScheduleBtn = () => {
-  const { database } = useStore();
+  const { database } = globalStore();
   const {
     attractionsData: allAttractions,
     attractionItemDetail,

@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useMutation } from "react-query";
-import useStore from "../../store/store";
-import { nativeSignIn } from "../../utils/firebaseSDK";
+import globalStore from "../../store/store";
+import { nativeSignIn } from "../../utils/tripHubDb";
 
 const SignIn = ({ inputRef }) => {
   const [insertEmail, setInsertEmail] = useState("");
   const [insertPassword, setInsertPassword] = useState("");
-  const { setUsername } = useStore();
+  const { setUsername } = globalStore();
 
   const mutation = useMutation((data) =>
     nativeSignIn(data.email, data.password),

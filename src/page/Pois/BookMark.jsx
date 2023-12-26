@@ -1,11 +1,11 @@
 import { collection, onSnapshot } from "firebase/firestore";
 import { find } from "lodash";
 import { useEffect, useState } from "react";
-import useStore from "../../store/store";
+import globalStore from "../../store/store";
 import { BookMarkIcon } from "../../utils/icons";
 
 const BookMark = ({ id }) => {
-  const { database } = useStore();
+  const { database } = globalStore();
   const uid = localStorage.getItem("uid");
   const [count, setCount] = useState(0);
   const [alreadyIn, setAlreadyIn] = useState([]);

@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Logo from "../../assets/logo.png";
-import useStore from "../../store/store";
+import globalStore from "../../store/store";
 import UserHeader from "./UserHeader";
 
 const path = [null, "/search", "/pois", "/schedule"];
 
 const Header = () => {
-  const { isLogin } = useStore();
+  const { isLogin } = globalStore();
   const currentPath = useLocation().pathname;
   const [activePageTag, setActivePageTag] = useState(null);
 

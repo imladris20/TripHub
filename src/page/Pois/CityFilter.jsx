@@ -1,8 +1,8 @@
 import { collection, getDocs, query, where } from "firebase/firestore";
-import useStore, { poisStore } from "../../store/store";
+import globalStore, { poisStore } from "../../store/store";
 
 const CityFilter = () => {
-  const { database, taiwanCities } = useStore();
+  const { database, taiwanCities } = globalStore();
   const { setCurrentPois, selectedCity, setSelectedCity } = poisStore();
   const uid = localStorage.getItem("uid");
   const poisColRef = collection(database, "users", uid, "pointOfInterests");

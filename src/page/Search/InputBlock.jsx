@@ -4,7 +4,7 @@ import {
   useMapsLibrary,
 } from "@vis.gl/react-google-maps";
 import { useRef, useState } from "react";
-import useStore from "../../store/store";
+import globalStore from "../../store/store";
 import { SearchIcon } from "../../utils/icons";
 
 const InputBlock = () => {
@@ -22,7 +22,7 @@ const InputBlock = () => {
     setCurrentCenter,
     setPlaceResult,
     setSearchItemDetailInfo,
-  } = useStore();
+  } = globalStore();
 
   const markerRef = useRef([]);
 

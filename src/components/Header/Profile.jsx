@@ -1,11 +1,11 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import useStore from "../../store/store";
-import { nativeSignOut } from "../../utils/firebaseSDK";
+import globalStore from "../../store/store";
 import { SignOutIcon } from "../../utils/icons";
+import { nativeSignOut } from "../../utils/tripHubDb";
 import Greeting from "./Greeting";
 
 const Profile = () => {
-  const { setUsername } = useStore();
+  const { setUsername } = globalStore();
   const navigate = useNavigate();
   const currentPath = useLocation().pathname;
 

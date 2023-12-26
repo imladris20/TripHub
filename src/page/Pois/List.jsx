@@ -2,13 +2,13 @@ import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import { collection, onSnapshot, query } from "firebase/firestore";
 import { find } from "lodash";
 import { useEffect, useRef } from "react";
-import useStore, { poisStore } from "../../store/store";
+import globalStore, { poisStore } from "../../store/store";
 import BookMark from "./BookMark";
 import CategoryFilter from "./CategoryFilter";
 import CityFilter from "./CityFilter";
 
 const List = () => {
-  const { database, typeOptions } = useStore();
+  const { database, typeOptions } = globalStore();
   const {
     setCurrentZoom,
     setCurrentCenter,

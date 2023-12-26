@@ -2,7 +2,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import { cloneDeep, filter, orderBy } from "lodash";
 import { useEffect, useRef, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import useStore, { scheduleStore } from "../../store/store";
+import globalStore, { scheduleStore } from "../../store/store";
 import { TimeIcon } from "../../utils/icons";
 import { addDurationToTime, calculateEndTime } from "../../utils/timeUtil";
 
@@ -13,7 +13,7 @@ const TimeSettingModal = ({
   daySequenceIndex,
 }) => {
   const modalRef = useRef();
-  const { database } = useStore();
+  const { database } = globalStore();
   const uid = localStorage.getItem("uid");
   const { currentLoadingTripId, currentLoadingTripData } = scheduleStore();
 

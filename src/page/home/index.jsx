@@ -1,10 +1,10 @@
 import { useRef } from "react";
 import { Link } from "react-router-dom";
-import useStore from "../../store/store";
+import globalStore from "../../store/store";
 import SignWindow from "./SignWindow";
 
 const Home = () => {
-  const { isLogin } = useStore();
+  const { isLogin } = globalStore();
 
   const signRef = useRef();
 

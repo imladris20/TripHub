@@ -1,7 +1,7 @@
 import { useMap } from "@vis.gl/react-google-maps";
 import { findIndex } from "lodash";
 import { useEffect, useState } from "react";
-import useStore, { scheduleStore } from "../../store/store";
+import globalStore, { scheduleStore } from "../../store/store";
 import DaySequenceDropDown from "./DaySequenceDropdown";
 import InDayOrderDropdown from "./InDayOrderDropdown";
 import RouteRow from "./RouteRow";
@@ -21,7 +21,7 @@ const AttractionRow = ({
     currentLoadingTripId,
   } = scheduleStore();
 
-  const { database } = useStore();
+  const { database } = globalStore();
   const uid = localStorage.getItem("uid");
   const map = useMap("tripMap");
 
