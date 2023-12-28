@@ -1,7 +1,9 @@
-import { collection, doc, onSnapshot, setDoc } from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 import { forwardRef, useEffect, useState } from "react";
 import globalStore, { scheduleStore } from "../../store/store";
 import { PlusIcon } from "../../utils/icons";
+import { db } from "../../utils/tripHubDb";
+import { getDisplayLength } from "../../utils/util";
 
 const TripSelectModal = forwardRef((_, ref) => {
   const [selectedTrip, setSelectedTrip] = useState("disabled");
@@ -10,20 +12,7 @@ const TripSelectModal = forwardRef((_, ref) => {
   const [newTripToAdd, setNewTripToAdd] = useState("");
   const [newTripError, setNewTripError] = useState("");
   const { setCurrentLoadingTripId } = scheduleStore();
-
-  const getDisplayLength = (str) => {
-    let length = 0;
-    for (let i = 0; i < str.length; i++) {
-      const charUnicode = str.charCodeAt(i);
-
-      if (charUnicode >= 0x4e00 && charUnicode <= 0x9fff) {
-        length += 2;
-      } else {
-        length += 1;
-      }
-    }
-    return length;
-  };
+  const { database, uid } = globalStore();
 
   const handleTripSelected = (e) => {
     setSelectedTrip(e.target.value);
@@ -35,38 +24,31 @@ const TripSelectModal = forwardRef((_, ref) => {
     }
   };
 
+  const checkOverflow = (str) => {
+    if (getDisplayLength(str) > 30) {
+      setNewTripError("行程名稱最多15個字唷");
+      return true;
+    }
+    setNewTripError("");
+  };
+
   const handleNewTripInput = (e) => {
     const value = e.target.value;
     setNewTripToAdd(value);
-    if (getDisplayLength(value) > 30) {
-      setNewTripError("行程名稱最多15個字唷");
-    } else {
-      setNewTripError("");
-    }
+    checkOverflow(value);
   };
-
-  const { database } = globalStore();
-  const uid = localStorage.getItem("uid");
 
   const handleAddNewBlankTrip = async () => {
     if (newTripToAdd.trim() === "") {
       setNewTripError("請填寫行程名稱");
       return;
-    } else if (getDisplayLength(newTripToAdd) > 30) {
-      setNewTripError("行程名稱最多15個字唷");
-      return;
-    } else {
-      setNewTripError("");
     }
-    const colRef = collection(database, "users", uid, "trips");
-    const docRef = doc(colRef);
 
-    await setDoc(docRef, {
-      name: newTripToAdd,
-    });
+    if (checkOverflow(newTripToAdd)) return;
 
+    const newdocId = await db.setNewDoc("trips", { name: newTripToAdd });
     setSelectedTrip(newTripToAdd);
-    setTripIdToLoad(docRef.id);
+    setTripIdToLoad(newdocId);
     setNewTripToAdd("");
   };
 
@@ -119,9 +101,7 @@ const TripSelectModal = forwardRef((_, ref) => {
           <form method="dialog">
             <button
               className="btn btn-secondary w-36 whitespace-nowrap text-gray-800"
-              onClick={() => {
-                setCurrentLoadingTripId(tripIdToLoad);
-              }}
+              onClick={() => setCurrentLoadingTripId(tripIdToLoad)}
             >
               確認選擇
             </button>
