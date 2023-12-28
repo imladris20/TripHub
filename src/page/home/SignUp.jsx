@@ -40,6 +40,10 @@ const SignUp = ({ inputRef }) => {
     resolver: yupResolver(signUpValidation),
   });
 
+  const swapSignUpCard = () => {
+    inputRef.current.checked = !inputRef.current.checked;
+  };
+
   return (
     <div className="swap-on w-full">
       <form
@@ -119,12 +123,7 @@ const SignUp = ({ inputRef }) => {
             </h3>
           </button>
           <label className="label mt-1">
-            <h1
-              className="link label-text-alt mt-3"
-              onClick={() =>
-                (inputRef.current.checked = !inputRef.current.checked)
-              }
-            >
+            <h1 className="link label-text-alt mt-3" onClick={swapSignUpCard}>
               已經有帳號了嗎？點我登入
             </h1>
           </label>
