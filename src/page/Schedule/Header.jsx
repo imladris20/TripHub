@@ -1,12 +1,12 @@
 import { addDays, format } from "date-fns";
 import { deleteDoc, doc, setDoc } from "firebase/firestore";
 import { cloneDeep } from "lodash";
-import { useEffect, useRef, useState } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import useStore, { scheduleStore } from "../../store/store";
+import globalStore, { scheduleStore } from "../../store/store";
 import { PlayButtonIcon } from "../../utils/icons";
 
-const Header = ({ tripModalRef }) => {
+const Header = forwardRef((_, ref) => {
   const {
     currentLoadingTripId,
     setCurrentTripDuration,
@@ -20,7 +20,7 @@ const Header = ({ tripModalRef }) => {
   );
   const [endDate, setEndDate] = useState(currentLoadingTripData?.endDate || "");
 
-  const { database } = useStore();
+  const { database } = globalStore();
   const uid = localStorage.getItem("uid");
 
   const removeRef = useRef();
@@ -31,7 +31,7 @@ const Header = ({ tripModalRef }) => {
     await deleteDoc(docRef);
 
     setCurrentLoadingTripId(null);
-    tripModalRef.current.showModal();
+    ref.current.showModal();
   };
 
   const calculateDayCount = (startDateStr, endDateStr) => {
@@ -225,7 +225,7 @@ const Header = ({ tripModalRef }) => {
             className="cursor-pointer text-[10px] text-gray-500 underline decoration-gray-500 decoration-solid"
             onClick={() => {
               setAttractionItemDetail(null);
-              tripModalRef.current.showModal();
+              ref.current.showModal();
             }}
           >
             編輯其他行程
@@ -247,9 +247,6 @@ const Header = ({ tripModalRef }) => {
             className="btn ml-6 flex h-10 min-h-0 flex-row items-center bg-sand"
             href={`/overview/${currentLoadingTripId}`}
             target="_blank"
-            onClick={() => {
-              console.log(currentLoadingTripData);
-            }}
           >
             <h1 className="text-sm leading-5 text-slate-800">預覽行程</h1>
             <svg
@@ -271,7 +268,6 @@ const Header = ({ tripModalRef }) => {
           <p className="py-4">請留意刪除行程將同步使行程分享連結失效。</p>
           <div className="modal-action mt-4">
             <form method="dialog">
-              {/* if there is a button in form, it will close the modal */}
               <button className="btn mr-2 h-9 min-h-0">再想想</button>
               <button
                 className="btn h-9 min-h-0 bg-sand"
@@ -290,6 +286,6 @@ const Header = ({ tripModalRef }) => {
   ) : (
     <span className="loading loading-bars loading-md"></span>
   );
-};
+});
 
 export default Header;

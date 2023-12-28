@@ -1,11 +1,11 @@
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import { useState } from "react";
-import useStore from "../../store/store";
+import globalStore from "../../store/store";
 import { CurrentLocationBtnIcon } from "../../utils/icons";
 import homeIcon from "./home-button.png";
 
 const CurrentPositionBtn = () => {
-  const { setCurrentCenter, setCurrentZoom } = useStore();
+  const { setCurrentCenter, setCurrentZoom } = globalStore();
   const [isCurrentPositionShow, setIsCurrentPositionShow] = useState(false);
   const map = useMap("searchMap");
   const markerLib = useMapsLibrary("marker");
@@ -41,7 +41,7 @@ const CurrentPositionBtn = () => {
   return (
     <button
       className="fixed bottom-[115px] right-[10px] ml-auto flex h-10 w-10 cursor-pointer flex-row items-center justify-center rounded-sm bg-white p-1"
-      onClick={() => handleCurrentLocationBtnClicked()}
+      onClick={handleCurrentLocationBtnClicked}
     >
       <CurrentLocationBtnIcon />
     </button>

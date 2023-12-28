@@ -1,36 +1,35 @@
 import { collection, onSnapshot } from "firebase/firestore";
 import { find } from "lodash";
 import { useEffect, useState } from "react";
-import useStore from "../../store/store";
+import globalStore from "../../store/store";
 import { BookMarkIcon } from "../../utils/icons";
 
 const BookMark = ({ id }) => {
-  const { database } = useStore();
+  const { database } = globalStore();
   const uid = localStorage.getItem("uid");
   const [count, setCount] = useState(0);
   const [alreadyIn, setAlreadyIn] = useState([]);
 
   useEffect(() => {
-    if (database) {
-      const tripsColRef = collection(database, "users", uid, "trips");
-      let count = 0;
-      const containArr = [];
+    if (!database) return;
+    const tripsColRef = collection(database, "users", uid, "trips");
+    let count = 0;
+    const containArr = [];
 
-      const unsubscribe = onSnapshot(tripsColRef, (snapshot) => {
-        count = 0;
-        snapshot.forEach((doc) => {
-          if (find(doc.data().attractions, { poisId: id })) {
-            count += 1;
-            containArr.push(doc.data().name);
-          }
-        });
-
-        setCount(count);
-        setAlreadyIn(containArr);
+    const unsubscribe = onSnapshot(tripsColRef, (snapshot) => {
+      count = 0;
+      snapshot.forEach((doc) => {
+        if (find(doc.data().attractions, { poisId: id })) {
+          count += 1;
+          containArr.push(doc.data().name);
+        }
       });
 
-      return () => unsubscribe();
-    }
+      setCount(count);
+      setAlreadyIn(containArr);
+    });
+
+    return () => unsubscribe();
   }, [database]);
 
   return (
@@ -58,9 +57,6 @@ const BookMark = ({ id }) => {
           tabIndex={0}
           className="dropdown-content z-[1] w-32 cursor-default rounded-box bg-gray-200 shadow"
         >
-          {/*           <li className="cursor-default border-b px-0 py-1 text-center last:border-none">
-            已加入行程
-          </li> */}
           {alreadyIn.map((item, index) => {
             return (
               <li

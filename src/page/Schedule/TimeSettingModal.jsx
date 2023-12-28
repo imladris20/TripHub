@@ -2,8 +2,9 @@ import { doc, updateDoc } from "firebase/firestore";
 import { cloneDeep, filter, orderBy } from "lodash";
 import { useEffect, useRef, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import useStore, { scheduleStore } from "../../store/store";
+import globalStore, { scheduleStore } from "../../store/store";
 import { TimeIcon } from "../../utils/icons";
+import { addDurationToTime, calculateEndTime } from "../../utils/timeUtil";
 
 const TimeSettingModal = ({
   name,
@@ -12,7 +13,7 @@ const TimeSettingModal = ({
   daySequenceIndex,
 }) => {
   const modalRef = useRef();
-  const { database } = useStore();
+  const { database } = globalStore();
   const uid = localStorage.getItem("uid");
   const { currentLoadingTripId, currentLoadingTripData } = scheduleStore();
 
@@ -32,7 +33,9 @@ const TimeSettingModal = ({
       return (
         currentLoadingTripData.startTime[daySequenceIndex - 1]?.value || ""
       );
-    } else if (n > 1) {
+    }
+
+    if (n > 1) {
       let totalDuration = 0;
       for (let i = 0; i < n - 1; i++) {
         if (sortedAttractions[i]?.duration) {
@@ -230,7 +233,6 @@ const TimeSettingModal = ({
               >
                 確認
               </button>
-              {/* <button className="btn btn-warning">取消</button> */}
             </form>
           </div>
         </div>
@@ -240,39 +242,3 @@ const TimeSettingModal = ({
 };
 
 export default TimeSettingModal;
-
-function calculateEndTime(start, hours, minutes) {
-  const startHours = parseInt(start.split(":")[0], 10);
-  const startMinutes = parseInt(start.split(":")[1], 10);
-  const stayHoursNum = parseInt(hours, 10);
-  const stayMinutesNum = parseInt(minutes, 10);
-
-  const endHours = startHours + stayHoursNum;
-  const endMinutes = startMinutes + stayMinutesNum;
-
-  const endTime = new Date(0, 0, 0, endHours, endMinutes);
-
-  const stringifyEndTime =
-    endTime.getHours().toString().padStart(2, "0") +
-    ":" +
-    endTime.getMinutes().toString().padStart(2, "0");
-  return stringifyEndTime;
-}
-
-function addDurationToTime(startTime, duration) {
-  const startTimeParts = startTime.split(":");
-  const startHours = parseInt(startTimeParts[0], 10);
-  const startMinutes = parseInt(startTimeParts[1], 10);
-  const startDate = new Date(0, 0, 0, startHours, startMinutes);
-
-  startDate.setMinutes(startDate.getMinutes() + duration);
-
-  const newHours = startDate.getHours();
-  const newMinutes = startDate.getMinutes();
-
-  const result = `${String(newHours).padStart(2, "0")}:${String(
-    newMinutes,
-  ).padStart(2, "0")}`;
-
-  return result;
-}

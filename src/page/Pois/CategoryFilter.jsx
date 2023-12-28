@@ -1,7 +1,7 @@
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { produce } from "immer";
 import { useState } from "react";
-import useStore, { poisStore } from "../../store/store";
+import globalStore, { poisStore } from "../../store/store";
 import { FilterIcon } from "../../utils/icons";
 
 const CategoryFilter = () => {
@@ -11,7 +11,7 @@ const CategoryFilter = () => {
     setCurrentPois,
     selectedCity,
   } = poisStore();
-  const { database, typeOptions } = useStore();
+  const { database, typeOptions } = globalStore();
   const [selectedTags, setSelectedTags] = useState([]);
   const uid = localStorage.getItem("uid");
   const poisColRef = collection(database, "users", uid, "pointOfInterests");
@@ -63,7 +63,6 @@ const CategoryFilter = () => {
         className="w-full cursor-pointer text-sm text-rose-500"
         onClick={() => {
           setIsFilterWindowOpen();
-          console.log(typeOptions);
         }}
       >
         篩選類別

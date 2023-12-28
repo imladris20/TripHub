@@ -1,9 +1,9 @@
 import { collection, doc, onSnapshot, setDoc } from "firebase/firestore";
-import { useEffect, useState } from "react";
-import useStore, { scheduleStore } from "../../store/store";
+import { forwardRef, useEffect, useState } from "react";
+import globalStore, { scheduleStore } from "../../store/store";
 import { PlusIcon } from "../../utils/icons";
 
-const TripSelectModal = ({ tripModalRef }) => {
+const TripSelectModal = forwardRef((_, ref) => {
   const [selectedTrip, setSelectedTrip] = useState("disabled");
   const [tripsOption, setTripsOption] = useState([]);
   const [tripIdToLoad, setTripIdToLoad] = useState("");
@@ -45,7 +45,7 @@ const TripSelectModal = ({ tripModalRef }) => {
     }
   };
 
-  const { database } = useStore();
+  const { database } = globalStore();
   const uid = localStorage.getItem("uid");
 
   const handleAddNewBlankTrip = async () => {
@@ -72,31 +72,31 @@ const TripSelectModal = ({ tripModalRef }) => {
 
   //  open modal first while page loaded
   useEffect(() => {
-    if (tripModalRef?.current) {
-      tripModalRef?.current?.showModal();
+    if (ref?.current) {
+      ref?.current?.showModal();
     }
   }, []);
 
   //  Load trip options on firestore into selections
   useEffect(() => {
-    if (database) {
-      const colRef = collection(database, "users", uid, "trips");
-      const unsubscribe = onSnapshot(colRef, (querySnapshot) => {
-        const currentTrips = [];
-        querySnapshot.forEach((doc) => {
-          currentTrips.push({ id: doc.id, data: doc.data() });
-        });
-        setTripsOption(currentTrips);
-      });
+    if (!database) return;
 
-      return () => {
-        unsubscribe();
-      };
-    }
+    const colRef = collection(database, "users", uid, "trips");
+    const unsubscribe = onSnapshot(colRef, (querySnapshot) => {
+      const currentTrips = [];
+      querySnapshot.forEach((doc) => {
+        currentTrips.push({ id: doc.id, data: doc.data() });
+      });
+      setTripsOption(currentTrips);
+    });
+
+    return () => {
+      unsubscribe();
+    };
   }, [database]);
 
   return (
-    <dialog ref={tripModalRef} className="modal">
+    <dialog ref={ref} className="modal">
       <div className="modal-box flex flex-col items-center justify-start gap-4">
         <h3 className="text-xl font-bold">請選擇行程</h3>
         <select
@@ -157,7 +157,7 @@ const TripSelectModal = ({ tripModalRef }) => {
         </div>
         <button
           className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2"
-          onClick={() => tripModalRef.current.close()}
+          onClick={() => ref.current.close()}
         >
           ✕
         </button>
@@ -167,6 +167,6 @@ const TripSelectModal = ({ tripModalRef }) => {
       </form>
     </dialog>
   );
-};
+});
 
 export default TripSelectModal;

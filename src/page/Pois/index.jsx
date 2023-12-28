@@ -1,12 +1,12 @@
 import { Map, useApiIsLoaded, useMap } from "@vis.gl/react-google-maps";
 import { useEffect } from "react";
 import { Navigate } from "react-router-dom";
-import useStore, { poisStore } from "../../store/store";
+import globalStore, { poisStore } from "../../store/store";
 import Detail from "./Detail";
 import List from "./List";
 
 const Pois = () => {
-  const { mapId } = useStore();
+  const { mapId } = globalStore();
   const {
     currentCenter,
     currentZoom,

@@ -13,12 +13,12 @@ import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
 import * as yup from "yup";
-import useStore, { poisStore } from "../../store/store";
+import globalStore, { poisStore } from "../../store/store";
 import { PlusIcon } from "../../utils/icons";
 
 const AddToSchedule = () => {
   const modalRef = useRef();
-  const { database } = useStore();
+  const { database } = globalStore();
   const { poisItemDetailInfo } = poisStore();
   const uid = localStorage.getItem("uid");
   const colRef = collection(database, "users", uid, "trips");
@@ -132,19 +132,18 @@ const AddToSchedule = () => {
   };
 
   useEffect(() => {
-    if (database) {
-      const unsubscribe = onSnapshot(colRef, (querySnapshot) => {
-        const currentTrips = [];
-        querySnapshot.forEach((doc) => {
-          currentTrips.push({ id: doc.id, data: doc.data() });
-        });
-        setTripsOption(currentTrips);
+    if (!database) return;
+    const unsubscribe = onSnapshot(colRef, (querySnapshot) => {
+      const currentTrips = [];
+      querySnapshot.forEach((doc) => {
+        currentTrips.push({ id: doc.id, data: doc.data() });
       });
+      setTripsOption(currentTrips);
+    });
 
-      return () => {
-        unsubscribe();
-      };
-    }
+    return () => {
+      unsubscribe();
+    };
   }, [database]);
 
   useEffect(() => {

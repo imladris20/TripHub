@@ -2,13 +2,13 @@ import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import { collection, onSnapshot, query } from "firebase/firestore";
 import { find } from "lodash";
 import { useEffect, useRef } from "react";
-import useStore, { poisStore } from "../../store/store";
+import globalStore, { poisStore } from "../../store/store";
 import BookMark from "./BookMark";
 import CategoryFilter from "./CategoryFilter";
 import CityFilter from "./CityFilter";
 
 const List = () => {
-  const { database, typeOptions } = useStore();
+  const { database, typeOptions } = globalStore();
   const {
     setCurrentZoom,
     setCurrentCenter,
@@ -25,23 +25,22 @@ const List = () => {
   const poisColRef = collection(database, "users", uid, "pointOfInterests");
 
   useEffect(() => {
-    if (database) {
-      const q = query(poisColRef);
+    if (!database) return;
+    const q = query(poisColRef);
 
-      const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        const newArr = [];
-        querySnapshot.forEach((doc) => {
-          if (!doc.data()?.archived) {
-            newArr.push({ id: doc.id, data: doc.data() });
-          }
-        });
-        setCurrentPois(newArr);
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const newArr = [];
+      querySnapshot.forEach((doc) => {
+        if (!doc.data()?.archived) {
+          newArr.push({ id: doc.id, data: doc.data() });
+        }
       });
+      setCurrentPois(newArr);
+    });
 
-      return () => {
-        unsubscribe();
-      };
-    }
+    return () => {
+      unsubscribe();
+    };
   }, [database]);
 
   useEffect(() => {

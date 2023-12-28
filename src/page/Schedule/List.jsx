@@ -1,7 +1,7 @@
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import React, { useEffect, useRef } from "react";
-import useStore, { scheduleStore } from "../../store/store";
+import globalStore, { scheduleStore } from "../../store/store";
 import DayBlock from "./DayBlock";
 
 const List = () => {
@@ -13,7 +13,7 @@ const List = () => {
     currentLoadingTripData,
     setCurrentLoadingTripData,
   } = scheduleStore();
-  const { database } = useStore();
+  const { database } = globalStore();
 
   const uid = localStorage.getItem("uid");
 
@@ -25,18 +25,18 @@ const List = () => {
 
   //  listener of loading newest data of selected trip
   useEffect(() => {
-    if (database && currentLoadingTripId) {
-      const unsubscribe = onSnapshot(
-        doc(database, "users", uid, "trips", currentLoadingTripId),
-        (doc) => {
-          setCurrentLoadingTripData(doc.data());
-          setCurrentTripDuration(doc.data()?.dayCount || 0);
-        },
-      );
-      return () => {
-        unsubscribe();
-      };
-    }
+    if (!database || !currentLoadingTripId) return;
+
+    const unsubscribe = onSnapshot(
+      doc(database, "users", uid, "trips", currentLoadingTripId),
+      (doc) => {
+        setCurrentLoadingTripData(doc.data());
+        setCurrentTripDuration(doc.data()?.dayCount || 0);
+      },
+    );
+    return () => {
+      unsubscribe();
+    };
   }, [database, currentLoadingTripId]);
 
   //  Add markers of attractions in trip on map
@@ -80,7 +80,6 @@ const List = () => {
             text: `${daySequence !== 0 ? `D${daySequence}` : "-"}`,
             color: "white",
           },
-          // label: `${daySequence !== 0 ? `D${daySequence}` : "-"}`,
         });
         const windowContent = `
           <div class='flex flex-col h-auto w-auto gap-1 justify-start items-start'>

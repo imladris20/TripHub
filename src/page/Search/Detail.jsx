@@ -5,7 +5,7 @@ import { useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { useMutation } from "react-query";
 import PlaceHolderPhoto from "../../assets/pois_photo_placeholder.png";
-import useStore from "../../store/store";
+import globalStore from "../../store/store";
 import { CloseIcon, PlusIcon } from "../../utils/icons";
 
 const Detail = () => {
@@ -16,7 +16,7 @@ const Detail = () => {
     database,
     prepareColor,
     setTypeOptions,
-  } = useStore();
+  } = globalStore();
   const uid = localStorage.getItem("uid");
   const [categoryTags, setCategoryTags] = useState([]);
   const [newCategoryToAdd, setNewCategoryToAdd] = useState("");
@@ -189,10 +189,7 @@ const Detail = () => {
   };
 
   return (
-    <div
-      // onClick={() => console.log(categoryTags)}
-      className="absolute left-[21%] top-8 z-[999] flex h-[calc(100%-32px)] w-1/4 flex-col items-start gap-3 rounded-lg border-b-2 border-solid border-gray-200 bg-white p-3 shadow-2xl 2xl:w-1/5"
-    >
+    <div className="absolute left-[21%] top-8 z-[999] flex h-[calc(100%-32px)] w-1/4 flex-col items-start gap-3 rounded-lg border-b-2 border-solid border-gray-200 bg-white p-3 shadow-2xl 2xl:w-1/5">
       <Toaster />
       <div className="flex w-[88%] flex-row items-center justify-start gap-2">
         <div className="flex h-4 w-4 flex-shrink-0 flex-row items-center justify-center rounded-full border border-dotted border-red-500 p-0 ">

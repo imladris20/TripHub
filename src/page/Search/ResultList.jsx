@@ -1,7 +1,7 @@
 import { useMap } from "@vis.gl/react-google-maps";
 import { collection, doc, getDoc, onSnapshot, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import useStore from "../../store/store";
+import globalStore from "../../store/store";
 import { AlreadyAddedPoisIcon } from "../../utils/icons";
 
 const ResultList = () => {
@@ -11,7 +11,7 @@ const ResultList = () => {
     setSearchItemDetailInfo,
     setCurrentCenter,
     setCurrentZoom,
-  } = useStore();
+  } = globalStore();
   const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   let labelIndex = 0;
   const uid = localStorage.getItem("uid");

@@ -1,4 +1,3 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import {
   createUserWithEmailAndPassword,
@@ -7,12 +6,10 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
-import { doc, getFirestore, setDoc } from "firebase/firestore";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
+import globalStore from "../store/store";
+import { getUidFromLocal } from "./util";
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyC_7TzcS2_S3GHkAWE5b_A3f8hhEw3qJ3g",
   authDomain: "triphub-d397b.firebaseapp.com",
@@ -45,7 +42,7 @@ export const nativeSignUp = async (name, email, password) => {
     );
     const user = userCredential.user;
 
-    const updata = await updateProfile(user, {
+    const update = await updateProfile(user, {
       displayName: name,
     });
 
@@ -86,4 +83,23 @@ export const setDocNewUser = async (name, email, uid, db) => {
   };
 
   setDoc(doc(db, "users", uid), docData, { merge: true });
+};
+
+export const db = {
+  getDoc: async (pathType) => {
+    const { uid, database } = globalStore.getState();
+    const pathOption = {
+      userInfo: ["users", uid || getUidFromLocal()],
+    };
+
+    // const [path, ...rest] = pathOption[pathType]
+
+    const docRef = doc(database, ...pathOption[pathType]);
+
+    const result = await getDoc(docRef);
+
+    console.log(result.data());
+
+    return result.data();
+  },
 };

@@ -1,13 +1,13 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import PlaceHolderPhoto from "../../assets/pois_photo_placeholder.png";
-import useStore, { scheduleStore } from "../../store/store";
+import globalStore, { scheduleStore } from "../../store/store";
 import { CloseIcon } from "../../utils/icons";
 import RemoveFromScheduleBtn from "./RemoveFromScheduleBtn";
 
 const Detail = () => {
   const { attractionItemDetail, setAttractionItemDetail } = scheduleStore();
-  const { apiKey } = useStore();
+  const { apiKey } = globalStore();
 
   const {
     address,
