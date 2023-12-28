@@ -58,7 +58,7 @@ export const nativeSignUp = async ({ name, email, password }) => {
   }
 };
 
-export const nativeSignIn = async (email, password) => {
+export const nativeSignIn = async ({ email, password }) => {
   const auth = getAuth();
 
   try {
