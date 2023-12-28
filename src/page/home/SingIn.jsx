@@ -8,12 +8,10 @@ const SignIn = ({ inputRef }) => {
   const [insertPassword, setInsertPassword] = useState("");
   const { setUsername } = globalStore();
 
-  const mutation = useMutation((data) =>
-    nativeSignIn(data.email, data.password),
-  );
+  const signInMutation = useMutation(nativeSignIn);
 
   const handleSignInClicked = async () => {
-    const user = await mutation.mutateAsync({
+    const user = await signInMutation.mutateAsync({
       email: insertEmail,
       password: insertPassword,
     });
@@ -30,7 +28,7 @@ const SignIn = ({ inputRef }) => {
         <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white md:text-2xl">
           歡迎回來！
         </h1>
-        {mutation.isError && (
+        {signInMutation.isError && (
           <h4 className="text-xs text-rose-900">帳號密碼似乎有錯喔</h4>
         )}
         <div className="form-control mt-10">
@@ -44,7 +42,7 @@ const SignIn = ({ inputRef }) => {
             className="input input-bordered"
             onChange={(e) => {
               setInsertEmail(e.target.value);
-              mutation.reset();
+              signInMutation.reset();
             }}
             required
           />
@@ -60,7 +58,7 @@ const SignIn = ({ inputRef }) => {
             value={insertPassword}
             onChange={(e) => {
               setInsertPassword(e.target.value);
-              mutation.reset();
+              signInMutation.reset();
             }}
             required
           />
@@ -69,12 +67,12 @@ const SignIn = ({ inputRef }) => {
           <button
             onClick={() => handleSignInClicked(insertEmail, insertPassword)}
             className={`btn w-full ${
-              mutation.isLoading ? "bg-red-200" : "bg-green-200"
+              signInMutation.isLoading ? "bg-red-200" : "bg-green-200"
             }`}
-            disabled={mutation.isLoading}
+            disabled={signInMutation.isLoading}
           >
             <h3 className="text-sm font-bold ">
-              {mutation.isLoading ? "登入中..." : "送出"}
+              {signInMutation.isLoading ? "登入中..." : "送出"}
             </h3>
           </button>
           <label className="label">
