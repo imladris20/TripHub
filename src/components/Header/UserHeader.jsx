@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import ScheduleHeader from "../../page/Schedule/Header";
 import globalStore, { scheduleStore } from "../../store/store";
 import LPButton from "../Button";
@@ -16,6 +16,7 @@ const UserHeader = ({ activePageTag, setActivePageTag }) => {
   const tripModalRef = useRef();
   const { currentLoadingTripData } = scheduleStore();
   const { username } = globalStore();
+  const path = useLocation().pathname;
 
   const renderButtonLinks = () => {
     return pageButtons.map(({ to, text, pageTag }) => (
@@ -35,7 +36,7 @@ const UserHeader = ({ activePageTag, setActivePageTag }) => {
   return (
     <>
       {renderButtonLinks()}
-      {location.pathname === "/schedule" && (
+      {path === "/schedule" && (
         <>
           <TripSelectModal ref={tripModalRef} />
           {currentLoadingTripData && <ScheduleHeader ref={tripModalRef} />}
