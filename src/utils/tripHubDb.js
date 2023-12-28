@@ -6,7 +6,13 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
-import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getFirestore,
+  setDoc,
+} from "firebase/firestore";
 import globalStore from "../store/store";
 import { getUidFromLocal } from "./util";
 
@@ -31,7 +37,7 @@ export const initFirebase = () => {
 
 //  Authentication
 
-export const nativeSignUp = async (name, email, password) => {
+export const nativeSignUp = async ({ name, email, password }) => {
   const auth = getAuth();
 
   try {
@@ -76,30 +82,37 @@ export const nativeSignOut = async () => {
 
 //  FireStore
 
-export const setDocNewUser = async (name, email, uid, db) => {
-  const docData = {
-    name,
-    email,
-  };
-
-  setDoc(doc(db, "users", uid), docData, { merge: true });
-};
-
 export const db = {
   getDoc: async (pathType) => {
     const { uid, database } = globalStore.getState();
     const pathOption = {
-      userInfo: ["users", uid || getUidFromLocal()],
+      userInfo: [database, "users", uid || getUidFromLocal()],
     };
 
-    // const [path, ...rest] = pathOption[pathType]
-
-    const docRef = doc(database, ...pathOption[pathType]);
+    const docRef = doc(...pathOption[pathType]);
 
     const result = await getDoc(docRef);
 
-    console.log(result.data());
-
     return result.data();
+  },
+  setNewDoc: async (pathType, newDocData) => {
+    const { uid, database } = globalStore.getState();
+    const pathOptions = {
+      trips: [database, "users", uid, "trips"],
+    };
+    const colRef = collection(...pathOptions[pathType]);
+    const docRef = doc(colRef);
+
+    await setDoc(docRef, newDocData);
+
+    return docRef.id;
+  },
+  setNewDocByAssignedId: async (pathType, id, newDocData) => {
+    const { uid, database } = globalStore.getState();
+    const pathOptions = {
+      newUser: [database, "users", id],
+    };
+    const docRef = doc(...pathOptions[pathType]);
+    await setDoc(docRef, newDocData, { merge: true });
   },
 };

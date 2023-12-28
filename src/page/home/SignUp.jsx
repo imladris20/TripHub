@@ -1,32 +1,16 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
-import * as yup from "yup";
 import globalStore from "../../store/store";
-import { nativeSignUp, setDocNewUser } from "../../utils/tripHubDb";
+import { db, nativeSignUp } from "../../utils/tripHubDb";
+import { signUpValidation } from "../../utils/yupValidations";
 
 const SignUp = ({ inputRef }) => {
-  const { database, setUsername } = globalStore();
+  const { setUsername } = globalStore();
 
-  const signUpMutation = useMutation(({ name, email, password }) =>
-    nativeSignUp(name, email, password),
-  );
-
-  const setDocMutation = useMutation(({ name, email, uid, db }) => {
-    setDocNewUser(name, email, uid, db);
-  });
-
-  const validation = yup.object({
-    fullName: yup
-      .string()
-      .max(5, "姓名最多僅可輸入5個字")
-      .required("欄位不得為空"),
-    email: yup.string().email("email 格式有誤").required("欄位不得為空"),
-    password: yup
-      .string()
-      .min(8, "密碼不得少於8個字")
-      .test("no-spaces", "密碼不得包含空格", (value) => !/\s/.test(value))
-      .required("欄位不得為空"),
+  const signUpMutation = useMutation(nativeSignUp);
+  const setDocMutation = useMutation(({ name, uid, email }) => {
+    db.setNewDocByAssignedId("newUser", uid, { name, email });
   });
 
   const handleSignUpClicked = async (values) => {
@@ -40,7 +24,6 @@ const SignUp = ({ inputRef }) => {
       name: fullName,
       email,
       uid: user.uid,
-      db: database,
     });
 
     localStorage.setItem("uid", user.uid);
@@ -54,7 +37,7 @@ const SignUp = ({ inputRef }) => {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(validation),
+    resolver: yupResolver(signUpValidation),
   });
 
   return (
