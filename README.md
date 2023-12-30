@@ -61,14 +61,12 @@
 
 ### Illustrated Version 👇
 
-1. Search attraction
-   <img src="https://imgur.com/GXI1PBJ.gif"/>
+1. [Search attraction](https://imgur.com/GXI1PBJ.gif)
 
 2. Add attraction into point of interests (POIs) list
    <img src="https://imgur.com/CPOgO1F.gif"/>
 
-3. Check itmes in POIs
-   <img src="https://imgur.com/hTICwOx.gif"/>
+3. [Check itmes in POIs](https://imgur.com/hTICwOx.gif)
 
 4. Filter function in POIs
    <img src="https://imgur.com/1z3JvWw.gif"/>
@@ -76,8 +74,7 @@
 5. Add POIs item into schedule, setting customized memo and estimated expense
    <img src="https://imgur.com/gNLbSaB.gif"/>
 
-6. Initial new schedule, checking added POIs items and setting duration of trip
-   <img src="https://imgur.com/TPMv20S.gif"/>
+6. [Initial new schedule, checking added POIs items and setting duration of trip](https://imgur.com/TPMv20S.gif)
 
 7. Set order of attractions into schedule, which will automatically generate traffic routes and calculate times
    <img src="https://imgur.com/t4ChW8q.gif" />
@@ -85,11 +82,9 @@
 8. Adjust travel mode, regenerating routes and times automatically
    <img src="https://imgur.com/foDnZuM.gif" />
 
-9. Adjust duration in attration, calculating specific times in whole schedule
-   <img src="https://imgur.com/egDMxaL.gif" />
+9. [Adjust duration in attration, calculating specific times in whole schedule](https://imgur.com/egDMxaL.gif)
 
-10. Finish editting of trip schedule, checking shareable web page of overview of whole schedule
-    <img src="https://imgur.com/9iW4Eg9.gif" />
+10. [Finish editting of trip schedule, checking shareable web page of overview of whole schedule](https://imgur.com/9iW4Eg9.gif)
 
 ## Contact
 
