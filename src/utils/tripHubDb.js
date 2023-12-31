@@ -16,8 +16,10 @@ import {
 import globalStore from "../store/store";
 import { getUidFromLocal } from "./util";
 
+const fbApiKey = import.meta.env.VITE_FIREBASE_API_KEY;
+
 const firebaseConfig = {
-  apiKey: "AIzaSyC_7TzcS2_S3GHkAWE5b_A3f8hhEw3qJ3g",
+  apiKey: fbApiKey,
   authDomain: "triphub-d397b.firebaseapp.com",
   projectId: "triphub-d397b",
   storageBucket: "triphub-d397b.appspot.com",
