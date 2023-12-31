@@ -26,7 +26,8 @@
 <div>
   <img src="https://img.shields.io/badge/React-61DAFB.svg?style=for-the-badge&logo=React&logoColor=black" />
   <img src="https://img.shields.io/badge/Tailwind%20CSS-06B6D4.svg?style=for-the-badge&logo=Tailwind-CSS&logoColor=white" />
-  <img src="https://img.shields.io/badge/Firebase-FFCA28.svg?style=for-the-badge&logo=Firebase&logoColor=black" />
+  <img src="https://img.shields.io/badge/Firebase-lightgray.svg?style=for-the-badge&logo=Firebase&logoColor=FFCC29" />
+  <img src="https://img.shields.io/badge/Vite-FFDB33.svg?style=for-the-badge&logo=vite" />
   <img src="https://img.shields.io/badge/Google%20Maps-4285F4.svg?style=for-the-badge&logo=Google-Maps&logoColor=white">
   <img src="https://img.shields.io/badge/React%20Hook%20Form-EC5990.svg?style=for-the-badge&logo=React-Hook-Form&logoColor=white" />
   <img src="https://img.shields.io/badge/🐻 zustand-purple.svg?style=for-the-badge&logoColor=black" />
