@@ -1,23 +1,6 @@
 import { filter, sumBy } from "lodash";
-import { numberToChinese } from "../../utils/timeUtil";
+import { addDaysToDate, numberToChinese } from "../../utils/timeUtil";
 import TimeCard from "./TimeCard";
-
-const addDaysToDate = (dateString, days) => {
-  const newStr = new Date(dateString);
-  newStr.setDate(newStr.getDate() + days);
-
-  const year = newStr.getFullYear();
-  const month = String(newStr.getMonth() + 1).padStart(2, "0");
-  const date = String(newStr.getDate()).padStart(2, "0");
-
-  const dayOfWeekIndex = newStr.getDay();
-
-  const daysOfWeek = ["日", "一", "二", "三", "四", "五", "六"];
-
-  const day = daysOfWeek[dayOfWeekIndex];
-
-  return `${year}/${month}/${date} (${day})`;
-};
 
 const Day = ({ trip, daySequence }) => {
   const matchDayAttraction = filter(trip.attractions, {
@@ -25,15 +8,17 @@ const Day = ({ trip, daySequence }) => {
   });
   const sum = sumBy(matchDayAttraction, (item) => parseInt(item.expense) || 0);
 
+  const displayDaySequence = numberToChinese(daySequence + 1);
+  const correctDate = addDaysToDate(trip.startDate, daySequence);
+  const displayDateTitle = `第${displayDaySequence}天：${correctDate}`;
+
   return (
     <>
       <div className="divider-gray divider"></div>
       <div className="collapse collapse-arrow bg-base-200">
         <input type="checkbox" className="peer" defaultChecked={true} />
         <div className="collapse-title flex flex-row items-center gap-10 bg-primary text-white peer-checked:bg-secondary peer-checked:text-secondary-content">
-          <h1 className="text-xl font-bold">{`第${numberToChinese(
-            daySequence + 1,
-          )}天：${addDaysToDate(trip.startDate, daySequence)}`}</h1>
+          <h1 className="text-xl font-bold">{displayDateTitle}</h1>
           <h1 className="text-xl">當日預計總花費：{sum}元</h1>
         </div>
         <div className="collapse-content bg-primary text-primary-content peer-checked:bg-secondary peer-checked:text-secondary-content">

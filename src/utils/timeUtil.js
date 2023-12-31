@@ -1,3 +1,5 @@
+import { addDays, format, getDay } from "date-fns";
+
 export function addDurationToTime(startTime, duration) {
   const startTimeParts = startTime.split(":");
   const startHours = parseInt(startTimeParts[0], 10);
@@ -69,4 +71,18 @@ export const numberToChinese = (num) => {
       chineseNumbers[num % 10]
     }`;
   }
+};
+
+export const addDaysToDate = (dateString, days) => {
+  let newDateString = format(addDays(dateString, days), "yyyy/MM/dd");
+
+  const dayOfWeekIndex = getDay(newDateString);
+
+  const daysOfWeek = ["日", "一", "二", "三", "四", "五", "六"];
+
+  const day = daysOfWeek[dayOfWeekIndex];
+
+  newDateString = newDateString + ` (${day})`;
+
+  return newDateString;
 };
