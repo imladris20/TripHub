@@ -15,9 +15,10 @@ const TripSelectModal = forwardRef((_, ref) => {
   const { database, uid } = globalStore();
 
   const handleTripSelected = (e) => {
-    setSelectedTrip(e.target.value);
+    const selectedTrip = e.target.value;
+    setSelectedTrip(selectedTrip);
     const correctOption = tripsOption.find(
-      (option) => option.data.name === e.target.value,
+      (option) => option.data.name === selectedTrip,
     );
     if (correctOption) {
       setTripIdToLoad(correctOption.id);
@@ -33,9 +34,9 @@ const TripSelectModal = forwardRef((_, ref) => {
   };
 
   const handleNewTripInput = (e) => {
-    const value = e.target.value;
-    setNewTripToAdd(value);
-    checkOverflow(value);
+    const newTripName = e.target.value;
+    setNewTripToAdd(newTripName);
+    checkOverflow(newTripName);
   };
 
   const handleAddNewBlankTrip = async () => {
