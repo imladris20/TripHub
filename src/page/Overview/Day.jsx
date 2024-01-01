@@ -3,10 +3,10 @@ import { addDaysToDate, numberToChinese } from "../../utils/timeUtil";
 import TimeCard from "./TimeCard";
 
 const Day = ({ trip, daySequence }) => {
-  const matchDayAttraction = filter(trip.attractions, {
+  const matchDayAttractions = filter(trip.attractions, {
     daySequence: daySequence + 1,
   });
-  const sum = sumBy(matchDayAttraction, (item) => parseInt(item.expense) || 0);
+  const sum = sumBy(matchDayAttractions, (item) => parseInt(item.expense) || 0);
 
   const daySequenceForDisplay = numberToChinese(daySequence + 1);
   const correctDate = addDaysToDate(trip.startDate, daySequence);
@@ -23,7 +23,7 @@ const Day = ({ trip, daySequence }) => {
         </div>
         <div className="collapse-content bg-primary text-primary-content peer-checked:bg-secondary peer-checked:text-secondary-content">
           <ul className="timeline timeline-vertical timeline-snap-icon max-md:timeline-compact">
-            {matchDayAttraction.map((item, index, arr) => {
+            {matchDayAttractions.map((item, index, arr) => {
               if (item.inDayOrder !== 0) {
                 return (
                   <TimeCard

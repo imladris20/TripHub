@@ -73,16 +73,20 @@ export const numberToChinese = (num) => {
   }
 };
 
-export const addDaysToDate = (dateString, days) => {
-  let newDateString = format(addDays(dateString, days), "yyyy/MM/dd");
+export const formatToTaiwanDate = (dateString) => {
+  let newDateString = format(dateString, "yyyy/MM/dd");
 
   const dayOfWeekIndex = getDay(newDateString);
-
   const daysOfWeek = ["日", "一", "二", "三", "四", "五", "六"];
-
   const day = daysOfWeek[dayOfWeekIndex];
 
   newDateString = newDateString + ` (${day})`;
 
+  return newDateString;
+};
+
+export const addDaysToDate = (dateString, days) => {
+  let newDateString = addDays(dateString, days);
+  newDateString = formatToTaiwanDate(newDateString);
   return newDateString;
 };
