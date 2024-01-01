@@ -8,12 +8,16 @@ import AttractionRow from "./AttractionRow";
 const DayBlock = ({ daySequenceIndex }) => {
   const { currentTripDuration, currentLoadingTripData } = scheduleStore();
 
+  const startTimeSettings = currentLoadingTripData?.startTime;
+  const startTimeIndex = daySequenceIndex - 1;
+  const startTimeOfCorrespondingDay = startTimeSettings[startTimeIndex]?.value;
+
+  const startDate = currentLoadingTripData?.startDate;
+
   const dayBlockRef = useRef();
 
   const [startTime, setStartTime] = useState(
-    currentLoadingTripData.startTime
-      ? currentLoadingTripData?.startTime[daySequenceIndex - 1]?.value
-      : "09:00",
+    startTimeSettings ? startTimeOfCorrespondingDay : "09:00",
   );
 
   const handleStartTimeInput = (e) => {
@@ -21,9 +25,11 @@ const DayBlock = ({ daySequenceIndex }) => {
   };
 
   const handleConfirmStartTime = async (daySequenceIndex) => {
-    const newStartTime = cloneDeep(currentLoadingTripData.startTime);
-    newStartTime[daySequenceIndex - 1].value = startTime;
-    newStartTime[daySequenceIndex - 1].haveSetted = true;
+    const startTimeIndex = daySequenceIndex - 1;
+
+    const newStartTime = cloneDeep(startTimeSettings);
+    newStartTime[startTimeIndex].value = startTime;
+    newStartTime[startTimeIndex].haveSetted = true;
 
     const newDocData = { startTime: newStartTime };
 
@@ -36,10 +42,11 @@ const DayBlock = ({ daySequenceIndex }) => {
     const arr = attractions.map((attraction) => {
       const { daySequence } = attraction;
 
-      if (
-        (daySequence > duration && daySequenceIndex === 0) ||
-        daySequence === daySequenceIndex
-      ) {
+      const isUndistributed = daySequence > duration && daySequenceIndex === 0;
+      const correctlyDistributed = daySequence === daySequenceIndex;
+      const shouldNotAppear = daySequence !== daySequenceIndex;
+
+      if (isUndistributed || correctlyDistributed) {
         return (
           <AttractionRow
             key={attraction.poisId}
@@ -50,19 +57,15 @@ const DayBlock = ({ daySequenceIndex }) => {
         );
       }
 
-      if (daySequence !== daySequenceIndex) {
-        return;
-      }
+      if (shouldNotAppear) return;
     });
 
     return arr;
   };
 
   useEffect(() => {
-    if (currentLoadingTripData.startTime) {
-      setStartTime(
-        currentLoadingTripData?.startTime[daySequenceIndex - 1]?.value,
-      );
+    if (startTimeSettings) {
+      setStartTime(startTimeOfCorrespondingDay);
     }
   }, [currentLoadingTripData]);
 
@@ -84,12 +87,7 @@ const DayBlock = ({ daySequenceIndex }) => {
             onClick={() => dayBlockRef.current.showModal()}
           >
             第{daySequenceIndex}天 (
-            {currentLoadingTripData?.startDate &&
-              format(
-                addDays(currentLoadingTripData.startDate, daySequenceIndex - 1),
-                "MM/dd",
-              )}
-            )
+            {startDate && format(addDays(startDate, startTimeIndex), "MM/dd")})
           </h1>
         )}
         {}
