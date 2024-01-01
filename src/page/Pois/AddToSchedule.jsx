@@ -1,6 +1,5 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
-  addDoc,
   arrayUnion,
   collection,
   doc,
@@ -8,51 +7,29 @@ import {
   onSnapshot,
   updateDoc,
 } from "firebase/firestore";
-import { find } from "lodash";
 import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import toast, { Toaster } from "react-hot-toast";
-import * as yup from "yup";
+import { Toaster } from "react-hot-toast";
+import useNewTripLogic from "../../hooks/useNewTripLogic";
 import globalStore, { poisStore } from "../../store/store";
 import { PlusIcon } from "../../utils/icons";
+import { addToScheduleValidation } from "../../utils/yupValidations";
 
 const AddToSchedule = () => {
   const modalRef = useRef();
-  const { database } = globalStore();
+  const { database, tripsOption, setTripsOption } = globalStore();
   const { poisItemDetailInfo } = poisStore();
   const uid = localStorage.getItem("uid");
   const colRef = collection(database, "users", uid, "trips");
 
-  const [tripsOption, setTripsOption] = useState([]);
   const [isPoisInSelectedTrip, setIsPoisInSelectedTrip] = useState(false);
 
-  const [newTripToAdd, setNewTripToAdd] = useState("");
-  const [newTripError, setNewTripError] = useState("");
-
-  const getDisplayLength = (str) => {
-    let length = 0;
-    for (let i = 0; i < str.length; i++) {
-      const charUnicode = str.charCodeAt(i);
-
-      if (charUnicode >= 0x4e00 && charUnicode <= 0x9fff) {
-        length += 2;
-      } else {
-        length += 1;
-      }
-    }
-    return length;
-  };
-
-  const validation = yup.object({
-    expense: yup
-      .number()
-      .integer("僅能輸入整數")
-      .typeError("請輸入有效數字")
-      .min(0, "金額不可小於零")
-      .max(9999, "金額不可超過9999元"),
-    note: yup.string().max(150, "備註最多150字唷"),
-    selectedTrip: yup.string().notOneOf(["disabled", "請選擇行程"]),
-  });
+  const {
+    newTripToAdd,
+    newTripError,
+    handleNewTripInput,
+    handleAddNewBlankTrip,
+  } = useNewTripLogic();
 
   const {
     register,
@@ -62,45 +39,10 @@ const AddToSchedule = () => {
     formState: { errors },
     reset,
     setValue,
-  } = useForm({ resolver: yupResolver(validation) });
+  } = useForm({ resolver: yupResolver(addToScheduleValidation) });
 
-  const handleNewTripInput = (e) => {
-    const value = e.target.value;
-    setNewTripToAdd(value);
-    if (getDisplayLength(value) > 30) {
-      setNewTripError("行程名稱最多15個字唷");
-    } else {
-      setNewTripError("");
-    }
-  };
-
-  const handleAddNewBlankTrip = async () => {
-    if (newTripToAdd.trim().length === 0) {
-      setNewTripError("請填寫行程名稱");
-      return;
-    } else if (getDisplayLength(newTripToAdd) > 30) {
-      setNewTripError("行程名稱最多15個字唷");
-      return;
-    } else {
-      setNewTripError("");
-    }
-
-    if (find(tripsOption, (trip) => trip.data.name === newTripToAdd.trim())) {
-      toast.error("此行程名稱已存在", {
-        duration: 2000,
-        className: "bg-slate-100 z-[999]",
-        icon: "😅",
-      });
-      return;
-    }
-
-    await addDoc(colRef, {
-      name: newTripToAdd,
-    });
-
+  const setSelectedTrip = (newTripToAdd) => {
     setValue("selectedTrip", newTripToAdd);
-
-    setNewTripToAdd("");
   };
 
   const findIdByName = (inputName, dataArray) => {
@@ -266,7 +208,7 @@ const AddToSchedule = () => {
               <button
                 type="button"
                 className="btn btn-circle btn-xs h-4 min-h-0 w-4 border-green-500 bg-white p-0"
-                onClick={handleAddNewBlankTrip}
+                onClick={() => handleAddNewBlankTrip(setSelectedTrip)}
                 disabled={!newTripToAdd}
               >
                 <svg
