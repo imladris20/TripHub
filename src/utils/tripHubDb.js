@@ -8,9 +8,12 @@ import {
 } from "firebase/auth";
 import {
   collection,
+  collectionGroup,
   doc,
   getDoc,
+  getDocs,
   getFirestore,
+  query,
   setDoc,
 } from "firebase/firestore";
 import globalStore, { scheduleStore } from "../store/store";
@@ -131,5 +134,14 @@ export const db = {
     };
     const docRef = doc(...pathOptions[pathType]);
     await setDoc(docRef, newDocData, { merge: true });
+  },
+  getDocsAccrossCollections: async (pathType) => {
+    const { database } = globalStore.getState();
+    const pathOptions = {
+      allTrips: [database, "trips"],
+    };
+    const colRef = query(collectionGroup(...pathOptions[pathType]));
+    const querySnapshot = await getDocs(colRef);
+    return querySnapshot;
   },
 };
