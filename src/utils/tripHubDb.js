@@ -13,7 +13,7 @@ import {
   getFirestore,
   setDoc,
 } from "firebase/firestore";
-import globalStore from "../store/store";
+import globalStore, { scheduleStore } from "../store/store";
 import { getUidFromLocal } from "./util";
 
 const fbApiKey = import.meta.env.VITE_FIREBASE_API_KEY;
@@ -110,9 +110,24 @@ export const db = {
     return docRef.id;
   },
   setNewDocByAssignedId: async (pathType, id, newDocData) => {
-    const { uid, database } = globalStore.getState();
+    const { database } = globalStore.getState();
     const pathOptions = {
       newUser: [database, "users", id],
+    };
+    const docRef = doc(...pathOptions[pathType]);
+    await setDoc(docRef, newDocData, { merge: true });
+  },
+  updateDoc: async (pathType, newDocData) => {
+    const { database, uid } = globalStore.getState();
+    const { currentLoadingTripId } = scheduleStore.getState();
+    const pathOptions = {
+      startTimeOfCurrentTrip: [
+        database,
+        "users",
+        uid,
+        "trips",
+        currentLoadingTripId,
+      ],
     };
     const docRef = doc(...pathOptions[pathType]);
     await setDoc(docRef, newDocData, { merge: true });

@@ -1,15 +1,12 @@
 import { addDays, format } from "date-fns";
-import { doc, updateDoc } from "firebase/firestore";
 import { cloneDeep } from "lodash";
 import { useEffect, useRef, useState } from "react";
-import globalStore, { scheduleStore } from "../../store/store";
+import { scheduleStore } from "../../store/store";
+import { db } from "../../utils/tripHubDb";
 import AttractionRow from "./AttractionRow";
 
 const DayBlock = ({ daySequenceIndex }) => {
-  const { currentTripDuration, currentLoadingTripData, currentLoadingTripId } =
-    scheduleStore();
-  const { database } = globalStore();
-  const uid = localStorage.getItem("uid");
+  const { currentTripDuration, currentLoadingTripData } = scheduleStore();
 
   const dayBlockRef = useRef();
 
@@ -24,17 +21,19 @@ const DayBlock = ({ daySequenceIndex }) => {
   };
 
   const handleConfirmStartTime = async (daySequenceIndex) => {
-    const docRef = doc(database, "users", uid, "trips", currentLoadingTripId);
     const newStartTime = cloneDeep(currentLoadingTripData.startTime);
     newStartTime[daySequenceIndex - 1].value = startTime;
     newStartTime[daySequenceIndex - 1].haveSetted = true;
-    await updateDoc(docRef, { startTime: newStartTime });
+
+    const newDocData = { startTime: newStartTime };
+
+    await db.updateDoc("startTimeOfCurrentTrip", newDocData);
   };
 
   const generateAttractions = (daySequenceIndex, duration) => {
     let attractions = currentLoadingTripData?.attractions;
 
-    const arr = attractions.map((attraction, attractionIndex) => {
+    const arr = attractions.map((attraction) => {
       const { daySequence } = attraction;
 
       if (
