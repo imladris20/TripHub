@@ -10,7 +10,8 @@ const DayBlock = ({ daySequenceIndex }) => {
 
   const startTimeSettings = currentLoadingTripData?.startTime;
   const startTimeIndex = daySequenceIndex - 1;
-  const startTimeOfCorrespondingDay = startTimeSettings[startTimeIndex]?.value;
+  const startTimeOfCorrespondingDay =
+    startTimeSettings?.[startTimeIndex]?.value;
 
   const startDate = currentLoadingTripData?.startDate;
 
