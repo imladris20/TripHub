@@ -1,18 +1,22 @@
 import { collection, onSnapshot } from "firebase/firestore";
 import { forwardRef, useEffect, useState } from "react";
+import useNewTripLogic from "../../hooks/useNewTripLogic";
 import globalStore, { scheduleStore } from "../../store/store";
 import { PlusIcon } from "../../utils/icons";
-import { db } from "../../utils/tripHubDb";
-import { getDisplayLength } from "../../utils/util";
 
 const TripSelectModal = forwardRef((_, ref) => {
   const [selectedTrip, setSelectedTrip] = useState("disabled");
   const [tripsOption, setTripsOption] = useState([]);
   const [tripIdToLoad, setTripIdToLoad] = useState("");
-  const [newTripToAdd, setNewTripToAdd] = useState("");
-  const [newTripError, setNewTripError] = useState("");
   const { setCurrentLoadingTripId } = scheduleStore();
   const { database, uid } = globalStore();
+
+  const {
+    newTripToAdd,
+    newTripError,
+    handleNewTripInput,
+    handleAddNewBlankTrip,
+  } = useNewTripLogic();
 
   const handleTripSelected = (e) => {
     const selectedTrip = e.target.value;
@@ -23,34 +27,6 @@ const TripSelectModal = forwardRef((_, ref) => {
     if (correctOption) {
       setTripIdToLoad(correctOption.id);
     }
-  };
-
-  const checkOverflow = (str) => {
-    if (getDisplayLength(str) > 30) {
-      setNewTripError("行程名稱最多15個字唷");
-      return true;
-    }
-    setNewTripError("");
-  };
-
-  const handleNewTripInput = (e) => {
-    const newTripName = e.target.value;
-    setNewTripToAdd(newTripName);
-    checkOverflow(newTripName);
-  };
-
-  const handleAddNewBlankTrip = async () => {
-    if (newTripToAdd.trim() === "") {
-      setNewTripError("請填寫行程名稱");
-      return;
-    }
-
-    if (checkOverflow(newTripToAdd)) return;
-
-    const newdocId = await db.setNewDoc("trips", { name: newTripToAdd });
-    setSelectedTrip(newTripToAdd);
-    setTripIdToLoad(newdocId);
-    setNewTripToAdd("");
   };
 
   //  open modal first while page loaded
@@ -117,7 +93,9 @@ const TripSelectModal = forwardRef((_, ref) => {
           />
           <button
             className="btn btn-circle btn-xs h-4 min-h-0 w-4 border-green-500 bg-white p-0"
-            onClick={handleAddNewBlankTrip}
+            onClick={() =>
+              handleAddNewBlankTrip(setSelectedTrip, setTripIdToLoad)
+            }
             disabled={!newTripToAdd}
           >
             <svg
