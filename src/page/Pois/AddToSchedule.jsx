@@ -1,26 +1,18 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import {
-  arrayUnion,
-  collection,
-  doc,
-  getDoc,
-  onSnapshot,
-  updateDoc,
-} from "firebase/firestore";
+import { arrayUnion, collection, onSnapshot } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Toaster } from "react-hot-toast";
 import useNewTripLogic from "../../hooks/useNewTripLogic";
 import globalStore, { poisStore } from "../../store/store";
 import { PlusIcon } from "../../utils/icons";
+import { db } from "../../utils/tripHubDb";
 import { addToScheduleValidation } from "../../utils/yupValidations";
 
 const AddToSchedule = () => {
   const modalRef = useRef();
-  const { database, tripsOption, setTripsOption } = globalStore();
+  const { database, uid, tripsOption, setTripsOption } = globalStore();
   const { poisItemDetailInfo } = poisStore();
-  const uid = localStorage.getItem("uid");
-  const colRef = collection(database, "users", uid, "trips");
 
   const [isPoisInSelectedTrip, setIsPoisInSelectedTrip] = useState(false);
 
@@ -53,7 +45,6 @@ const AddToSchedule = () => {
   const handleAddPoisToTrip = async (values) => {
     const { selectedTrip, note, expense } = values;
     const docId = findIdByName(selectedTrip, tripsOption);
-    const docRef = doc(database, "users", uid, "trips", docId);
     const newData = {
       attractions: arrayUnion({
         note,
@@ -64,7 +55,7 @@ const AddToSchedule = () => {
         poisId: poisItemDetailInfo.id,
       }),
     };
-    await updateDoc(docRef, newData);
+    await db.updateDocWithParams("trips", newData, docId);
     reset({
       expense: 0,
       note: "",
@@ -75,6 +66,7 @@ const AddToSchedule = () => {
 
   useEffect(() => {
     if (!database) return;
+    const colRef = collection(database, "users", uid, "trips");
     const unsubscribe = onSnapshot(colRef, (querySnapshot) => {
       const currentTrips = [];
       querySnapshot.forEach((doc) => {
@@ -92,20 +84,21 @@ const AddToSchedule = () => {
     const selectedTrip = watch("selectedTrip");
     const compare = async () => {
       const docId = findIdByName(selectedTrip, tripsOption);
-      const docRef = doc(database, "users", uid, "trips", docId);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        const checkResult = docSnap.data()?.attractions?.some((attraction) => {
+      const docSnap = await db.getDocWithParams("trip", docId);
+      if (docSnap) {
+        const checkResult = docSnap?.attractions?.some((attraction) => {
           return attraction.poisId === poisItemDetailInfo.id;
         });
         setIsPoisInSelectedTrip(checkResult);
       }
     };
-    if (
+
+    const shouldCompare =
       poisItemDetailInfo &&
       tripsOption.length !== 0 &&
-      selectedTrip !== "disabled"
-    ) {
+      selectedTrip !== "disabled";
+
+    if (shouldCompare) {
       compare();
     }
   }, [watch("selectedTrip")]);

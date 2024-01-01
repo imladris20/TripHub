@@ -15,6 +15,7 @@ import {
   getFirestore,
   query,
   setDoc,
+  updateDoc,
 } from "firebase/firestore";
 import globalStore, { overViewStore, scheduleStore } from "../store/store";
 import { getUidFromLocal } from "./util";
@@ -105,10 +106,10 @@ export const db = {
     const overviewUid = overViewStore.getState().uid;
     const pathOptions = {
       categories: [database, "users", overviewUid, "pointOfInterests", params],
+      trip: [database, "users", uid, "trips", params],
     };
     const docRef = doc(...pathOptions[pathType]);
     const result = await getDoc(docRef);
-    console.log(result.data());
     return result.data();
   },
   setNewDoc: async (pathType, newDocData) => {
@@ -145,6 +146,15 @@ export const db = {
     };
     const docRef = doc(...pathOptions[pathType]);
     await setDoc(docRef, newDocData, { merge: true });
+  },
+  updateDocWithParams: async (pathType, newDocData, params) => {
+    const { uid, database } = globalStore.getState();
+    const pathOptions = {
+      trips: [database, "users", uid, "trips", params],
+    };
+    const docRef = doc(...pathOptions[pathType]);
+    await updateDoc(docRef, newDocData);
+    return docRef.id;
   },
   getDocsAccrossCollections: async (pathType) => {
     const { database } = globalStore.getState();
