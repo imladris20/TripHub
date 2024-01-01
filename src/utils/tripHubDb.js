@@ -16,13 +16,13 @@ import {
   query,
   setDoc,
 } from "firebase/firestore";
-import globalStore, { scheduleStore } from "../store/store";
+import globalStore, { overViewStore, scheduleStore } from "../store/store";
 import { getUidFromLocal } from "./util";
 
-const fbApiKey = import.meta.env.VITE_FIREBASE_API_KEY;
+const firebaseApiKey = import.meta.env.VITE_FIREBASE_API_KEY;
 
 const firebaseConfig = {
-  apiKey: fbApiKey,
+  apiKey: firebaseApiKey,
   authDomain: "triphub-d397b.firebaseapp.com",
   projectId: "triphub-d397b",
   storageBucket: "triphub-d397b.appspot.com",
@@ -53,7 +53,7 @@ export const nativeSignUp = async ({ name, email, password }) => {
     );
     const user = userCredential.user;
 
-    const update = await updateProfile(user, {
+    await updateProfile(user, {
       displayName: name,
     });
 
@@ -90,14 +90,25 @@ export const nativeSignOut = async () => {
 export const db = {
   getDoc: async (pathType) => {
     const { uid, database } = globalStore.getState();
-    const pathOption = {
+    const pathOptions = {
       userInfo: [database, "users", uid || getUidFromLocal()],
     };
 
-    const docRef = doc(...pathOption[pathType]);
+    const docRef = doc(...pathOptions[pathType]);
 
     const result = await getDoc(docRef);
 
+    return result.data();
+  },
+  getDocWithParams: async (pathType, params) => {
+    const { uid, database } = globalStore.getState();
+    const overviewUid = overViewStore.getState().uid;
+    const pathOptions = {
+      categories: [database, "users", overviewUid, "pointOfInterests", params],
+    };
+    const docRef = doc(...pathOptions[pathType]);
+    const result = await getDoc(docRef);
+    console.log(result.data());
     return result.data();
   },
   setNewDoc: async (pathType, newDocData) => {
