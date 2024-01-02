@@ -140,6 +140,8 @@ export const db = {
   updateDoc: async (pathType, newDocData) => {
     const { database, uid } = globalStore.getState();
     const { currentLoadingTripId } = scheduleStore.getState();
+    const { poisItemDetailInfo } = poisStore.getState();
+
     const pathOptions = {
       startTimeOfCurrentTrip: [
         database,
@@ -147,6 +149,13 @@ export const db = {
         uid,
         "trips",
         currentLoadingTripId,
+      ],
+      removeFromPois: [
+        database,
+        "users",
+        uid,
+        "pointOfInterests",
+        poisItemDetailInfo.id,
       ],
     };
     const docRef = doc(...pathOptions[pathType]);
