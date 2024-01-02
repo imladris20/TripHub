@@ -218,4 +218,9 @@ export const db = {
     const q = query(collection(database, "users", uid, "pointOfInterests"));
     return q;
   },
+  tripsCollection: () => {
+    const { database, uid } = globalStore.getState();
+    const colRef = collection(database, "users", uid, "trips");
+    return colRef;
+  },
 };

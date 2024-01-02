@@ -1,22 +1,22 @@
-import { collection, onSnapshot } from "firebase/firestore";
+import { onSnapshot } from "firebase/firestore";
 import { find } from "lodash";
 import { useEffect, useState } from "react";
 import globalStore from "../../store/store";
 import { BookMarkIcon } from "../../utils/icons";
+import { db } from "../../utils/tripHubDb";
 
 const BookMark = ({ id }) => {
-  const { database } = globalStore();
-  const uid = localStorage.getItem("uid");
+  const { database, uid } = globalStore();
   const [count, setCount] = useState(0);
   const [alreadyIn, setAlreadyIn] = useState([]);
 
   useEffect(() => {
     if (!database) return;
-    const tripsColRef = collection(database, "users", uid, "trips");
+
     let count = 0;
     const containArr = [];
 
-    const unsubscribe = onSnapshot(tripsColRef, (snapshot) => {
+    const unsubscribe = onSnapshot(db.tripsCollection(), (snapshot) => {
       count = 0;
       snapshot.forEach((doc) => {
         if (find(doc.data().attractions, { poisId: id })) {

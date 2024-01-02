@@ -14,11 +14,9 @@ const Detail = () => {
     searchItemDetailInfo,
     setSearchItemDetailInfo,
     typeOptions,
-    database,
     prepareColor,
     setTypeOptions,
   } = globalStore();
-  const uid = localStorage.getItem("uid");
   const [categoryTags, setCategoryTags] = useState([]);
   const [newCategoryToAdd, setNewCategoryToAdd] = useState("");
 
