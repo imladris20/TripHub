@@ -1,23 +1,15 @@
-import { doc, updateDoc } from "firebase/firestore";
 import { useRef } from "react";
-import globalStore, { poisStore } from "../../store/store";
+import { poisStore } from "../../store/store";
+import { db } from "../../utils/tripHubDb";
 
 const RemoveFromPois = () => {
-  const { database } = globalStore();
   const { poisItemDetailInfo, setPoisItemDetailInfo } = poisStore();
-  const uid = localStorage.getItem("uid");
 
   const removeRef = useRef();
 
   const handleDeleteClick = async () => {
-    const docRef = doc(
-      database,
-      "users",
-      uid,
-      "pointOfInterests",
-      poisItemDetailInfo.id,
-    );
-    await updateDoc(docRef, { archived: true });
+    const newDocData = { archived: true };
+    await db.updateDoc("removeFromPois", newDocData);
     setPoisItemDetailInfo(null);
   };
 
