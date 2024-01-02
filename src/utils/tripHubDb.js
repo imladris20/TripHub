@@ -209,4 +209,9 @@ export const db = {
     const docRef = doc(...pathOptions[pathType]);
     await deleteDoc(docRef);
   },
+  poisCollection: () => {
+    const { database, uid } = globalStore.getState();
+    const q = query(collection(database, "users", uid, "pointOfInterests"));
+    return q;
+  },
 };
