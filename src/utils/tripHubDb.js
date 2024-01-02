@@ -142,11 +142,15 @@ export const db = {
     await setDoc(docRef, newDocData, { merge: true });
   },
   updateDoc: async (pathType, newDocData) => {
-    const { database, uid } = globalStore.getState();
+    const { database, uid, searchItemDetailInfo } = globalStore.getState();
     const { currentLoadingTripId } = scheduleStore.getState();
     const { poisItemDetailInfo } = poisStore.getState();
 
+    const { place_id } = searchItemDetailInfo?.data;
+
     const pathOptions = {
+      userInfo: [database, "users", uid],
+      addPois: [database, "users", uid, "pointOfInterests", place_id],
       currentTrip: [database, "users", uid, "trips", currentLoadingTripId],
       removeFromPois: [
         database,
