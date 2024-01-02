@@ -16,8 +16,13 @@ import {
   query,
   setDoc,
   updateDoc,
+  where,
 } from "firebase/firestore";
-import globalStore, { overViewStore, scheduleStore } from "../store/store";
+import globalStore, {
+  overViewStore,
+  poisStore,
+  scheduleStore,
+} from "../store/store";
 import { getUidFromLocal } from "./util";
 
 const firebaseApiKey = import.meta.env.VITE_FIREBASE_API_KEY;
@@ -163,6 +168,19 @@ export const db = {
     };
     const colRef = query(collectionGroup(...pathOptions[pathType]));
     const querySnapshot = await getDocs(colRef);
+    return querySnapshot;
+  },
+  getDocsByCityFiler: async () => {
+    const { selectedCity } = poisStore.getState();
+    const { database, uid } = globalStore.getState();
+    const poisColRef = collection(database, "users", uid, "pointOfInterests");
+    let q;
+    if (selectedCity === "顯示全部縣市" || selectedCity === "") {
+      q = query(poisColRef);
+    } else {
+      q = query(poisColRef, where("city", "==", selectedCity));
+    }
+    const querySnapshot = await getDocs(q);
     return querySnapshot;
   },
 };
