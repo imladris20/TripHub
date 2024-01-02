@@ -170,6 +170,15 @@ export const db = {
     const querySnapshot = await getDocs(colRef);
     return querySnapshot;
   },
+  getDocs: async (pathType) => {
+    const { database, uid } = globalStore.getState();
+    const pathOptions = {
+      trips: [database, "users", uid, "trips"],
+    };
+    const colRef = collection(...pathOptions[pathType]);
+    const querySnapshot = await getDocs(colRef);
+    return querySnapshot;
+  },
   getDocsByCityFiler: async () => {
     const { selectedCity } = poisStore.getState();
     const { database, uid } = globalStore.getState();
