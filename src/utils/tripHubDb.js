@@ -143,19 +143,13 @@ export const db = {
     const { poisItemDetailInfo } = poisStore.getState();
 
     const pathOptions = {
-      startTimeOfCurrentTrip: [
-        database,
-        "users",
-        uid,
-        "trips",
-        currentLoadingTripId,
-      ],
+      currentTrip: [database, "users", uid, "trips", currentLoadingTripId],
       removeFromPois: [
         database,
         "users",
         uid,
         "pointOfInterests",
-        poisItemDetailInfo.id,
+        poisItemDetailInfo?.id,
       ],
     };
     const docRef = doc(...pathOptions[pathType]);

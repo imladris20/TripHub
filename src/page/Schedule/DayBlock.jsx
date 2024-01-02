@@ -34,7 +34,7 @@ const DayBlock = ({ daySequenceIndex }) => {
 
     const newDocData = { startTime: newStartTime };
 
-    await db.updateDoc("startTimeOfCurrentTrip", newDocData);
+    await db.updateDoc("currentTrip", newDocData);
   };
 
   const generateAttractions = (daySequenceIndex, duration) => {
