@@ -113,6 +113,7 @@ export const db = {
     const pathOptions = {
       categories: [database, "users", overviewUid, "pointOfInterests", params],
       trip: [database, "users", uid, "trips", params],
+      poi: [database, "users", uid, "pointOfInterests", params],
     };
     const docRef = doc(...pathOptions[pathType]);
     const result = await getDoc(docRef);
