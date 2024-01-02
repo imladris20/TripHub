@@ -1,10 +1,10 @@
 import { addDays, format } from "date-fns";
-import { deleteDoc, doc, setDoc } from "firebase/firestore";
 import { cloneDeep } from "lodash";
 import { forwardRef, useEffect, useRef, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import globalStore, { scheduleStore } from "../../store/store";
+import { scheduleStore } from "../../store/store";
 import { PlayButtonIcon } from "../../utils/icons";
+import { db } from "../../utils/tripHubDb";
 
 const Header = forwardRef((_, ref) => {
   const {
@@ -20,15 +20,10 @@ const Header = forwardRef((_, ref) => {
   );
   const [endDate, setEndDate] = useState(currentLoadingTripData?.endDate || "");
 
-  const { database } = globalStore();
-  const uid = localStorage.getItem("uid");
-
   const removeRef = useRef();
 
   const handleRemoveSchedule = async () => {
-    const docRef = doc(database, "users", uid, "trips", currentLoadingTripId);
-
-    await deleteDoc(docRef);
+    await db.deleteDoc("currentTrip");
 
     setCurrentLoadingTripId(null);
     ref.current.showModal();
@@ -44,7 +39,6 @@ const Header = forwardRef((_, ref) => {
 
   const handleStartDateInput = async (e) => {
     const newStartDate = e.target.value;
-    const docRef = doc(database, "users", uid, "trips", currentLoadingTripId);
 
     let startTime = [];
 
@@ -63,21 +57,20 @@ const Header = forwardRef((_, ref) => {
       setEndDate(defaultEndDate);
       setCurrentTripDuration(3);
 
-      await setDoc(
-        docRef,
-        {
-          dayCount: 3,
-          startDate: newStartDate,
-          endDate: defaultEndDate,
-          startTime: [
-            ...Array(3).fill({
-              value: "09:00",
-              haveSetted: false,
-            }),
-          ],
-        },
-        { merge: true },
-      );
+      const newDocData = {
+        dayCount: 3,
+        startDate: newStartDate,
+        endDate: defaultEndDate,
+        startTime: [
+          ...Array(3).fill({
+            value: "09:00",
+            haveSetted: false,
+          }),
+        ],
+      };
+
+      await db.updateDoc("currentTrip", newDocData);
+
       return;
     }
 
@@ -100,30 +93,27 @@ const Header = forwardRef((_, ref) => {
     }
 
     if (endDate) {
-      await setDoc(
-        docRef,
-        {
-          dayCount: newDayCount,
-          startDate: newStartDate,
-          endDate,
-          startTime,
-        },
-        { merge: true },
-      );
+      const newDocData = {
+        dayCount: newDayCount,
+        startDate: newStartDate,
+        endDate,
+        startTime,
+      };
+
+      await db.updateDoc("currentTrip", newDocData);
     } else {
       const defaultEndDate = format(addDays(newStartDate, 2), "yyyy-MM-dd");
       setEndDate(defaultEndDate);
       setCurrentTripDuration(3);
-      await setDoc(
-        docRef,
-        {
-          dayCount: 3,
-          startDate: newStartDate,
-          endDate: defaultEndDate,
-          startTime,
-        },
-        { merge: true },
-      );
+
+      const newDocData = {
+        dayCount: 3,
+        startDate: newStartDate,
+        endDate: defaultEndDate,
+        startTime,
+      };
+
+      await db.updateDoc("currentTrip", newDocData);
     }
   };
 
@@ -150,7 +140,6 @@ const Header = forwardRef((_, ref) => {
 
     const newDayCount = calculateDayCount(startDate, newEndDate);
     setCurrentTripDuration(newDayCount);
-    const docRef = doc(database, "users", uid, "trips", currentLoadingTripId);
 
     let startTime = [];
 
@@ -171,16 +160,14 @@ const Header = forwardRef((_, ref) => {
     }
 
     if (startDate) {
-      await setDoc(
-        docRef,
-        {
-          dayCount: newDayCount,
-          startDate,
-          endDate: newEndDate,
-          startTime,
-        },
-        { merge: true },
-      );
+      const newDocData = {
+        dayCount: newDayCount,
+        startDate,
+        endDate: newEndDate,
+        startTime,
+      };
+
+      await db.updateDoc("currentTrip", newDocData);
     }
   };
 

@@ -9,6 +9,7 @@ import {
 import {
   collection,
   collectionGroup,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -194,5 +195,15 @@ export const db = {
     }
     const querySnapshot = await getDocs(q);
     return querySnapshot;
+  },
+  deleteDoc: async (pathType) => {
+    const { database, uid } = globalStore.getState();
+    const { currentLoadingTripId } = scheduleStore.getState();
+
+    const pathOptions = {
+      currentTrip: [database, "users", uid, "trips", currentLoadingTripId],
+    };
+    const docRef = doc(...pathOptions[pathType]);
+    await deleteDoc(docRef);
   },
 };
