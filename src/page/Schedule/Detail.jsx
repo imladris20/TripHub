@@ -11,9 +11,6 @@ const Detail = () => {
 
   const {
     address,
-    categories,
-    city,
-    location,
     name,
     openingHours,
     phoneNumber,
