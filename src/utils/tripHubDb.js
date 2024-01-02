@@ -97,8 +97,10 @@ export const nativeSignOut = async () => {
 export const db = {
   getDoc: async (pathType) => {
     const { uid, database } = globalStore.getState();
+    const { currentLoadingTripId } = scheduleStore.getState();
     const pathOptions = {
       userInfo: [database, "users", uid || getUidFromLocal()],
+      currentTrip: [database, "users", uid, "trips", currentLoadingTripId],
     };
 
     const docRef = doc(...pathOptions[pathType]);
