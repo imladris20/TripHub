@@ -18,11 +18,8 @@ const AttractionRow = ({
     setCurrentCenter,
     setCurrentZoom,
     currentLoadingTripData,
-    currentLoadingTripId,
   } = scheduleStore();
 
-  const { database } = globalStore();
-  const uid = localStorage.getItem("uid");
   const map = useMap("tripMap");
 
   const { name, note, expense, inDayOrder, daySequence, poisId } =
