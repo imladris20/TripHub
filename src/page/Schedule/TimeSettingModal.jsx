@@ -1,10 +1,10 @@
-import { doc, updateDoc } from "firebase/firestore";
 import { cloneDeep, filter, orderBy } from "lodash";
 import { useEffect, useRef, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import globalStore, { scheduleStore } from "../../store/store";
+import { scheduleStore } from "../../store/store";
 import { TimeIcon } from "../../utils/icons";
 import { addDurationToTime, calculateEndTime } from "../../utils/timeUtil";
+import { db } from "../../utils/tripHubDb";
 
 const TimeSettingModal = ({
   name,
@@ -13,9 +13,7 @@ const TimeSettingModal = ({
   daySequenceIndex,
 }) => {
   const modalRef = useRef();
-  const { database } = globalStore();
-  const uid = localStorage.getItem("uid");
-  const { currentLoadingTripId, currentLoadingTripData } = scheduleStore();
+  const { currentLoadingTripData } = scheduleStore();
 
   const initStartTime = () => {
     const n =
@@ -128,17 +126,12 @@ const TimeSettingModal = ({
 
   const handleConfirmSettingTime = async () => {
     if (startTime && endTime) {
-      const tripRef = doc(
-        database,
-        "users",
-        uid,
-        "trips",
-        currentLoadingTripId,
-      );
       const newAttractions = cloneDeep(currentLoadingTripData.attractions);
       const duration = parseInt(stayHours) * 60 + parseInt(stayMinutes);
       newAttractions[currentAttractionIndex].duration = duration;
-      await updateDoc(tripRef, { attractions: newAttractions });
+
+      const newDocData = { attractions: newAttractions };
+      await db.updateDoc("currentTrip", newDocData);
     } else {
       toast.error("請設定完整再點選確認");
     }
