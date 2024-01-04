@@ -1,23 +1,15 @@
 import { sumBy } from "lodash";
 import { QRCodeSVG } from "qrcode.react";
-
-const convertDateString = (dateStr) => {
-  const newStr = new Date(dateStr);
-  const year = newStr.getFullYear();
-  const month = String(newStr.getMonth() + 1).padStart(2, "0");
-  const date = String(newStr.getDate()).padStart(2, "0");
-  const dayOfWeekIndex = newStr.getDay();
-  const daysOfWeek = ["日", "一", "二", "三", "四", "五", "六"];
-  const day = daysOfWeek[dayOfWeekIndex];
-
-  return `${year}/${month}/${date} (${day})`;
-};
+import { formatToTaiwanDate } from "../../utils/timeUtil";
 
 const Maininfo = ({ trip, tripId }) => {
   const totalExpense = sumBy(
     trip.attractions,
     (item) => parseInt(item.expense) || 0,
   );
+
+  const startDate = formatToTaiwanDate(trip.startDate);
+  const endDate = formatToTaiwanDate(trip.endDate);
 
   return (
     <>
@@ -29,9 +21,7 @@ const Maininfo = ({ trip, tripId }) => {
 
         <div className="stat">
           <div className="stat-title">日期</div>
-          <div className="stat-value">{`${convertDateString(
-            trip.startDate,
-          )} ~ ${convertDateString(trip.endDate)}`}</div>
+          <div className="stat-value">{`${startDate} ~ ${endDate}`}</div>
         </div>
 
         <div className="stat">

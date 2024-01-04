@@ -1,9 +1,9 @@
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { cloneDeep, filter, orderBy } from "lodash";
 import { useEffect, useRef, useState } from "react";
-import globalStore, { scheduleStore } from "../../store/store";
+import { scheduleStore } from "../../store/store";
 import { addDurationToTime } from "../../utils/timeUtil";
+import { db } from "../../utils/tripHubDb";
 import TravelTypeDropdown from "./TravelTypeDropDown";
 
 const RouteRow = ({
@@ -14,9 +14,7 @@ const RouteRow = ({
 }) => {
   const map = useMap("tripMap");
   const { DirectionsService, DirectionsRenderer } = useMapsLibrary("routes");
-  const { database } = globalStore();
-  const uid = localStorage.getItem("uid");
-  const { currentLoadingTripData, currentLoadingTripId } = scheduleStore();
+  const { currentLoadingTripData } = scheduleStore();
   const [directionsResult, setDirectionsResult] = useState();
   const [travelMode, setTravelMode] = useState(
     currentLoadingTripData.attractions[currentAttractionIndex].travelMode,
@@ -54,19 +52,14 @@ const RouteRow = ({
             result.routes[0].legs[0].duration.value / 60,
           );
 
-          const tripRef = doc(
-            database,
-            "users",
-            uid,
-            "trips",
-            currentLoadingTripId,
-          );
-          const docSnap = await getDoc(tripRef);
-          const newAttractions = cloneDeep(docSnap.data().attractions);
+          const docSnap = await db.getDoc("currentTrip");
+          const newAttractions = cloneDeep(docSnap?.attractions);
           newAttractions[currentAttractionIndex].routeDuration = minutes;
           newAttractions[currentAttractionIndex].travelMode = travelMode;
 
-          await updateDoc(tripRef, { attractions: newAttractions });
+          const newDocData = { attractions: newAttractions };
+
+          await db.updateDoc("currentTrip", newDocData);
         }
       });
       directionsRendererRef.current.setMap(map);

@@ -1,17 +1,14 @@
-import { doc, setDoc } from "firebase/firestore";
 import { filter } from "lodash";
 import { useRef } from "react";
-import globalStore, { scheduleStore } from "../../store/store";
+import { scheduleStore } from "../../store/store";
+import { db } from "../../utils/tripHubDb";
 
 const RemoveFromScheduleBtn = () => {
-  const { database } = globalStore();
   const {
     attractionsData: allAttractions,
     attractionItemDetail,
     setAttractionItemDetail,
-    currentLoadingTripId,
   } = scheduleStore();
-  const uid = localStorage.getItem("uid");
 
   const removeRef = useRef();
 
@@ -20,8 +17,8 @@ const RemoveFromScheduleBtn = () => {
       allAttractions,
       (attraction) => attraction.poisId !== attractionItemDetail.poisId,
     );
-    const docRef = doc(database, "users", uid, "trips", currentLoadingTripId);
-    await setDoc(docRef, { attractions: newArractions }, { merge: true });
+    const newDocData = { attractions: newArractions };
+    await db.updateDoc("currentTrip", newDocData);
     setAttractionItemDetail(null);
   };
 
@@ -43,7 +40,7 @@ const RemoveFromScheduleBtn = () => {
               <button className="btn mr-2 h-9 min-h-0">再想想</button>
               <button
                 className="btn h-9 min-h-0 bg-sand"
-                onClick={() => handleRemoveClick()}
+                onClick={handleRemoveClick}
               >
                 確定移出
               </button>

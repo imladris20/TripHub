@@ -6,7 +6,7 @@ import Detail from "./Detail";
 import List from "./List";
 
 const Pois = () => {
-  const { mapId } = globalStore();
+  const { mapId, uid } = globalStore();
   const {
     currentCenter,
     currentZoom,
@@ -16,8 +16,6 @@ const Pois = () => {
   } = poisStore();
   const apiIsLoaded = useApiIsLoaded();
   const map = useMap("poisMap");
-
-  const uid = localStorage.getItem("uid");
 
   const initialMapOptions = {
     mapId,

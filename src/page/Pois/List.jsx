@@ -1,8 +1,9 @@
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
-import { collection, onSnapshot, query } from "firebase/firestore";
+import { onSnapshot } from "firebase/firestore";
 import { find } from "lodash";
 import { useEffect, useRef } from "react";
 import globalStore, { poisStore } from "../../store/store";
+import { db } from "../../utils/tripHubDb";
 import BookMark from "./BookMark";
 import CategoryFilter from "./CategoryFilter";
 import CityFilter from "./CityFilter";
@@ -19,16 +20,13 @@ const List = () => {
   const map = useMap("poisMap");
   const { Marker } = useMapsLibrary("marker");
   const { InfoWindow } = useMapsLibrary("maps");
-  const uid = localStorage.getItem("uid");
   const markerRef = useRef([]);
-
-  const poisColRef = collection(database, "users", uid, "pointOfInterests");
 
   useEffect(() => {
     if (!database) return;
-    const q = query(poisColRef);
+    const query = db.poisCollection();
 
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const unsubscribe = onSnapshot(query, (querySnapshot) => {
       const newArr = [];
       querySnapshot.forEach((doc) => {
         if (!doc.data()?.archived) {

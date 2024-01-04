@@ -1,8 +1,8 @@
-import { collectionGroup, getDocs, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Logo from "../../assets/logo.png";
 import globalStore, { overViewStore } from "../../store/store";
+import { db } from "../../utils/tripHubDb";
 import Day from "./Day";
 import Maininfo from "./Maininfo";
 
@@ -14,12 +14,15 @@ const Overview = () => {
 
   useEffect(() => {
     const getTripData = async () => {
-      const allTrips = query(collectionGroup(database, "trips"));
-      const querySnapshot = await getDocs(allTrips);
+      const querySnapshot = await db.getDocsAccrossCollections("allTrips");
       querySnapshot.forEach((doc) => {
-        if (doc.id === tripId) {
-          setUid(doc.ref?._key?.path?.segments[6]);
-          setTrip(doc.data());
+        const findTarget = doc.id === tripId;
+        const targetTripAuthorUid = doc.ref?._key?.path?.segments[6];
+        const targetTrip = doc.data();
+
+        if (findTarget) {
+          setUid(targetTripAuthorUid);
+          setTrip(targetTrip);
         }
       });
     };

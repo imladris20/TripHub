@@ -1,5 +1,6 @@
-import { collection, doc, onSnapshot, setDoc } from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 import { forwardRef, useEffect, useState } from "react";
+import useNewTripLogic from "../../hooks/useNewTripLogic";
 import globalStore, { scheduleStore } from "../../store/store";
 import { PlusIcon } from "../../utils/icons";
 
@@ -7,67 +8,25 @@ const TripSelectModal = forwardRef((_, ref) => {
   const [selectedTrip, setSelectedTrip] = useState("disabled");
   const [tripsOption, setTripsOption] = useState([]);
   const [tripIdToLoad, setTripIdToLoad] = useState("");
-  const [newTripToAdd, setNewTripToAdd] = useState("");
-  const [newTripError, setNewTripError] = useState("");
   const { setCurrentLoadingTripId } = scheduleStore();
+  const { database, uid } = globalStore();
 
-  const getDisplayLength = (str) => {
-    let length = 0;
-    for (let i = 0; i < str.length; i++) {
-      const charUnicode = str.charCodeAt(i);
-
-      if (charUnicode >= 0x4e00 && charUnicode <= 0x9fff) {
-        length += 2;
-      } else {
-        length += 1;
-      }
-    }
-    return length;
-  };
+  const {
+    newTripToAdd,
+    newTripError,
+    handleNewTripInput,
+    handleAddNewBlankTrip,
+  } = useNewTripLogic();
 
   const handleTripSelected = (e) => {
-    setSelectedTrip(e.target.value);
+    const selectedTrip = e.target.value;
+    setSelectedTrip(selectedTrip);
     const correctOption = tripsOption.find(
-      (option) => option.data.name === e.target.value,
+      (option) => option.data.name === selectedTrip,
     );
     if (correctOption) {
       setTripIdToLoad(correctOption.id);
     }
-  };
-
-  const handleNewTripInput = (e) => {
-    const value = e.target.value;
-    setNewTripToAdd(value);
-    if (getDisplayLength(value) > 30) {
-      setNewTripError("行程名稱最多15個字唷");
-    } else {
-      setNewTripError("");
-    }
-  };
-
-  const { database } = globalStore();
-  const uid = localStorage.getItem("uid");
-
-  const handleAddNewBlankTrip = async () => {
-    if (newTripToAdd.trim() === "") {
-      setNewTripError("請填寫行程名稱");
-      return;
-    } else if (getDisplayLength(newTripToAdd) > 30) {
-      setNewTripError("行程名稱最多15個字唷");
-      return;
-    } else {
-      setNewTripError("");
-    }
-    const colRef = collection(database, "users", uid, "trips");
-    const docRef = doc(colRef);
-
-    await setDoc(docRef, {
-      name: newTripToAdd,
-    });
-
-    setSelectedTrip(newTripToAdd);
-    setTripIdToLoad(docRef.id);
-    setNewTripToAdd("");
   };
 
   //  open modal first while page loaded
@@ -119,9 +78,7 @@ const TripSelectModal = forwardRef((_, ref) => {
           <form method="dialog">
             <button
               className="btn btn-secondary w-36 whitespace-nowrap text-gray-800"
-              onClick={() => {
-                setCurrentLoadingTripId(tripIdToLoad);
-              }}
+              onClick={() => setCurrentLoadingTripId(tripIdToLoad)}
             >
               確認選擇
             </button>
@@ -136,7 +93,9 @@ const TripSelectModal = forwardRef((_, ref) => {
           />
           <button
             className="btn btn-circle btn-xs h-4 min-h-0 w-4 border-green-500 bg-white p-0"
-            onClick={handleAddNewBlankTrip}
+            onClick={() =>
+              handleAddNewBlankTrip(setSelectedTrip, setTripIdToLoad)
+            }
             disabled={!newTripToAdd}
           >
             <svg

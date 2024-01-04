@@ -1,21 +1,19 @@
 import axios from "axios";
-import { doc, getDoc } from "firebase/firestore";
 import { find } from "lodash";
 import { useEffect, useState } from "react";
-import globalStore, { overViewStore } from "../../store/store";
+import globalStore from "../../store/store";
 import { addDurationToTime } from "../../utils/timeUtil";
+import { db } from "../../utils/tripHubDb";
 import TravelModeAlert from "./TravelModeAlert";
 
 const TimeCard = ({
-  trip,
   attraction,
   cardOrder,
   isLastOne,
   dayStartTime,
   wholeDay,
 }) => {
-  const { apiKey, database, typeOptions } = globalStore();
-  const { uid } = overViewStore();
+  const { apiKey, typeOptions } = globalStore();
 
   const initAttractionStartTime = () => {
     if (cardOrder === 1) {
@@ -78,9 +76,8 @@ const TimeCard = ({
     };
 
     const getCategory = async (poisId) => {
-      const docRef = doc(database, "users", uid, "pointOfInterests", poisId);
-      const docSnap = await getDoc(docRef);
-      return docSnap.data().categories;
+      const data = await db.getDocWithParams("categories", poisId);
+      return data.categories;
     };
 
     const init = async () => {

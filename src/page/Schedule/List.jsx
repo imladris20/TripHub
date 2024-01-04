@@ -1,7 +1,8 @@
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
-import { doc, getDoc, onSnapshot } from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
 import React, { useEffect, useRef } from "react";
 import globalStore, { scheduleStore } from "../../store/store";
+import { db } from "../../utils/tripHubDb";
 import DayBlock from "./DayBlock";
 
 const List = () => {
@@ -13,9 +14,7 @@ const List = () => {
     currentLoadingTripData,
     setCurrentLoadingTripData,
   } = scheduleStore();
-  const { database } = globalStore();
-
-  const uid = localStorage.getItem("uid");
+  const { database, uid } = globalStore();
 
   const map = useMap("tripMap");
   const { Marker } = useMapsLibrary("marker");
@@ -53,16 +52,9 @@ const List = () => {
       const result = await Promise.all(
         currentLoadingTripData.attractions.map(async (attraction) => {
           const { daySequence, note, expense, poisId } = attraction;
-          const ref = doc(
-            database,
-            "users",
-            uid,
-            "pointOfInterests",
-            attraction.poisId,
-          );
-          const docSnap = await getDoc(ref);
-          if (docSnap.exists()) {
-            return { ...docSnap.data(), daySequence, note, expense, poisId };
+          const docSnap = await db.getDocWithParams("poi", attraction.poisId);
+          if (docSnap) {
+            return { ...docSnap, daySequence, note, expense, poisId };
           }
         }),
       );

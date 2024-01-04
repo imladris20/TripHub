@@ -6,12 +6,30 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
-import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
-import globalStore from "../store/store";
+import {
+  collection,
+  collectionGroup,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  getFirestore,
+  query,
+  setDoc,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import globalStore, {
+  overViewStore,
+  poisStore,
+  scheduleStore,
+} from "../store/store";
 import { getUidFromLocal } from "./util";
 
+const firebaseApiKey = import.meta.env.VITE_FIREBASE_API_KEY;
+
 const firebaseConfig = {
-  apiKey: "AIzaSyC_7TzcS2_S3GHkAWE5b_A3f8hhEw3qJ3g",
+  apiKey: firebaseApiKey,
   authDomain: "triphub-d397b.firebaseapp.com",
   projectId: "triphub-d397b",
   storageBucket: "triphub-d397b.appspot.com",
@@ -31,7 +49,7 @@ export const initFirebase = () => {
 
 //  Authentication
 
-export const nativeSignUp = async (name, email, password) => {
+export const nativeSignUp = async ({ name, email, password }) => {
   const auth = getAuth();
 
   try {
@@ -42,7 +60,7 @@ export const nativeSignUp = async (name, email, password) => {
     );
     const user = userCredential.user;
 
-    const update = await updateProfile(user, {
+    await updateProfile(user, {
       displayName: name,
     });
 
@@ -52,7 +70,7 @@ export const nativeSignUp = async (name, email, password) => {
   }
 };
 
-export const nativeSignIn = async (email, password) => {
+export const nativeSignIn = async ({ email, password }) => {
   const auth = getAuth();
 
   try {
@@ -76,30 +94,133 @@ export const nativeSignOut = async () => {
 
 //  FireStore
 
-export const setDocNewUser = async (name, email, uid, db) => {
-  const docData = {
-    name,
-    email,
-  };
-
-  setDoc(doc(db, "users", uid), docData, { merge: true });
-};
-
 export const db = {
   getDoc: async (pathType) => {
     const { uid, database } = globalStore.getState();
-    const pathOption = {
-      userInfo: ["users", uid || getUidFromLocal()],
+    const { currentLoadingTripId } = scheduleStore.getState();
+    const pathOptions = {
+      userInfo: [database, "users", uid || getUidFromLocal()],
+      currentTrip: [database, "users", uid, "trips", currentLoadingTripId],
     };
 
-    // const [path, ...rest] = pathOption[pathType]
-
-    const docRef = doc(database, ...pathOption[pathType]);
+    const docRef = doc(...pathOptions[pathType]);
 
     const result = await getDoc(docRef);
 
-    console.log(result.data());
-
     return result.data();
+  },
+  getDocWithParams: async (pathType, params) => {
+    const { uid, database } = globalStore.getState();
+    const overviewUid = overViewStore.getState().uid;
+    const pathOptions = {
+      categories: [database, "users", overviewUid, "pointOfInterests", params],
+      trip: [database, "users", uid, "trips", params],
+      poi: [database, "users", uid, "pointOfInterests", params],
+    };
+    const docRef = doc(...pathOptions[pathType]);
+    const result = await getDoc(docRef);
+    return result.data();
+  },
+  setNewDoc: async (pathType, newDocData) => {
+    const { uid, database } = globalStore.getState();
+    const pathOptions = {
+      trips: [database, "users", uid, "trips"],
+    };
+    const colRef = collection(...pathOptions[pathType]);
+    const docRef = doc(colRef);
+
+    await setDoc(docRef, newDocData);
+
+    return docRef.id;
+  },
+  setNewDocByAssignedId: async (pathType, id, newDocData) => {
+    const { database } = globalStore.getState();
+    const pathOptions = {
+      newUser: [database, "users", id],
+    };
+    const docRef = doc(...pathOptions[pathType]);
+    await setDoc(docRef, newDocData, { merge: true });
+  },
+  updateDoc: async (pathType, newDocData) => {
+    const { database, uid, searchItemDetailInfo } = globalStore.getState();
+    const { currentLoadingTripId } = scheduleStore.getState();
+    const { poisItemDetailInfo } = poisStore.getState();
+
+    const { place_id } = searchItemDetailInfo?.data;
+
+    const pathOptions = {
+      userInfo: [database, "users", uid],
+      addPois: [database, "users", uid, "pointOfInterests", place_id],
+      currentTrip: [database, "users", uid, "trips", currentLoadingTripId],
+      removeFromPois: [
+        database,
+        "users",
+        uid,
+        "pointOfInterests",
+        poisItemDetailInfo?.id,
+      ],
+    };
+    const docRef = doc(...pathOptions[pathType]);
+    await setDoc(docRef, newDocData, { merge: true });
+  },
+  updateDocWithParams: async (pathType, newDocData, params) => {
+    const { uid, database } = globalStore.getState();
+    const pathOptions = {
+      trips: [database, "users", uid, "trips", params],
+    };
+    const docRef = doc(...pathOptions[pathType]);
+    await updateDoc(docRef, newDocData);
+    return docRef.id;
+  },
+  getDocsAccrossCollections: async (pathType) => {
+    const { database } = globalStore.getState();
+    const pathOptions = {
+      allTrips: [database, "trips"],
+    };
+    const colRef = query(collectionGroup(...pathOptions[pathType]));
+    const querySnapshot = await getDocs(colRef);
+    return querySnapshot;
+  },
+  getDocs: async (pathType) => {
+    const { database, uid } = globalStore.getState();
+    const pathOptions = {
+      trips: [database, "users", uid, "trips"],
+    };
+    const colRef = collection(...pathOptions[pathType]);
+    const querySnapshot = await getDocs(colRef);
+    return querySnapshot;
+  },
+  getDocsByCityFiler: async () => {
+    const { selectedCity } = poisStore.getState();
+    const { database, uid } = globalStore.getState();
+    const poisColRef = collection(database, "users", uid, "pointOfInterests");
+    let q;
+    if (selectedCity === "顯示全部縣市" || selectedCity === "") {
+      q = query(poisColRef);
+    } else {
+      q = query(poisColRef, where("city", "==", selectedCity));
+    }
+    const querySnapshot = await getDocs(q);
+    return querySnapshot;
+  },
+  deleteDoc: async (pathType) => {
+    const { database, uid } = globalStore.getState();
+    const { currentLoadingTripId } = scheduleStore.getState();
+
+    const pathOptions = {
+      currentTrip: [database, "users", uid, "trips", currentLoadingTripId],
+    };
+    const docRef = doc(...pathOptions[pathType]);
+    await deleteDoc(docRef);
+  },
+  poisCollection: () => {
+    const { database, uid } = globalStore.getState();
+    const q = query(collection(database, "users", uid, "pointOfInterests"));
+    return q;
+  },
+  tripsCollection: () => {
+    const { database, uid } = globalStore.getState();
+    const colRef = collection(database, "users", uid, "trips");
+    return colRef;
   },
 };
