@@ -1,17 +1,16 @@
 import axios from "axios";
-import { collection, getDocs } from "firebase/firestore";
 import { find } from "lodash";
 import { useEffect, useState } from "react";
 import PlaceHolderPhoto from "../../assets/pois_photo_placeholder.png";
 import globalStore, { poisStore } from "../../store/store";
 import { CloseIcon } from "../../utils/icons";
+import { db } from "../../utils/tripHubDb";
 import AddToSchedule from "./AddToSchedule";
 import RemoveFromPois from "./RemoveFromPois";
 
 const Detail = () => {
   const { poisItemDetailInfo, setPoisItemDetailInfo } = poisStore();
-  const { database, apiKey } = globalStore();
-  const uid = localStorage.getItem("uid");
+  const { apiKey } = globalStore();
 
   const {
     id,
@@ -23,7 +22,6 @@ const Detail = () => {
       priceLevel,
       rating,
       ratingTotal,
-      location,
       gmapUrl,
     },
   } = poisItemDetailInfo;
@@ -47,8 +45,7 @@ const Detail = () => {
     };
 
     const checkTrip = async (id) => {
-      const tirpsColRef = collection(database, "users", uid, "trips");
-      const querySnapShot = await getDocs(tirpsColRef);
+      const querySnapShot = await db.getDocs("trips");
       const containArr = [];
       querySnapShot.forEach((doc) => {
         if (find(doc.data().attractions, { poisId: id })) {

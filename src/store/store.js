@@ -180,6 +180,14 @@ const globalStore = create((set, get) => ({
       }),
     );
   },
+  tripsOption: [],
+  setTripsOption: (tripsArr) => {
+    set(
+      produce((state) => {
+        state.tripsOption = tripsArr;
+      }),
+    );
+  },
 }));
 
 export default globalStore;

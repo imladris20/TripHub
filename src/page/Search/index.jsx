@@ -16,12 +16,11 @@ const Search = () => {
     searchItemDetailInfo,
     setCurrentCenter,
     setCurrentZoom,
+    uid,
   } = globalStore();
   const apiIsLoaded = useApiIsLoaded();
 
   const map = useMap("searchMap");
-
-  const uid = localStorage.getItem("uid");
 
   const initialMapOptions = {
     mapId,

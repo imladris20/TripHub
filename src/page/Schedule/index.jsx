@@ -7,7 +7,7 @@ import List from "./List";
 
 const Schedule = () => {
   const apiIsLoaded = useApiIsLoaded();
-  const { mapId } = globalStore();
+  const { mapId, uid } = globalStore();
   const {
     currentCenter,
     currentZoom,
@@ -17,7 +17,6 @@ const Schedule = () => {
     setCurrentZoom,
   } = scheduleStore();
   const map = useMap("tripMap");
-  const uid = localStorage.getItem("uid");
 
   const initialMapOptions = {
     mapId,

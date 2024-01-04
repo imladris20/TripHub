@@ -1,22 +1,14 @@
-import { collection, getDocs, query, where } from "firebase/firestore";
 import globalStore, { poisStore } from "../../store/store";
+import { db } from "../../utils/tripHubDb";
 
 const CityFilter = () => {
-  const { database, taiwanCities } = globalStore();
+  const { taiwanCities } = globalStore();
   const { setCurrentPois, selectedCity, setSelectedCity } = poisStore();
-  const uid = localStorage.getItem("uid");
-  const poisColRef = collection(database, "users", uid, "pointOfInterests");
 
   const handleSelectedCityChange = async (e) => {
     setSelectedCity(e.target.value);
     const newArr = [];
-    let q;
-    if (e.target.value === "顯示全部縣市") {
-      q = query(poisColRef);
-    } else {
-      q = query(poisColRef, where("city", "==", e.target.value));
-    }
-    const querySnapshot = await getDocs(q);
+    const querySnapshot = await db.getDocsByCityFiler();
     querySnapshot.forEach((doc) => {
       newArr.push({ id: doc.id, data: doc.data() });
     });

@@ -1,7 +1,7 @@
-import { doc, updateDoc } from "firebase/firestore";
 import { cloneDeep } from "lodash";
-import globalStore, { scheduleStore } from "../../store/store";
+import { scheduleStore } from "../../store/store";
 import { VerticalSwapIcon } from "../../utils/icons";
+import { db } from "../../utils/tripHubDb";
 
 const InDayOrderDropdown = ({
   daySequenceIndex,
@@ -9,13 +9,8 @@ const InDayOrderDropdown = ({
   inDayOrder,
   currentAttractionIndex,
 }) => {
-  const { database } = globalStore();
-  const uid = localStorage.getItem("uid");
-  const {
-    currentLoadingTripId,
-    attractionsData: allAttractions,
-    currentLoadingTripData,
-  } = scheduleStore();
+  const { attractionsData: allAttractions, currentLoadingTripData } =
+    scheduleStore();
 
   const generateInDayOrderDropdown = (daySequenceIndex, name) => {
     if (allAttractions && currentLoadingTripData?.attractions) {
@@ -58,14 +53,6 @@ const InDayOrderDropdown = ({
 
   const handleDropdownOptionClicked = async (name, currentOrder, newOrder) => {
     if (currentOrder !== newOrder) {
-      const tripRef = doc(
-        database,
-        "users",
-        uid,
-        "trips",
-        currentLoadingTripId,
-      );
-
       const newAttractions = cloneDeep(currentLoadingTripData.attractions);
 
       newAttractions[currentAttractionIndex].inDayOrder = newOrder;
@@ -74,7 +61,9 @@ const InDayOrderDropdown = ({
 
       newAttractions.sort((a, b) => a.inDayOrder - b.inDayOrder);
 
-      await updateDoc(tripRef, { attractions: newAttractions });
+      const newDocData = { attractions: newAttractions };
+
+      await db.updateDoc("currentTrip", newDocData);
     }
   };
 
@@ -114,20 +103,3 @@ const InDayOrderDropdown = ({
 };
 
 export default InDayOrderDropdown;
-
-function addOneMinuteToTimeString(timeString) {
-  if (timeString) {
-    const [hours, minutes] = timeString.split(":").map(Number);
-
-    const totalMinutes = (hours * 60 + minutes + 1) % (24 * 60);
-
-    const newHours = Math.floor(totalMinutes / 60);
-    const newMinutes = totalMinutes % 60;
-
-    const newTimeString = `${String(newHours).padStart(2, "0")}:${String(
-      newMinutes,
-    ).padStart(2, "0")}`;
-
-    return newTimeString;
-  }
-}

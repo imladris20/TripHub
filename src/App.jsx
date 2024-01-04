@@ -42,7 +42,9 @@ function App() {
         } else {
           setPlaceResult(null);
           setIsLogin(false);
-          navigate("/");
+          if (!isOverviewPath) {
+            navigate("/");
+          }
         }
       });
     }

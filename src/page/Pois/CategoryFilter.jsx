@@ -1,20 +1,14 @@
-import { collection, getDocs, query, where } from "firebase/firestore";
 import { produce } from "immer";
 import { useState } from "react";
 import globalStore, { poisStore } from "../../store/store";
 import { FilterIcon } from "../../utils/icons";
+import { db } from "../../utils/tripHubDb";
 
 const CategoryFilter = () => {
-  const {
-    isFilterWindowOpen,
-    setIsFilterWindowOpen,
-    setCurrentPois,
-    selectedCity,
-  } = poisStore();
-  const { database, typeOptions } = globalStore();
+  const { isFilterWindowOpen, setIsFilterWindowOpen, setCurrentPois } =
+    poisStore();
+  const { typeOptions } = globalStore();
   const [selectedTags, setSelectedTags] = useState([]);
-  const uid = localStorage.getItem("uid");
-  const poisColRef = collection(database, "users", uid, "pointOfInterests");
 
   const handleCheckboxChanged = async (event) => {
     let keyCategories = [...selectedTags];
@@ -35,13 +29,7 @@ const CategoryFilter = () => {
     }
 
     const pois = [];
-    let q;
-    if (selectedCity === "顯示全部縣市" || selectedCity === "") {
-      q = query(poisColRef);
-    } else {
-      q = query(poisColRef, where("city", "==", selectedCity));
-    }
-    const querySnapshot = await getDocs(q);
+    const querySnapshot = await db.getDocsByCityFiler();
     querySnapshot.forEach((doc) => {
       pois.push({ id: doc.id, data: doc.data() });
     });
@@ -61,9 +49,7 @@ const CategoryFilter = () => {
     <div className="relative flex h-10 w-full flex-row items-center justify-between border-b-2 border-dashed border-rose-200 bg-white px-2 outline-none">
       <h1
         className="w-full cursor-pointer text-sm text-rose-500"
-        onClick={() => {
-          setIsFilterWindowOpen();
-        }}
+        onClick={setIsFilterWindowOpen}
       >
         篩選類別
       </h1>

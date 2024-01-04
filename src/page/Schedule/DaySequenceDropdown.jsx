@@ -1,13 +1,10 @@
-import { doc, updateDoc } from "firebase/firestore";
 import { cloneDeep } from "lodash";
-import globalStore, { scheduleStore } from "../../store/store";
+import { scheduleStore } from "../../store/store";
 import { MenuIcon } from "../../utils/icons";
+import { db } from "../../utils/tripHubDb.js";
 
 const DaySequenceDropdown = ({ currentAttractionIndex, name }) => {
-  const { database } = globalStore();
-  const uid = localStorage.getItem("uid");
-  const { currentLoadingTripId, currentTripDuration, currentLoadingTripData } =
-    scheduleStore();
+  const { currentTripDuration, currentLoadingTripData } = scheduleStore();
 
   const handleDropdownOptionClicked = async (
     newDaySequence,
@@ -16,21 +13,15 @@ const DaySequenceDropdown = ({ currentAttractionIndex, name }) => {
     const newAttractions = cloneDeep(currentLoadingTripData?.attractions);
 
     if (newAttractions) {
-      const tripRef = doc(
-        database,
-        "users",
-        uid,
-        "trips",
-        currentLoadingTripId,
-      );
-
       newAttractions[currentAttractionIndex].daySequence = newDaySequence;
       newAttractions[currentAttractionIndex].inDayOrder = 0;
       newAttractions[currentAttractionIndex].routeDuration = 0;
       newAttractions[currentAttractionIndex].duration = 60;
       newAttractions[currentAttractionIndex].travelMode = "DRIVING";
 
-      await updateDoc(tripRef, { attractions: newAttractions });
+      const newDocData = { attractions: newAttractions };
+
+      await db.updateDoc("currentTrip", newDocData);
     }
   };
 
@@ -44,17 +35,14 @@ const DaySequenceDropdown = ({ currentAttractionIndex, name }) => {
       )?.daySequence;
 
       return [...Array((duration || 0) + 1)].map((_, optionIndex) => {
+        const showOptions = () => {
+          handleDropdownOptionClicked(optionIndex, currentAttractionIndex);
+        };
+
         return (
           optionIndex !== currentDaySequence && (
             <li key={optionIndex}>
-              <button
-                onClick={() =>
-                  handleDropdownOptionClicked(
-                    optionIndex,
-                    currentAttractionIndex,
-                  )
-                }
-              >
+              <button onClick={showOptions}>
                 {optionIndex !== 0 ? `移至第${optionIndex}天` : "移回未分配"}
               </button>
             </li>

@@ -1,20 +1,19 @@
 import { useMap } from "@vis.gl/react-google-maps";
-import { collection, doc, getDoc, onSnapshot, query } from "firebase/firestore";
+import { onSnapshot } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import globalStore from "../../store/store";
 import { AlreadyAddedPoisIcon } from "../../utils/icons";
+import { db } from "../../utils/tripHubDb.js";
 
 const ResultList = () => {
   const {
     placeResult,
-    database,
     setSearchItemDetailInfo,
     setCurrentCenter,
     setCurrentZoom,
   } = globalStore();
   const labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   let labelIndex = 0;
-  const uid = localStorage.getItem("uid");
   const [isInPoisArr, setIsInPoisArr] = useState(new Array(20).fill(false));
   const map = useMap("searchMap");
 
@@ -34,20 +33,14 @@ const ResultList = () => {
   };
 
   useEffect(() => {
-    const q = query(collection(database, "users", uid, "pointOfInterests"));
-    const unsubscribe = onSnapshot(q, (querySnapShot) => {
+    const query = db.poisCollection();
+    const unsubscribe = onSnapshot(query, () => {
       const updateIsInPoisArr = async () => {
         const result = await Promise.all(
-          placeResult.map(async (place, index) => {
-            const docRef = doc(
-              database,
-              `users/${uid}/pointOfInterests`,
-              place.place_id,
-            );
+          placeResult.map(async (place) => {
+            const result = await db.getDocWithParams("poi", place?.place_id);
 
-            const result = await getDoc(docRef);
-
-            if (!result.exists() || result.data()?.archived) {
+            if (!result || result?.archived) {
               return false;
             } else {
               return true;

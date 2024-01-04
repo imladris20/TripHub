@@ -1,4 +1,4 @@
-import { arrayUnion, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { arrayUnion } from "firebase/firestore";
 import { produce } from "immer";
 import { find, includes, indexOf } from "lodash";
 import { useState } from "react";
@@ -7,24 +7,21 @@ import { useMutation } from "react-query";
 import PlaceHolderPhoto from "../../assets/pois_photo_placeholder.png";
 import globalStore from "../../store/store";
 import { CloseIcon, PlusIcon } from "../../utils/icons";
+import { db } from "../../utils/tripHubDb";
 
 const Detail = () => {
   const {
     searchItemDetailInfo,
     setSearchItemDetailInfo,
     typeOptions,
-    database,
     prepareColor,
     setTypeOptions,
   } = globalStore();
-  const uid = localStorage.getItem("uid");
   const [categoryTags, setCategoryTags] = useState([]);
   const [newCategoryToAdd, setNewCategoryToAdd] = useState("");
 
-  const setDocMutation = useMutation(({ database, uid, place_id, docData }) => {
-    setDoc(doc(database, `users/${uid}/pointOfInterests`, place_id), docData, {
-      merge: true,
-    });
+  const setDocMutation = useMutation(({ docData }) => {
+    db.updateDoc("addPois", docData);
   });
 
   const {
@@ -69,12 +66,7 @@ const Detail = () => {
       archived: false,
     };
 
-    await setDocMutation.mutateAsync({
-      database,
-      uid,
-      place_id,
-      docData,
-    });
+    await setDocMutation.mutateAsync({ docData });
 
     toast.success(`點選左方口袋清單頁面，即可看到剛加入的「${name}」唷！`, {
       duration: 2000,
@@ -164,19 +156,21 @@ const Detail = () => {
       return;
     }
 
-    const docSnap = await getDoc(doc(database, "users", uid));
+    const docSnap = await db.getDoc("userInfo");
     const newOption = {
       name: newCategoryToAdd,
-      bg: prepareColor[docSnap.data()?.categories?.length || 0].bg,
+      bg: prepareColor[docSnap?.categories?.length || 0].bg,
       shouldTextDark:
-        prepareColor[docSnap.data()?.categories?.length || 0].shouldTextDark,
+        prepareColor[docSnap?.categories?.length || 0].shouldTextDark,
     };
 
     setTypeOptions(newOption);
 
-    await updateDoc(doc(database, "users", uid), {
+    const newDocData = {
       categories: arrayUnion(newCategoryToAdd),
-    });
+    };
+
+    await db.updateDoc("userInfo", newDocData);
 
     if (categoryTags.length < 3) {
       setCategoryTags(
