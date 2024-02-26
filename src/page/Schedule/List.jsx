@@ -1,6 +1,6 @@
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import { doc, onSnapshot } from "firebase/firestore";
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import globalStore, { scheduleStore } from "../../store/store";
 import { db } from "../../utils/tripHubDb";
 import DayBlock from "./DayBlock";

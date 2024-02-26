@@ -1,7 +1,7 @@
 import { APIProvider } from "@vis.gl/react-google-maps";
 import { onAuthStateChanged } from "firebase/auth";
 import { find } from "lodash";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import Header from "./components/Header";
 import Home from "./page/Home";
