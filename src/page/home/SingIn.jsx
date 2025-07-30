@@ -5,8 +5,8 @@ import { nativeSignIn } from "../../utils/tripHubDb";
 import { optimizeClassName } from "../../utils/util";
 
 const SignIn = ({ inputRef }) => {
-  const [insertEmail, setInsertEmail] = useState("");
-  const [insertPassword, setInsertPassword] = useState("");
+  const [insertEmail, setInsertEmail] = useState("demo@gmail.com");
+  const [insertPassword, setInsertPassword] = useState("trytrysee");
   const { setUsername } = globalStore();
 
   const signInMutation = useMutation(nativeSignIn);
